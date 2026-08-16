@@ -94,6 +94,10 @@
 
   height: 200px;
 
+  width: 840px;
+
+  min-width: 840px;
+
 }
 
 .white-keys {

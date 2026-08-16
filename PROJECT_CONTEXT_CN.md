@@ -18,9 +18,11 @@ Piano Trainer 是一个基于 React + TypeScript 开发的 Web 钢琴练习工�
 
 # 2. 当前版本
 
-## v0.1.0 Piano Core
+## v0.2.0 Piano Trainer（开发中）
 
-当前已经完成：
+Phase 3.1（双八度键盘）已完成。
+
+v0.1.0 已完成：
 
 ## 钢琴键盘系统
 
@@ -42,12 +44,17 @@ Piano Trainer 是一个基于 React + TypeScript 开发的 Web 钢琴练习工�
 白键：
 
     A S D F G H J
-    C D E F G A B
+    C4 D4 E4 F4 G4 A4 B4
 
 黑键：
 
     W E T Y U
-    C# D# F# G# A#
+    C#4 D#4 F#4 G#4 A#4
+
+第二八度：
+
+    K O L P ; Z Q X R C V B
+    C5 C#5 D5 D#5 E5 F5 F#5 G5 G#5 A5 A#5 B5
 
 ## 音频系统
 
@@ -110,7 +117,9 @@ Piano Trainer 是一个基于 React + TypeScript 开发的 Web 钢琴练习工�
 
 ``` ts
 {
-  name: "C",
+  name: "C4",
+  pitchClass: "C",
+  octave: 4,
   frequency: 261.63,
   type: "white"
 }
@@ -134,11 +143,11 @@ Piano Trainer 是一个基于 React + TypeScript 开发的 Web 钢琴练习工�
 
 当前：
 
--   单八度钢琴
+-   双八度钢琴（C4-B5）
+-   音符包含完整音高信息，例如 C4、C#5
 
 计划：
 
--   双八度键盘
 -   后续结合 MIDI 支持完整88键
 
 ## 音频系统
@@ -176,16 +185,19 @@ Piano Trainer 是一个基于 React + TypeScript 开发的 Web 钢琴练习工�
 
 ## 6.1 双八度键盘
 
+状态：已完成
+
 目标：
 
 扩展当前单八度键盘。
 
-要求：
+已完成：
 
--   修改钢琴数据模型
--   增加 octave 信息
--   支持更多音符
+-   修改钢琴数据模型，增加 `pitchClass` 与 `octave`
+-   支持 C4-B5 共两个八度
+-   根据音高自动生成频率
 -   扩展电脑键盘映射
+-   保持鼠标与电脑键盘输入系统
 
 设计原因：
 

@@ -30,7 +30,7 @@ Completed:
 
 状态：
 
-- [ ] Planned
+- [x] Completed
 
 
 目标：
@@ -40,11 +40,11 @@ Completed:
 
 Tasks:
 
-- [ ] Upgrade piano data model
-- [ ] Add octave information
-- [ ] Support more notes
-- [ ] Extend keyboard mapping
-- [ ] Maintain current input system
+- [x] Upgrade piano data model
+- [x] Add octave information
+- [x] Support C4-B5 (two octaves)
+- [x] Extend keyboard mapping
+- [x] Maintain current input system
 
 
 设计原因：

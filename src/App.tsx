@@ -76,17 +76,19 @@ function App() {
 
     function handleKeyDown(event: KeyboardEvent) {
 
-      if (activeKeys.current.includes(event.key)) {
+      const key = event.key.toLowerCase()
+
+      if (activeKeys.current.includes(key)) {
         return
       }
 
 
-      const noteName = keyboardMap[event.key]
+      const noteName = keyboardMap[key]
 
 
       if (noteName) {
 
-        activeKeys.current.push(event.key)
+        activeKeys.current.push(key)
 
         pressNote(noteName)
 
@@ -97,7 +99,8 @@ function App() {
 
     function handleKeyUp(event: KeyboardEvent) {
 
-      const noteName = keyboardMap[event.key]
+      const key = event.key.toLowerCase()
+      const noteName = keyboardMap[key]
 
 
       if (noteName) {
@@ -106,7 +109,7 @@ function App() {
 
         activeKeys.current =
           activeKeys.current.filter(
-            key => key !== event.key
+            activeKey => activeKey !== key
           )
 
       }
