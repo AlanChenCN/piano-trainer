@@ -1,0 +1,118 @@
+.piano-key {
+
+  position: relative;
+
+  border: 1px solid #333;
+
+  border-radius: 4px;
+
+  cursor: pointer;
+
+  font-size: 18px;
+  font-weight: bold;
+
+  transition: 0.15s;
+
+  display: flex;
+
+  align-items: flex-end;
+
+  justify-content: center;
+
+  padding-bottom: 20px;
+
+}
+
+
+.piano-key.white {
+
+  width: 60px;
+
+  height: 200px;
+
+  background: #eee;
+
+  color: #555;
+
+}
+
+
+.piano-key.black {
+
+  position: absolute;
+
+  width: 36px;
+
+  height: 120px;
+
+  background: #333;
+
+  color: white;
+
+  z-index: 2;
+
+}
+
+
+.piano-key.white:hover {
+
+  background: #ccc;
+
+}
+
+
+.piano-key.black:hover {
+
+  background: #555;
+
+}
+
+
+.piano-key.pressed {
+
+  transform: translateY(5px);
+
+}
+
+
+.piano-key.white.pressed {
+
+  background: #bbb;
+
+}
+
+
+.piano-key.black.pressed {
+
+  background: #222;
+
+}
+
+.piano {
+
+  position: relative;
+
+  height: 200px;
+
+}
+
+.white-keys {
+
+  display: flex;
+
+  position: absolute;
+
+  left: 0;
+  top: 0;
+
+}
+
+
+.black-keys {
+
+  position: absolute;
+
+  left: 0;
+  top: 0;
+
+}
