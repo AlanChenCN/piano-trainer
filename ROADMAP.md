@@ -2,6 +2,12 @@
 
 ## Current Version
 
+v0.2.0 Piano Trainer（开发中）
+
+- Phase 3.1 Keyboard Expansion 已完成
+- 当前电脑键盘映射覆盖 `C4-E5`
+- 完整 `C4-B5` 键盘等待后续 MIDI 输入支持
+
 ## v0.1.0 Piano Core ✅
 
 Completed:
@@ -45,6 +51,8 @@ Tasks:
 - [x] Support C4-B5 (two octaves)
 - [x] Extend keyboard mapping
 - [x] Maintain current input system
+
+当前电脑键盘映射从 `A` 到 `;`，覆盖 C4-E5。未映射的琴键保留给后续 MIDI 输入。
 
 
 设计原因：
