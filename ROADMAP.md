@@ -1,61 +1,56 @@
-# Piano Trainer Roadmap
+# Piano Trainer 开发路线图
 
-## Current Version
+## 当前版本
 
 v0.2.0 Piano Trainer（开发中）
 
-- Phase 3.1 Keyboard Expansion 已完成
-- Phase 3.2 Audio Control 已完成
-- P3-003 Application Layout 已完成
+- 第 3.1 阶段：双八度键盘，已完成
+- 第 3.2 阶段：声音控制，已完成
+- P3-003：应用主布局，已完成
 - 当前电脑键盘映射覆盖 `C4-E5`
 - 完整 `C4-B5` 键盘等待后续 MIDI 输入支持
 
-## v0.1.0 Piano Core ✅
+## v0.1.0 钢琴核心 ✅
 
-Completed:
+已完成：
 
-- Virtual piano keyboard
-- White and black keys
-- Computer keyboard input
-- Mouse input
-- Web Audio sound engine
-- Multi-note playback
-- Basic UI
-
+- 虚拟钢琴键盘
+- 白键和黑键
+- 电脑键盘输入
+- 鼠标输入
+- Web Audio 音频引擎
+- 多音同时播放
+- 基础界面
 
 ---
 
-# v0.2.0 Piano Trainer
+# v0.2.0 钢琴训练工具
 
 目标：
 
 从“虚拟钢琴”升级为“钢琴训练工具”。
 
-
 ---
 
-## Phase 3.1 Keyboard Expansion
+## 第 3.1 阶段：双八度键盘
 
 状态：
 
-- [x] Completed
-
+- [x] 已完成
 
 目标：
 
-扩展当前单八度键盘到双八度。
+将当前单八度键盘扩展为双八度。
 
+任务：
 
-Tasks:
-
-- [x] Upgrade piano data model
-- [x] Add octave information
-- [x] Support C4-B5 (two octaves)
-- [x] Extend keyboard mapping
-- [x] Maintain current input system
+- [x] 升级钢琴音符数据模型
+- [x] 增加八度信息
+- [x] 支持 C4-B5 两个八度
+- [x] 扩展电脑键盘映射
+- [x] 保持现有输入系统
 
 当前电脑键盘映射从 `A` 到 `;`，覆盖 C4-E5。未映射的琴键保留给后续 MIDI 输入。
-
 
 设计原因：
 
@@ -69,132 +64,116 @@ C3 / C4 / C5
 
 因此需要升级音符数据结构。
 
-
 ---
 
-## Phase 3.2 Audio Control
+## 第 3.2 阶段：声音控制
 
 状态：
 
-- [x] Completed
-
+- [x] 已完成
 
 目标：
 
 增加电脑声音控制。
 
+任务：
 
-Tasks:
-
-- [x] Add sound enable/disable switch
-- [x] Separate input and audio output logic
+- [x] 增加声音开启/关闭开关
+- [x] 保持输入逻辑与音频输出逻辑分离
 
 浏览器声音默认开启。关闭后不播放声音，但琴键动画、鼠标输入和电脑键盘输入保持正常。
 
+设计原因：
 
-Reason:
+部分 MIDI 键盘拥有自己的音源。
 
-Some MIDI keyboards have their own sound source.
+用户应当能够选择：
 
-Users should choose:
-
-- Computer generated sound
-- External MIDI sound
-
+- 使用电脑生成的声音
+- 使用外部 MIDI 设备的声音
 
 ---
 
-## Phase 3.3 UI Improvement
+## 第 3.3 阶段：界面改进
 
 状态：
 
-- [ ] In Progress
-
+- [ ] 进行中
 
 目标：
 
-从 Demo 界面升级为完整应用。
+将 Demo 界面升级为完整应用。
 
+任务：
 
-Tasks:
-
-- [x] Application title
-- [x] Layout redesign
-- [x] Control panel
-- [ ] Better visual feedback
-- [ ] Mode selection
+- [x] 增加应用标题
+- [x] 搭建整体布局
+- [x] 增加控制面板
+- [ ] 改进视觉反馈
+- [ ] 增加模式选择
 
 P3-003 已完成基础布局、Grand Staff 占位区域和 Status Bar。Practice Mode、MIDI、Metronome 当前仅为占位控件。
 
-
 ---
 
-## Phase 3.4 Sight Reading Mode
+## 第 3.4 阶段：视奏模式
 
 状态：
 
-- [ ] Planned
-
+- [ ] 计划中
 
 目标：
 
 增加五线谱训练。
 
+任务：
 
-Tasks:
+- [ ] 显示大谱表
+- [ ] 将音符映射到五线谱位置
+- [ ] 同步键盘和乐谱
 
-- [ ] Display grand staff
-- [ ] Map notes to staff position
-- [ ] Synchronize keyboard and notation
+后续考虑：
 
-
-Future consideration:
-
-- VexFlow integration
-
+- 集成 VexFlow 乐谱渲染库
 
 ---
 
-# Future Versions
+# 后续版本
 
+## v0.3 MIDI 支持
 
-## v0.3 MIDI Support
+可能包含：
 
-Possible features:
-
-- MIDI keyboard input
-- MIDI velocity
-- External instrument support
-- Full keyboard range
-
+- MIDI 键盘输入
+- MIDI力度（Velocity）
+- 外部乐器支持
+- 完整钢琴键盘范围
 
 ---
 
-## v0.4 Practice System
+## v0.4 练习系统
 
-Possible features:
+可能包含：
 
-- Random note exercises
-- Accuracy tracking
-- Score system
-- Reaction time measurement
-
+- 随机音符练习
+- 正确率统计
+- 分数系统
+- 反应时间统计
 
 ---
 
-# Development Rules
+# 开发规则
 
-Before implementing a feature:
+实现功能前：
 
-1. Discuss requirement
-2. Confirm design
-3. Implement
-4. Test
-5. Commit
+1. 讨论需求
+2. 确认设计方案
+3. 开始实现
+4. 测试功能
+5. 创建 Git 提交
 
+避免：
 
-Avoid:
-
-- Large uncontrolled refactoring
-- Adding unnecessary dependencies
-- Solving future problems too early
+- 大规模、无控制的重构
+- 添加不必要的依赖
+- 过早解决未来问题
