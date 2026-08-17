@@ -12,6 +12,82 @@
 
   box-sizing: border-box;
 
+  width: 100%;
+
+}
+
+.app-header {
+
+  width: 100%;
+
+}
+
+.app-header h1 {
+
+  margin: 0;
+
+}
+
+.toolbar {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  flex-wrap: wrap;
+
+  gap: 12px;
+
+  width: min(100%, 840px);
+
+}
+
+.toolbar-control {
+
+  padding: 6px 12px;
+
+  font: inherit;
+
+}
+
+.toolbar-control:disabled {
+
+  cursor: not-allowed;
+
+  opacity: 0.65;
+
+}
+
+.grand-staff {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: min(100%, 840px);
+
+  min-height: 120px;
+
+  border: 1px solid var(--border);
+
+  box-sizing: border-box;
+
+}
+
+.status-bar {
+
+  width: 100%;
+
+  padding-top: 12px;
+
+  border-top: 1px solid var(--border);
+
+  font-size: 14px;
+
 }
 
 .sound-control {

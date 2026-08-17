@@ -6,6 +6,7 @@ v0.2.0 Piano Trainer（开发中）
 
 - Phase 3.1 Keyboard Expansion 已完成
 - Phase 3.2 Audio Control 已完成
+- P3-003 Application Layout 已完成
 - 当前电脑键盘映射覆盖 `C4-E5`
 - 完整 `C4-B5` 键盘等待后续 MIDI 输入支持
 
@@ -107,7 +108,7 @@ Users should choose:
 
 状态：
 
-- [ ] Planned
+- [ ] In Progress
 
 
 目标：
@@ -117,11 +118,13 @@ Users should choose:
 
 Tasks:
 
-- [ ] Application title
-- [ ] Layout redesign
-- [ ] Control panel
+- [x] Application title
+- [x] Layout redesign
+- [x] Control panel
 - [ ] Better visual feedback
 - [ ] Mode selection
+
+P3-003 已完成基础布局、Grand Staff 占位区域和 Status Bar。Practice Mode、MIDI、Metronome 当前仅为占位控件。
 
 
 ---

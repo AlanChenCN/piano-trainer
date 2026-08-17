@@ -11,6 +11,7 @@
 - 根据 MIDI 音高自动计算音符频率。
 - 增加从 C4 到 E5 的电脑键盘映射。
 - 增加默认开启的浏览器声音开关。
+- 增加 Header、Toolbar、Grand Staff 占位、Piano 和 Status Bar 基础布局。
 
 ### Changed
 

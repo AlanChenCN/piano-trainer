@@ -1,246 +1,104 @@
 import { useState, useEffect, useRef } from 'react'
-import PianoKey from './components/PianoKey'
+import GrandStaff from './components/GrandStaff'
+import Header from './components/Header'
+import Piano from './components/Piano'
+import StatusBar from './components/StatusBar'
+import Toolbar from './components/Toolbar'
 import { setAudioEnabled, startNote, stopNote } from './audio/sound'
 import { pianoNotes } from './data/piano'
 import { keyboardMap } from './data/keyboard'
 import './App.css'
 
 function App() {
-
-  const whiteKeys =
-    pianoNotes.filter(
-      note => note.type === "white"
-    )
-
-  const blackKeys =
-    pianoNotes.filter(
-      note => note.type === "black"
-    )
-
-
   const [pressedNotes, setPressedNotes] = useState<string[]>([])
   const [soundEnabled, setSoundEnabled] = useState(true)
 
   const activeKeys = useRef<string[]>([])
 
-
   function pressNote(noteName: string) {
-
-    const note = pianoNotes.find(
-      item => item.name === noteName
-    )
-
+    const note = pianoNotes.find(item => item.name === noteName)
 
     if (!note) {
       return
     }
 
-
     setPressedNotes(prev => {
-
       if (prev.includes(noteName)) {
         return prev
       }
 
-
-      return [
-        ...prev,
-        noteName
-      ]
-
+      return [...prev, noteName]
     })
 
-
-    startNote(
-      note.name,
-      note.frequency
-    )
-
+    startNote(note.name, note.frequency)
   }
-
 
   function releaseNote(noteName: string) {
-
-    setPressedNotes(prev =>
-      prev.filter(
-        item => item !== noteName
-      )
-    )
-
-
+    setPressedNotes(prev => prev.filter(item => item !== noteName))
     stopNote(noteName)
-
   }
 
+  function handleSoundChange(enabled: boolean) {
+    setSoundEnabled(enabled)
+    setAudioEnabled(enabled)
+  }
 
   useEffect(() => {
-
     function handleKeyDown(event: KeyboardEvent) {
-
       const key = event.key.toLowerCase()
 
       if (activeKeys.current.includes(key)) {
         return
       }
 
-
       const noteName = keyboardMap[key]
 
-
       if (noteName) {
-
         activeKeys.current.push(key)
-
         pressNote(noteName)
-
       }
-
     }
 
-
     function handleKeyUp(event: KeyboardEvent) {
-
       const key = event.key.toLowerCase()
       const noteName = keyboardMap[key]
 
-
       if (noteName) {
-
         releaseNote(noteName)
 
-        activeKeys.current =
-          activeKeys.current.filter(
-            activeKey => activeKey !== key
-          )
-
+        activeKeys.current = activeKeys.current.filter(
+          activeKey => activeKey !== key
+        )
       }
-
     }
 
-
-    window.addEventListener(
-      "keydown",
-      handleKeyDown
-    )
-
-
-    window.addEventListener(
-      "keyup",
-      handleKeyUp
-    )
-
+    window.addEventListener("keydown", handleKeyDown)
+    window.addEventListener("keyup", handleKeyUp)
 
     return () => {
-
-      window.removeEventListener(
-        "keydown",
-        handleKeyDown
-      )
-
-
-      window.removeEventListener(
-        "keyup",
-        handleKeyUp
-      )
-
+      window.removeEventListener("keydown", handleKeyDown)
+      window.removeEventListener("keyup", handleKeyUp)
     }
-
   }, [])
-
 
   return (
     <div className="piano-trainer">
+      <Header />
 
-      <label className="sound-control">
+      <Toolbar
+        soundEnabled={soundEnabled}
+        onSoundChange={handleSoundChange}
+      />
 
-        <input
-          type="checkbox"
-          checked={soundEnabled}
-          onChange={event => {
-            const enabled = event.target.checked
+      <GrandStaff />
 
-            setSoundEnabled(enabled)
-            setAudioEnabled(enabled)
-          }}
-        />
+      <Piano
+        pressedNotes={pressedNotes}
+        onPress={pressNote}
+        onRelease={releaseNote}
+      />
 
-        浏览器声音
-
-      </label>
-
-      <div className="piano">
-
-      <div className="white-keys">
-
-        {
-          whiteKeys.map(note => (
-
-            <PianoKey
-
-              key={note.name}
-
-              note={note.name}
-
-              type={note.type}
-
-              position={note.position}
-
-              pressed={
-                pressedNotes.includes(note.name)
-              }
-
-              onPress={() =>
-                pressNote(note.name)
-              }
-
-              onRelease={() =>
-                releaseNote(note.name)
-              }
-
-            />
-
-          ))
-        }
-
-      </div>
-
-
-      <div className="black-keys">
-
-        {
-          blackKeys.map(note => (
-
-            <PianoKey
-
-              key={note.name}
-
-              note={note.name}
-
-              type={note.type}
-
-              position={note.position}
-
-              pressed={
-                pressedNotes.includes(note.name)
-              }
-
-              onPress={() =>
-                pressNote(note.name)
-              }
-
-              onRelease={() =>
-                releaseNote(note.name)
-              }
-
-            />
-
-          ))
-        }
-
-      </div>
-
-    </div>
-
+      <StatusBar />
     </div>
   )
 }
