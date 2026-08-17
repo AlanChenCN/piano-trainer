@@ -5,6 +5,7 @@
 v0.2.0 Piano Trainer（开发中）
 
 - Phase 3.1 Keyboard Expansion 已完成
+- Phase 3.2 Audio Control 已完成
 - 当前电脑键盘映射覆盖 `C4-E5`
 - 完整 `C4-B5` 键盘等待后续 MIDI 输入支持
 
@@ -74,7 +75,7 @@ C3 / C4 / C5
 
 状态：
 
-- [ ] Planned
+- [x] Completed
 
 
 目标：
@@ -84,8 +85,10 @@ C3 / C4 / C5
 
 Tasks:
 
-- [ ] Add sound enable/disable switch
-- [ ] Separate input and audio output logic
+- [x] Add sound enable/disable switch
+- [x] Separate input and audio output logic
+
+浏览器声音默认开启。关闭后不播放声音，但琴键动画、鼠标输入和电脑键盘输入保持正常。
 
 
 Reason:

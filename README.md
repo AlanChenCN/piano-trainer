@@ -8,6 +8,7 @@ A browser-based piano practice tool built with React and TypeScript.
 - ⌨️ Computer keyboard input for `C4-E5` (`A` through `;`)
 - 🖱️ Mouse click input
 - 🎵 Real-time Web Audio playback
+- 🔊 Browser sound toggle, enabled by default
 - 🎼 White and black key support
 - 🎶 Multi-note playback
 
@@ -23,9 +24,9 @@ computer keyboard. Future MIDI support will provide full keyboard input.
 
 ## Current Status
 
-Version `v0.2.0` is under development. The two-octave keyboard expansion is
-complete; audio controls, UI improvements, sight reading, MIDI, and practice
-features remain on the roadmap.
+Version `v0.2.0` is under development. The two-octave keyboard expansion and
+browser sound control are complete; UI improvements, sight reading, MIDI, and
+practice features remain on the roadmap.
 
 ## Development
 
