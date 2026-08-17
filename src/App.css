@@ -70,11 +70,47 @@
 
   width: min(100%, 840px);
 
-  min-height: 120px;
+  min-height: 180px;
 
   border: 1px solid var(--border);
 
   box-sizing: border-box;
+
+}
+
+.grand-staff-svg {
+
+  display: block;
+
+  width: 100%;
+
+  max-width: 840px;
+
+  height: 180px;
+
+}
+
+.staff-line {
+
+  stroke: currentColor;
+
+  stroke-width: 1.5;
+
+}
+
+.staff-note {
+
+  fill: currentColor;
+
+}
+
+.staff-accidental {
+
+  fill: currentColor;
+
+  font-family: serif;
+
+  font-size: 26px;
 
 }
 

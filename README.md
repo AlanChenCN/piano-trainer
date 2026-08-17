@@ -10,6 +10,7 @@ A browser-based piano practice tool built with React and TypeScript.
 - 🎵 Real-time Web Audio playback
 - 🔊 Browser sound toggle, enabled by default
 - 🧩 Application layout with toolbar and status bar
+- 🎼 Real-time treble staff note display
 - 🎼 White and black key support
 - 🎶 Multi-note playback
 

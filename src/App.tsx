@@ -90,7 +90,7 @@ function App() {
         onSoundChange={handleSoundChange}
       />
 
-      <GrandStaff />
+      <GrandStaff pressedNotes={pressedNotes} />
 
       <Piano
         pressedNotes={pressedNotes}
