@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import PianoKey from './components/PianoKey'
-import { startNote, stopNote } from './audio/sound'
+import { setAudioEnabled, startNote, stopNote } from './audio/sound'
 import { pianoNotes } from './data/piano'
 import { keyboardMap } from './data/keyboard'
 import './App.css'
@@ -19,6 +19,7 @@ function App() {
 
 
   const [pressedNotes, setPressedNotes] = useState<string[]>([])
+  const [soundEnabled, setSoundEnabled] = useState(true)
 
   const activeKeys = useRef<string[]>([])
 
@@ -148,7 +149,26 @@ function App() {
 
 
   return (
-    <div className="piano">
+    <div className="piano-trainer">
+
+      <label className="sound-control">
+
+        <input
+          type="checkbox"
+          checked={soundEnabled}
+          onChange={event => {
+            const enabled = event.target.checked
+
+            setSoundEnabled(enabled)
+            setAudioEnabled(enabled)
+          }}
+        />
+
+        浏览器声音
+
+      </label>
+
+      <div className="piano">
 
       <div className="white-keys">
 
@@ -218,6 +238,8 @@ function App() {
         }
 
       </div>
+
+    </div>
 
     </div>
   )

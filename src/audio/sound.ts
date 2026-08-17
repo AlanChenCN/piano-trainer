@@ -9,11 +9,26 @@ interface ActiveNote {
 
 const activeNotes: Record<string, ActiveNote> = {}
 
+let audioEnabled = true
+
+
+export function setAudioEnabled(enabled: boolean) {
+  audioEnabled = enabled
+
+  if (!enabled) {
+    Object.keys(activeNotes).forEach(stopNote)
+  }
+}
+
 
 export function startNote(
   name: string,
   frequency: number
 ) {
+
+  if (!audioEnabled) {
+    return
+  }
 
   if (audioContext.state === "suspended") {
     audioContext.resume()
