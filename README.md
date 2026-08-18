@@ -5,7 +5,7 @@ A browser-based piano practice tool built with React and TypeScript.
 ## Features
 
 - 🎹 Full 88-key virtual piano keyboard (`A0-C8`)
-- ⌨️ Computer keyboard input with switchable ranges (`C3-E4`, `C4-E5`, `C5-E6`)
+- ⌨️ Computer keyboard input with an adjustable white-key base note
 - 🖱️ Mouse click input
 - 🎵 Real-time Web Audio playback
 - 🔊 Browser sound toggle, enabled by default
@@ -15,9 +15,11 @@ A browser-based piano practice tool built with React and TypeScript.
 - 🎼 White and black key support
 - 🎶 Multi-note playback
 
-The computer keyboard keeps the physical `A` through `;` layout while the
-mapping range can be changed with the Toolbar arrow buttons. The default
-range is `C4-E5`. Future MIDI support will provide full keyboard input.
+The computer keyboard maps white keys from `A` through `'` and uses
+`WERTYUIOP[` as candidate black-key positions. The base note can be selected
+in the Toolbar, while the arrow buttons move it by one octave. The default
+base is `E3`, placing middle C (`C4`) on `H`. Future MIDI support will provide
+full keyboard input.
 
 ## Tech Stack
 

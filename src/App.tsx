@@ -9,8 +9,8 @@ import { pianoNotes, type PianoLabelMode } from './data/piano'
 import { InputLayer } from './input/inputLayer'
 import { KeyboardController } from './input/keyboardController'
 import {
-  defaultKeyboardRange,
-  type KeyboardRange,
+  defaultKeyboardBaseNote,
+  type KeyboardBaseNote,
 } from './input/keyboardMapper'
 import './App.css'
 
@@ -19,8 +19,8 @@ function App() {
   const [soundEnabled, setSoundEnabled] = useState(true)
   const [labelMode, setLabelMode] = useState<PianoLabelMode>("all")
 
-  const [keyboardRange, setKeyboardRange] = useState<KeyboardRange>(
-    defaultKeyboardRange,
+  const [keyboardBaseNote, setKeyboardBaseNote] = useState<KeyboardBaseNote>(
+    defaultKeyboardBaseNote,
   )
 
   const pressNote = useCallback((noteName: string) => {
@@ -52,7 +52,7 @@ function App() {
   )
 
   const keyboardController = useMemo(
-    () => new KeyboardController(inputLayer, defaultKeyboardRange),
+    () => new KeyboardController(inputLayer, defaultKeyboardBaseNote),
     [inputLayer],
   )
 
@@ -74,8 +74,8 @@ function App() {
   }, [keyboardController])
 
   useEffect(() => {
-    keyboardController.setRange(keyboardRange)
-  }, [keyboardController, keyboardRange])
+    keyboardController.setBaseNote(keyboardBaseNote)
+  }, [keyboardController, keyboardBaseNote])
 
   return (
     <div className="piano-trainer">
@@ -84,10 +84,10 @@ function App() {
       <Toolbar
         soundEnabled={soundEnabled}
         labelMode={labelMode}
-        keyboardRange={keyboardRange}
+        keyboardBaseNote={keyboardBaseNote}
         onSoundChange={handleSoundChange}
         onLabelModeChange={handleLabelModeChange}
-        onKeyboardRangeChange={setKeyboardRange}
+        onKeyboardBaseNoteChange={setKeyboardBaseNote}
       />
 
       <GrandStaff pressedNotes={pressedNotes} />
@@ -99,7 +99,7 @@ function App() {
         onRelease={inputLayer.releaseNote}
       />
 
-      <StatusBar keyboardRange={keyboardRange} />
+      <StatusBar keyboardBaseNote={keyboardBaseNote} />
     </div>
   )
 }

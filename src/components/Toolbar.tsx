@@ -1,29 +1,30 @@
 import type { PianoLabelMode } from '../data/piano'
 import {
-  keyboardRangeIndex,
-  keyboardRanges,
-  type KeyboardRange,
+  keyboardBaseNotes,
+  shiftKeyboardBaseNote,
+  type KeyboardBaseNote,
 } from '../input/keyboardMapper'
 
 interface ToolbarProps {
   soundEnabled: boolean
   labelMode: PianoLabelMode
-  keyboardRange: KeyboardRange
+  keyboardBaseNote: KeyboardBaseNote
   onSoundChange: (enabled: boolean) => void
   onLabelModeChange: (mode: PianoLabelMode) => void
-  onKeyboardRangeChange: (range: KeyboardRange) => void
+  onKeyboardBaseNoteChange: (baseNote: KeyboardBaseNote) => void
 }
 
 
 function Toolbar({
   soundEnabled,
   labelMode,
-  keyboardRange,
+  keyboardBaseNote,
   onSoundChange,
   onLabelModeChange,
-  onKeyboardRangeChange,
+  onKeyboardBaseNoteChange,
 }: ToolbarProps) {
-  const currentRangeIndex = keyboardRangeIndex(keyboardRange)
+  const lowerBaseNote = shiftKeyboardBaseNote(keyboardBaseNote, -12)
+  const higherBaseNote = shiftKeyboardBaseNote(keyboardBaseNote, 12)
 
   return (
     <section className="toolbar" aria-label="Toolbar">
@@ -55,27 +56,42 @@ function Toolbar({
         </select>
       </label>
 
-      <div className="keyboard-range-control" aria-label="Keyboard Range">
-        <span>Keyboard Range</span>
+      <div className="keyboard-base-control" aria-label="Keyboard Base Note">
+        <span>Keyboard Base</span>
         <button
           className="toolbar-arrow"
           type="button"
-          aria-label="Previous keyboard range"
-          disabled={currentRangeIndex <= 0}
+          aria-label="Lower keyboard base by one octave"
+          disabled={lowerBaseNote === keyboardBaseNote}
           onClick={() =>
-            onKeyboardRangeChange(keyboardRanges[currentRangeIndex - 1].value)
+            onKeyboardBaseNoteChange(
+              shiftKeyboardBaseNote(keyboardBaseNote, -12),
+            )
           }
         >
           ←
         </button>
-        <output className="keyboard-range-value">{keyboardRange}</output>
+        <select
+          className="keyboard-base-select"
+          value={keyboardBaseNote}
+          aria-label="Keyboard base note"
+          onChange={event => onKeyboardBaseNoteChange(event.target.value)}
+        >
+          {keyboardBaseNotes.map(baseNote => (
+            <option key={baseNote} value={baseNote}>
+              {baseNote}
+            </option>
+          ))}
+        </select>
         <button
           className="toolbar-arrow"
           type="button"
-          aria-label="Next keyboard range"
-          disabled={currentRangeIndex >= keyboardRanges.length - 1}
+          aria-label="Raise keyboard base by one octave"
+          disabled={higherBaseNote === keyboardBaseNote}
           onClick={() =>
-            onKeyboardRangeChange(keyboardRanges[currentRangeIndex + 1].value)
+            onKeyboardBaseNoteChange(
+              shiftKeyboardBaseNote(keyboardBaseNote, 12),
+            )
           }
         >
           →

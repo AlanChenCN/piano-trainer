@@ -160,7 +160,7 @@
 
 }
 
-.keyboard-range-control {
+.keyboard-base-control {
 
   display: inline-flex;
 
@@ -194,14 +194,15 @@
 
 }
 
-.keyboard-range-value {
+.keyboard-base-select {
 
-  min-width: 64px;
+  min-width: 72px;
 
-  font-variant-numeric: tabular-nums;
+  padding: 4px 8px;
+
+  font: inherit;
 
 }
-
 
 .piano-key {
 

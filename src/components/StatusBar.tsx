@@ -1,13 +1,16 @@
-import type { KeyboardRange } from '../input/keyboardMapper'
+import {
+  keyboardRangeLabel,
+  type KeyboardBaseNote,
+} from '../input/keyboardMapper'
 
 interface StatusBarProps {
-  keyboardRange: KeyboardRange
+  keyboardBaseNote: KeyboardBaseNote
 }
 
-function StatusBar({ keyboardRange }: StatusBarProps) {
+function StatusBar({ keyboardBaseNote }: StatusBarProps) {
   return (
     <footer className="status-bar">
-      Ready | Keyboard: {keyboardRange} | v0.2.0-dev
+      Ready | Keyboard: {keyboardRangeLabel(keyboardBaseNote)} | Base: {keyboardBaseNote} | v0.2.0-dev
     </footer>
   )
 }

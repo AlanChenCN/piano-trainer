@@ -1,8 +1,8 @@
 import { InputLayer } from './inputLayer'
 import {
-  defaultKeyboardRange,
-  mapKeyToNote,
-  type KeyboardRange,
+  createKeyboardMap,
+  defaultKeyboardBaseNote,
+  type KeyboardBaseNote,
 } from './keyboardMapper'
 
 /**
@@ -12,12 +12,17 @@ import {
 export class KeyboardController {
   private readonly activeKeys = new Map<string, string>()
   private readonly inputLayer: InputLayer
-  private range: KeyboardRange
+  private baseNote: KeyboardBaseNote
+  private keyboardMap: Record<string, string>
   private started = false
 
-  constructor(inputLayer: InputLayer, initialRange: KeyboardRange = defaultKeyboardRange) {
+  constructor(
+    inputLayer: InputLayer,
+    initialBaseNote: KeyboardBaseNote = defaultKeyboardBaseNote,
+  ) {
     this.inputLayer = inputLayer
-    this.range = initialRange
+    this.baseNote = initialBaseNote
+    this.keyboardMap = createKeyboardMap(initialBaseNote)
   }
 
   start() {
@@ -43,13 +48,14 @@ export class KeyboardController {
     this.started = false
   }
 
-  setRange(range: KeyboardRange) {
-    if (range === this.range) {
+  setBaseNote(baseNote: KeyboardBaseNote) {
+    if (baseNote === this.baseNote) {
       return
     }
 
     this.releaseActiveKeys()
-    this.range = range
+    this.baseNote = baseNote
+    this.keyboardMap = createKeyboardMap(baseNote)
   }
 
   private readonly handleKeyDown = (event: KeyboardEvent) => {
@@ -59,7 +65,7 @@ export class KeyboardController {
       return
     }
 
-    const noteName = mapKeyToNote(key, this.range)
+    const noteName = this.keyboardMap[key]
 
     if (!noteName) {
       return

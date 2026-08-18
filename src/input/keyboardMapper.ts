@@ -1,53 +1,88 @@
-import type { PitchClass } from '../data/piano'
-import { keyboardKeys } from '../data/keyboard'
+import { pianoNotes } from '../data/piano'
+import {
+  blackKeyboardKeys,
+  whiteKeyboardKeys,
+} from '../data/keyboard'
 
-export const keyboardRanges = [
-  { value: "C3-E4", label: "C3-E4", baseOctave: 3 },
-  { value: "C4-E5", label: "C4-E5", baseOctave: 4 },
-  { value: "C5-E6", label: "C5-E6", baseOctave: 5 },
-] as const
+export type KeyboardBaseNote = string
 
-export type KeyboardRange = (typeof keyboardRanges)[number]["value"]
+const whitePianoNotes = pianoNotes.filter(note => note.type === "white")
+const lastBaseNoteIndex = whitePianoNotes.length - whiteKeyboardKeys.length
 
-export const defaultKeyboardRange: KeyboardRange = "C4-E5"
+export const keyboardBaseNotes = whitePianoNotes
+  .slice(0, lastBaseNoteIndex + 1)
+  .map(note => note.name)
 
-const chromaticPitchClasses: PitchClass[] = [
-  "C",
-  "C#",
-  "D",
-  "D#",
-  "E",
-  "F",
-  "F#",
-  "G",
-  "G#",
-  "A",
-  "A#",
-  "B",
-]
+export const defaultKeyboardBaseNote: KeyboardBaseNote = "E3"
 
-export function mapKeyToNote(
-  key: string,
-  range: KeyboardRange,
-): string | undefined {
-  const keyIndex = keyboardKeys.indexOf(key.toLowerCase() as typeof keyboardKeys[number])
-
-  if (keyIndex === -1) {
-    return undefined
-  }
-
-  const rangeConfig = keyboardRanges.find(item => item.value === range)
-
-  if (!rangeConfig) {
-    return undefined
-  }
-
-  const pitchClass = chromaticPitchClasses[keyIndex % 12]
-  const octave = rangeConfig.baseOctave + Math.floor(keyIndex / 12)
-
-  return `${pitchClass}${octave}`
+function baseNoteIndex(baseNote: KeyboardBaseNote) {
+  return keyboardBaseNotes.indexOf(baseNote)
 }
 
-export function keyboardRangeIndex(range: KeyboardRange) {
-  return keyboardRanges.findIndex(item => item.value === range)
+/**
+ * Creates a mapping from the fixed computer-key layout to a piano position.
+ * White keys are mapped first; black-key candidates are then placed between
+ * their neighboring white keys when that piano position exists.
+ */
+export function createKeyboardMap(
+  baseNote: KeyboardBaseNote,
+): Record<string, string> {
+  const baseIndex = baseNoteIndex(baseNote)
+
+  if (baseIndex === -1) {
+    return {}
+  }
+
+  const mapping: Record<string, string> = {}
+
+  whiteKeyboardKeys.forEach((key, index) => {
+    mapping[key] = whitePianoNotes[baseIndex + index].name
+  })
+
+  blackKeyboardKeys.forEach((key, index) => {
+    const leftWhiteIndex = baseIndex + index
+    const blackNote = pianoNotes.find(
+      note => note.type === "black" && note.position === leftWhiteIndex,
+    )
+
+    if (blackNote) {
+      mapping[key] = blackNote.name
+    }
+  })
+
+  return mapping
+}
+
+export function shiftKeyboardBaseNote(
+  baseNote: KeyboardBaseNote,
+  semitones: -12 | 12,
+): KeyboardBaseNote {
+  const currentIndex = baseNoteIndex(baseNote)
+
+  if (currentIndex === -1) {
+    return defaultKeyboardBaseNote
+  }
+
+  const currentPianoIndex = pianoNotes.findIndex(
+    note => note.name === whitePianoNotes[currentIndex].name,
+  )
+  const shiftedNote = pianoNotes[currentPianoIndex + semitones]
+
+  if (
+    shiftedNote &&
+    shiftedNote.type === "white" &&
+    keyboardBaseNotes.includes(shiftedNote.name)
+  ) {
+    return shiftedNote.name
+  }
+
+  return baseNote
+}
+
+export function keyboardRangeLabel(baseNote: KeyboardBaseNote) {
+  const mapping = createKeyboardMap(baseNote)
+  const firstWhiteKey = whiteKeyboardKeys[0]
+  const lastWhiteKey = whiteKeyboardKeys[whiteKeyboardKeys.length - 1]
+
+  return `${mapping[firstWhiteKey]}-${mapping[lastWhiteKey]}`
 }
