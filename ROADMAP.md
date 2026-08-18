@@ -12,9 +12,10 @@ v0.2.0 Piano Trainer（开发中）
 - P4-002：输入系统重构，已完成
 - P4-003：Web MIDI 技术验证，已完成
 - P4-004：MIDI 输入接入，已完成
+- P4-005：原生 Bluetooth LE MIDI 支持，已完成
 - 键盘音名显示模式，已完成
 - 当前电脑键盘白键使用 `A` 到 `'`，默认 A=`E3`、H=`C4`
-- 完整 88 键键盘已支持基础 MIDI Input 接入
+- 完整 88 键键盘已支持基础 USB MIDI 和 Bluetooth LE MIDI Input 接入
 
 ## v0.1.0 钢琴核心 ✅
 
@@ -252,9 +253,59 @@ P3-004 第一版只绘制高音谱表和实心音头，仅支持升号（♯）�
 
 技术债：
 
-当前 Input Layer 按音名管理状态。当 Keyboard、Mouse、MIDI 同时按下同一个
-音符时，释放顺序可能产生状态冲突。后续可通过 Input Source 或引用计数
+当前 Input Layer 按音名管理状态。当 Keyboard、Mouse、USB MIDI、Bluetooth MIDI
+同时按下同一个音符时，释放顺序可能产生状态冲突。后续可通过 Input Source 或引用计数
 机制解决，本阶段不处理该问题。
+
+---
+
+## P4-005：原生 Bluetooth LE MIDI 支持
+
+状态：
+
+- [x] 已完成
+
+已完成：
+
+- [x] 检测 Web Bluetooth 支持和安全上下文
+- [x] 通过浏览器原生设备选择窗口扫描并选择 BLE MIDI 设备
+- [x] 连接 BLE MIDI Service 和 Data I/O Characteristic
+- [x] 解析 BLE MIDI 时间戳、Running Status 和多消息数据包
+- [x] 支持 Note On、Note Off 和 Note On + Velocity 0
+- [x] Bluetooth MIDI 通过统一 Input Layer 驱动 Piano、Grand Staff 和 Browser Sound
+- [x] 支持多键同时按下
+- [x] 设备断开后自动释放所有 Bluetooth MIDI 活动音符
+- [x] Status Bar 显示 Bluetooth MIDI 设备连接状态
+
+输入链路：
+
+    Bluetooth Device
+            ↓
+    Web Bluetooth Adapter
+            ↓
+    BLE MIDI Parser
+            ↓
+    BluetoothMidiController
+            ↓
+    MidiNoteController
+            ↓
+    Input Layer
+            ↓
+    Piano、Grand Staff、Browser Sound
+
+职责边界：
+
+- `BluetoothMidiController` 负责 Bluetooth 连接、通知接收和调用 Parser。
+- `bleMidiParser.ts` 负责 BLE MIDI 时间戳、Running Status 和消息解析。
+- `MidiNoteController` 统一负责 MIDI Note 状态、音符转换和 Input Layer 调用。
+- USB MIDI 和 Bluetooth MIDI 各自持有独立的 `MidiNoteController` 实例。
+
+明确不包含：
+
+- 不支持 MIDI Output、Sustain Pedal、Aftertouch、Pitch Bend 或 Velocity 响应。
+- 不支持自动重连或多个 Bluetooth MIDI 设备同时连接。
+- 不处理 MIDI 输入源之间相同音符的归属冲突。
+- 不改变现有 Piano、Grand Staff、Browser Sound 和 Input Layer 接口。
 
 ---
 

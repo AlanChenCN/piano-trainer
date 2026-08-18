@@ -13,6 +13,7 @@ interface ToolbarProps {
   onLabelModeChange: (mode: PianoLabelMode) => void
   onKeyboardBaseNoteChange: (baseNote: KeyboardBaseNote) => void
   onMidiConnect: () => void
+  onBluetoothConnect: () => void
 }
 
 
@@ -24,6 +25,7 @@ function Toolbar({
   onLabelModeChange,
   onKeyboardBaseNoteChange,
   onMidiConnect,
+  onBluetoothConnect,
 }: ToolbarProps) {
   const lowerBaseNote = shiftKeyboardBaseNote(keyboardBaseNote, -12)
   const higherBaseNote = shiftKeyboardBaseNote(keyboardBaseNote, 12)
@@ -102,6 +104,14 @@ function Toolbar({
 
       <button className="toolbar-control" type="button" onClick={onMidiConnect}>
         MIDI Connect
+      </button>
+
+      <button
+        className="toolbar-control"
+        type="button"
+        onClick={onBluetoothConnect}
+      >
+        Bluetooth Connect
       </button>
 
       <button className="toolbar-control" type="button" disabled>

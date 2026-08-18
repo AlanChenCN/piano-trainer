@@ -6,11 +6,22 @@ import {
 interface StatusBarProps {
   keyboardBaseNote: KeyboardBaseNote
   midiDeviceName: string | null
+  bluetoothMidiDeviceName: string | null
 }
 
-function StatusBar({ keyboardBaseNote, midiDeviceName }: StatusBarProps) {
-  const midiStatus = midiDeviceName
-    ? `🎹 ${midiDeviceName} Connected`
+function StatusBar({
+  keyboardBaseNote,
+  midiDeviceName,
+  bluetoothMidiDeviceName,
+}: StatusBarProps) {
+  const connectedDevices = [
+    midiDeviceName ? `🎹 ${midiDeviceName} Connected` : null,
+    bluetoothMidiDeviceName
+      ? `Bluetooth MIDI: ${bluetoothMidiDeviceName} Connected`
+      : null,
+  ].filter((device): device is string => device !== null)
+  const midiStatus = connectedDevices.length
+    ? connectedDevices.join(" | ")
     : "MIDI: Not Connected"
 
   return (

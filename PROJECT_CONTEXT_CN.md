@@ -29,6 +29,7 @@ P4-001（完整 88 键钢琴）已完成。
 P4-002（输入系统重构）已完成。
 P4-003（Web MIDI 技术验证）已完成。
 P4-004（MIDI 输入接入）已完成。
+P4-005（原生 Bluetooth LE MIDI 支持）已完成。
 
 v0.1.0 已完成：
 
@@ -65,8 +66,9 @@ Toolbar 提供基准自然音下拉菜单，可选择 `A0-G6` 范围内的基准
 箭头每次将基准音移动一个八度。显示出的其余琴键暂时不绑定电脑按键，
 目前可通过 MIDI Input 接入完整 A0-C8 范围。
 
-MIDI Input 通过 Input Layer 统一驱动 Piano、Grand Staff 和 Browser Sound。
-当前支持一个 MIDI Input，且不处理 Velocity 响应。
+USB MIDI 和 Bluetooth MIDI 均通过 Input Layer 统一驱动 Piano、Grand Staff
+和 Browser Sound。当前 USB MIDI 和 Bluetooth MIDI 各自支持一个输入设备，
+且不处理 Velocity 响应。
 
 ## 音频系统
 
@@ -100,6 +102,8 @@ MIDI Input 通过 Input Layer 统一驱动 Piano、Grand Staff 和 Browser Sound
     │   │   状态栏组件
     │   ├── MidiMonitor.tsx
     │   │   单 MIDI Input 连接和调试面板
+    │   ├── BluetoothMidiPanel.tsx
+    │   │   Bluetooth MIDI 连接面板
     │   └── PianoKey.tsx
     │       单个琴键组件
 
@@ -120,15 +124,25 @@ MIDI Input 通过 Input Layer 统一驱动 Piano、Grand Staff 和 Browser Sound
     │   ├── keyboardMapper.ts
     │   │   电脑键盘到音符的动态映射
     │   │
-    │   └── keyboardController.ts
-    │       浏览器键盘事件、基准音和活动键释放
+    │   ├── keyboardController.ts
+    │   │   浏览器键盘事件、基准音和活动键释放
+    │   ├── midiNoteController.ts
+    │   │   统一 MIDI 音符状态和 Input Layer 调用
+    │   ├── midiController.ts
+    │   │   USB MIDI 消息适配
+    │   └── bluetoothMidiController.ts
+    │       Bluetooth MIDI 通知到 MIDI 音符控制器的适配
 
     ├── midi/
     │   ├── webMidi.ts
     │   │   Web MIDI API 适配、设备枚举和连接
     │   │
-    │   └── midiController.ts
-    │       MIDI 消息解析、Note 转换、去重和活动音符释放
+    │   ├── webBluetooth.ts
+    │   │   Web Bluetooth GATT 连接适配
+    │   ├── bleMidiParser.ts
+    │   │   BLE MIDI 时间戳、Running Status 和消息解析
+    │   └── midiMessage.ts
+    │       通用 MIDI 音符消息类型
 
     ├── App.tsx
     │   主应用逻辑
@@ -189,6 +203,19 @@ MIDI Input 通过 Input Layer 统一驱动 Piano、Grand Staff 和 Browser Sound
 
 都依赖这个数据模型。
 
+## 统一输入边界
+
+所有输入源必须统一经过 Input Layer：
+
+    Keyboard、Mouse、USB MIDI、Bluetooth MIDI、Playback
+                            ↓
+                        Input Layer
+                            ↓
+                 Application State、Piano、Grand Staff、Browser Sound
+
+输入源不得直接驱动 Piano、Grand Staff 或 Browser Sound。Input Layer 只提供
+`pressNote()` 和 `releaseNote()`，不感知具体输入来源。
+
 ------------------------------------------------------------------------
 
 # 5. 当前限制
@@ -200,9 +227,7 @@ MIDI Input 通过 Input Layer 统一驱动 Piano、Grand Staff 和 Browser Sound
 -   完整 88 键钢琴（A0-C8）
 -   音符包含完整音高信息，例如 A0、C4、C#5、C8
 
-计划：
-
--   后续结合 MIDI 支持完整键盘输入
+当前已通过 USB MIDI 和 Bluetooth MIDI 支持完整键盘输入。
 
 ## 音频系统
 
@@ -226,6 +251,7 @@ MIDI Input 通过 Input Layer 统一驱动 Piano、Grand Staff 和 Browser Sound
 -   键盘音名显示模式：隐藏、仅白键、仅 C 音、全部
 -   88 键钢琴在 Piano 区域内横向滚动，保持现有琴键尺寸
 -   电脑键盘基准音控制和当前映射范围状态显示
+-   Bluetooth MIDI 独立连接面板和设备状态显示
 
 计划：
 
@@ -423,6 +449,7 @@ Sustain Pedal 或完整 Velocity 处理。
 已完成：
 
 -   MIDI Input 通过 `MidiInputController` 接入 Input Layer
+-   USB MIDI 通过独立的 `MidiNoteController` 处理 MIDI 音符状态
 -   使用 `midiNumberToPianoNote()` 将 MIDI Note Number 转换为 Piano Note
 -   使用 `pianoNoteToMidiNumber()` 提供反向转换能力
 -   Note On 调用 `pressNote()`
@@ -440,6 +467,8 @@ Sustain Pedal 或完整 Velocity 处理。
           ↓
     MidiInputController
           ↓
+    MidiNoteController
+          ↓
     Input Layer
           ↓
     Piano、Grand Staff、Browser Sound
@@ -454,9 +483,68 @@ Sustain Pedal 或完整 Velocity 处理。
 技术债：
 
 -   当前 Input Layer 按音名管理状态。
--   Keyboard、Mouse、MIDI 同时按下同一个音符时，释放顺序可能存在冲突。
+-   Keyboard、Mouse、USB MIDI、Bluetooth MIDI 同时按下同一个音符时，释放顺序可能存在冲突。
 -   后续可通过 Input Source 或引用计数机制解决。
 -   本 Issue 不处理该问题。
+
+------------------------------------------------------------------------
+
+## 6.8 原生 Bluetooth LE MIDI 支持（P4-005）
+
+状态：已完成
+
+已完成：
+
+-   检测 Web Bluetooth API 和安全上下文
+-   通过浏览器原生设备选择窗口选择一个 BLE MIDI 设备
+-   连接 BLE MIDI Service 和 Data I/O Characteristic
+-   解析 BLE MIDI 时间戳、Running Status 和多消息数据包
+-   支持 Note On、Note Off 和 Note On + Velocity 0
+-   通过 `BluetoothMidiController` 接入 Input Layer
+-   使用独立的 `MidiNoteController` 管理 Bluetooth MIDI 活动音符
+-   支持多键同时按下
+-   断开设备后释放所有 Bluetooth MIDI 活动音符
+-   Status Bar 显示 Bluetooth MIDI 设备连接状态
+
+输入链路：
+
+    Bluetooth Device
+            ↓
+    Web Bluetooth Adapter
+            ↓
+    BLE MIDI Parser
+            ↓
+    BluetoothMidiController
+            ↓
+    MidiNoteController
+            ↓
+    Input Layer
+            ↓
+    Piano、Grand Staff、Browser Sound
+
+职责边界：
+
+-   `webBluetooth.ts` 负责浏览器 API、GATT 连接、Characteristic Notification
+    和设备断开事件。
+-   `bleMidiParser.ts` 只负责 BLE MIDI 协议解析，不负责连接和音符状态。
+-   `BluetoothMidiController` 负责 Bluetooth 连接、接收 Notification 并调用 Parser。
+-   `MidiNoteController` 统一负责 MIDI Note On、Note Off、Velocity 0、音符转换、
+    Active Note 管理和 Input Layer 调用。
+-   USB MIDI 与 Bluetooth MIDI 各自持有独立的 `MidiNoteController` 实例。
+
+浏览器限制：
+
+-   第一版目标为支持 Web Bluetooth 的 Chrome / Edge。
+-   Web Bluetooth 需要安全上下文，并且设备选择必须由用户操作触发。
+-   Firefox、Safari 等不支持浏览器显示明确提示。
+
+明确不包含：
+
+-   Bluetooth MIDI Output
+-   Sustain Pedal、Aftertouch、Pitch Bend 和 Velocity 响应
+-   自动重连
+-   多个 Bluetooth MIDI 设备同时连接
+-   其他非 Note On / Note Off MIDI 消息
 
 ------------------------------------------------------------------------
 
@@ -473,7 +561,7 @@ Sustain Pedal 或完整 Velocity 处理。
 
 ## MIDI支持
 
-已完成基础 MIDI Input 接入，后续可能加入：
+已完成基础 USB MIDI 和 Bluetooth MIDI Input 接入，后续可能加入：
 
 -   MIDI键盘输入
 -   MIDI力度（Velocity）
@@ -515,7 +603,7 @@ Sustain Pedal 或完整 Velocity 处理。
 当前开发版本：
 
     v0.2.0 钢琴训练工具
-    第 3.1 阶段、第 3.2 阶段、P3-003、P4-001、P4-002、P4-003、P4-004 已完成，尚未正式发布
+    第 3.1 阶段、第 3.2 阶段、P3-003、P4-001、P4-002、P4-003、P4-004、P4-005 已完成，尚未正式发布
 
 最新稳定版本：
 

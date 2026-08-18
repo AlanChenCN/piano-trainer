@@ -1,3 +1,5 @@
+import type { MidiNoteMessage } from './midiMessage'
+
 export interface MidiInputInfo {
   id: string
   name: string
@@ -7,13 +9,7 @@ export interface MidiInputInfo {
   input: MIDIInput
 }
 
-export interface MidiNoteMessage {
-  type: "Note On" | "Note Off"
-  status: string
-  channel: number
-  noteNumber: number
-  velocity: number
-}
+export type { MidiNoteMessage } from './midiMessage'
 
 export function isWebMidiSupported() {
   return (

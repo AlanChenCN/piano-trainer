@@ -1,0 +1,50 @@
+import { midiNumberToPianoNote } from '../data/piano'
+import type { MidiNoteMessage } from '../midi/midiMessage'
+import { InputLayer } from './inputLayer'
+
+/**
+ * Shared MIDI note behavior for each independent MIDI input source.
+ */
+export class MidiNoteController {
+  private readonly activeNotes = new Map<number, string>()
+  private readonly inputLayer: InputLayer
+
+  constructor(inputLayer: InputLayer) {
+    this.inputLayer = inputLayer
+  }
+
+  handleMessage = (message: MidiNoteMessage) => {
+    const note = midiNumberToPianoNote(message.noteNumber)
+
+    if (!note) {
+      return
+    }
+
+    if (message.type === "Note On" && message.velocity > 0) {
+      if (this.activeNotes.has(message.noteNumber)) {
+        return
+      }
+
+      this.activeNotes.set(message.noteNumber, note.name)
+      this.inputLayer.pressNote(note.name)
+      return
+    }
+
+    const activeNoteName = this.activeNotes.get(message.noteNumber)
+
+    if (!activeNoteName) {
+      return
+    }
+
+    this.activeNotes.delete(message.noteNumber)
+    this.inputLayer.releaseNote(activeNoteName)
+  }
+
+  reset = () => {
+    for (const noteName of this.activeNotes.values()) {
+      this.inputLayer.releaseNote(noteName)
+    }
+
+    this.activeNotes.clear()
+  }
+}

@@ -204,7 +204,8 @@
 
 }
 
-.midi-monitor-panel {
+.midi-monitor-panel,
+.bluetooth-midi-panel {
 
   width: min(100%, 840px);
 
@@ -218,7 +219,8 @@
 
 }
 
-.midi-monitor-header {
+.midi-monitor-header,
+.bluetooth-midi-header {
 
   display: flex;
 
@@ -230,7 +232,8 @@
 
 }
 
-.midi-monitor-header h2 {
+.midi-monitor-header h2,
+.bluetooth-midi-header h2 {
 
   margin: 0;
 
