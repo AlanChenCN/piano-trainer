@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import GrandStaff from './components/GrandStaff'
 import Header from './components/Header'
 import Piano from './components/Piano'
@@ -6,7 +6,12 @@ import StatusBar from './components/StatusBar'
 import Toolbar from './components/Toolbar'
 import { setAudioEnabled, startNote, stopNote } from './audio/sound'
 import { pianoNotes, type PianoLabelMode } from './data/piano'
-import { keyboardMap } from './data/keyboard'
+import { InputLayer } from './input/inputLayer'
+import { KeyboardController } from './input/keyboardController'
+import {
+  defaultKeyboardRange,
+  type KeyboardRange,
+} from './input/keyboardMapper'
 import './App.css'
 
 function App() {
@@ -14,9 +19,11 @@ function App() {
   const [soundEnabled, setSoundEnabled] = useState(true)
   const [labelMode, setLabelMode] = useState<PianoLabelMode>("all")
 
-  const activeKeys = useRef<string[]>([])
+  const [keyboardRange, setKeyboardRange] = useState<KeyboardRange>(
+    defaultKeyboardRange,
+  )
 
-  function pressNote(noteName: string) {
+  const pressNote = useCallback((noteName: string) => {
     const note = pianoNotes.find(item => item.name === noteName)
 
     if (!note) {
@@ -32,12 +39,22 @@ function App() {
     })
 
     startNote(note.name, note.frequency)
-  }
+  }, [])
 
-  function releaseNote(noteName: string) {
+  const releaseNote = useCallback((noteName: string) => {
     setPressedNotes(prev => prev.filter(item => item !== noteName))
     stopNote(noteName)
-  }
+  }, [])
+
+  const inputLayer = useMemo(
+    () => new InputLayer({ pressNote, releaseNote }),
+    [pressNote, releaseNote],
+  )
+
+  const keyboardController = useMemo(
+    () => new KeyboardController(inputLayer, defaultKeyboardRange),
+    [inputLayer],
+  )
 
   function handleSoundChange(enabled: boolean) {
     setSoundEnabled(enabled)
@@ -49,42 +66,16 @@ function App() {
   }
 
   useEffect(() => {
-    function handleKeyDown(event: KeyboardEvent) {
-      const key = event.key.toLowerCase()
-
-      if (activeKeys.current.includes(key)) {
-        return
-      }
-
-      const noteName = keyboardMap[key]
-
-      if (noteName) {
-        activeKeys.current.push(key)
-        pressNote(noteName)
-      }
-    }
-
-    function handleKeyUp(event: KeyboardEvent) {
-      const key = event.key.toLowerCase()
-      const noteName = keyboardMap[key]
-
-      if (noteName) {
-        releaseNote(noteName)
-
-        activeKeys.current = activeKeys.current.filter(
-          activeKey => activeKey !== key
-        )
-      }
-    }
-
-    window.addEventListener("keydown", handleKeyDown)
-    window.addEventListener("keyup", handleKeyUp)
+    keyboardController.start()
 
     return () => {
-      window.removeEventListener("keydown", handleKeyDown)
-      window.removeEventListener("keyup", handleKeyUp)
+      keyboardController.stop()
     }
-  }, [])
+  }, [keyboardController])
+
+  useEffect(() => {
+    keyboardController.setRange(keyboardRange)
+  }, [keyboardController, keyboardRange])
 
   return (
     <div className="piano-trainer">
@@ -93,8 +84,10 @@ function App() {
       <Toolbar
         soundEnabled={soundEnabled}
         labelMode={labelMode}
+        keyboardRange={keyboardRange}
         onSoundChange={handleSoundChange}
         onLabelModeChange={handleLabelModeChange}
+        onKeyboardRangeChange={setKeyboardRange}
       />
 
       <GrandStaff pressedNotes={pressedNotes} />
@@ -102,11 +95,11 @@ function App() {
       <Piano
         pressedNotes={pressedNotes}
         labelMode={labelMode}
-        onPress={pressNote}
-        onRelease={releaseNote}
+        onPress={inputLayer.pressNote}
+        onRelease={inputLayer.releaseNote}
       />
 
-      <StatusBar />
+      <StatusBar keyboardRange={keyboardRange} />
     </div>
   )
 }
