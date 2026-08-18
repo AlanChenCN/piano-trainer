@@ -34,6 +34,7 @@
 - 增加 BLE MIDI 时间戳、Running Status 和多消息数据包解析。
 - 增加 `BluetoothMidiController` 和统一的 `MidiNoteController`。
 - 增加 Bluetooth MIDI 设备连接状态和断开后的活动音符释放。
+- 完成 ES120G Bluetooth MIDI 实机连接、演奏和断开释放验证。
 
 ### 变更
 
@@ -54,7 +55,8 @@
 - 未加入 Playback、Practice Mode 或 Metronome 功能。
 - 未支持多个 MIDI Input 同时监听、MIDI Output、Sustain Pedal 或 Velocity 响应。
 - Bluetooth MIDI 暂不支持自动重连、多个 BLE 设备和其他 MIDI 消息类型。
-- 未处理 Keyboard、Mouse、MIDI 同时触发同一个音符时的来源归属冲突。
+- 未处理 Keyboard、Mouse、USB MIDI、Bluetooth MIDI 同时触发同一个音符时的来源归属冲突；
+  多输入源同音符引用计数作为后续独立 Issue。
 - 未修改钢琴、Grand Staff、Browser Sound 的既有音频和显示架构。
 
 ## [0.1.0] - 钢琴核心

@@ -29,7 +29,7 @@ P4-001（完整 88 键钢琴）已完成。
 P4-002（输入系统重构）已完成。
 P4-003（Web MIDI 技术验证）已完成。
 P4-004（MIDI 输入接入）已完成。
-P4-005（原生 Bluetooth LE MIDI 支持）已完成。
+P4-005（原生 Bluetooth LE MIDI 支持）已完成，ES120G 实机验证通过。
 
 v0.1.0 已完成：
 
@@ -505,6 +505,7 @@ Sustain Pedal 或完整 Velocity 处理。
 -   支持多键同时按下
 -   断开设备后释放所有 Bluetooth MIDI 活动音符
 -   Status Bar 显示 Bluetooth MIDI 设备连接状态
+-   已通过 ES120G 实机验证连接、Note On、Note Off 和断开释放
 
 输入链路：
 
@@ -545,6 +546,12 @@ Sustain Pedal 或完整 Velocity 处理。
 -   自动重连
 -   多个 Bluetooth MIDI 设备同时连接
 -   其他非 Note On / Note Off MIDI 消息
+
+技术债：
+
+-   当前 Input Layer 按音名管理状态。
+-   Keyboard、Mouse、USB MIDI、Bluetooth MIDI 同时按下同一个音符时，释放顺序可能冲突。
+-   多输入源同音符引用计数作为后续独立 Issue 处理。
 
 ------------------------------------------------------------------------
 

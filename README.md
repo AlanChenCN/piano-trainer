@@ -37,9 +37,9 @@ separate Bluetooth Connect panel in supported secure Chromium browsers.
 Version `v0.2.0` is under development. The full 88-key keyboard, browser sound
 control, basic application layout, keyboard label modes, dynamic keyboard
 mapping, source-agnostic input layer, Web MIDI connection, MIDI Input
-integration, and Bluetooth LE MIDI input are complete; detailed UI improvements,
-advanced MIDI features, sight reading, and practice features remain on the
-roadmap.
+integration, and Bluetooth LE MIDI input are complete. Bluetooth LE MIDI has
+been verified with the ES120G; detailed UI improvements, advanced MIDI
+features, sight reading, and practice features remain on the roadmap.
 
 ## Development
 

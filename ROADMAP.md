@@ -12,7 +12,7 @@ v0.2.0 Piano Trainer（开发中）
 - P4-002：输入系统重构，已完成
 - P4-003：Web MIDI 技术验证，已完成
 - P4-004：MIDI 输入接入，已完成
-- P4-005：原生 Bluetooth LE MIDI 支持，已完成
+- P4-005：原生 Bluetooth LE MIDI 支持，已完成（ES120G 已验证）
 - 键盘音名显示模式，已完成
 - 当前电脑键盘白键使用 `A` 到 `'`，默认 A=`E3`、H=`C4`
 - 完整 88 键键盘已支持基础 USB MIDI 和 Bluetooth LE MIDI Input 接入
@@ -276,6 +276,7 @@ P3-004 第一版只绘制高音谱表和实心音头，仅支持升号（♯）�
 - [x] 支持多键同时按下
 - [x] 设备断开后自动释放所有 Bluetooth MIDI 活动音符
 - [x] Status Bar 显示 Bluetooth MIDI 设备连接状态
+- [x] 通过 ES120G 实机验证连接、Note On、Note Off 和断开释放
 
 输入链路：
 
@@ -306,6 +307,12 @@ P3-004 第一版只绘制高音谱表和实心音头，仅支持升号（♯）�
 - 不支持自动重连或多个 Bluetooth MIDI 设备同时连接。
 - 不处理 MIDI 输入源之间相同音符的归属冲突。
 - 不改变现有 Piano、Grand Staff、Browser Sound 和 Input Layer 接口。
+
+技术债：
+
+- 当前 Input Layer 按音名管理状态。
+- Keyboard、Mouse、USB MIDI、Bluetooth MIDI 同时按下同一个音符时，释放顺序可能冲突。
+- 多输入源同音符引用计数作为后续独立 Issue 处理。
 
 ---
 
