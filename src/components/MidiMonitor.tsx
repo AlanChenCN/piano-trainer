@@ -3,7 +3,6 @@ import {
   connectMidiInput,
   isWebMidiSupported,
   listMidiInputs,
-  parseMidiNoteMessage,
   requestMidiAccess,
   type MidiInputInfo,
 } from '../midi/webMidi'
@@ -20,6 +19,7 @@ interface MidiMonitorProps {
   isOpen: boolean
   onClose: () => void
   onConnectionChange: (deviceName: string | null) => void
+  onMidiMessage: (event: MIDIMessageEvent) => void
 }
 
 function statusText(status: MidiAccessStatus) {
@@ -43,6 +43,7 @@ function MidiMonitor({
   isOpen,
   onClose,
   onConnectionChange,
+  onMidiMessage,
 }: MidiMonitorProps) {
   const [status, setStatus] = useState<MidiAccessStatus>(() =>
     isWebMidiSupported() ? "idle" : "unsupported",
@@ -130,17 +131,7 @@ function MidiMonitor({
 
       const disconnect = await connectMidiInput(
         selectedInput.input,
-        event => {
-          if (!event.data) {
-            return
-          }
-
-          const message = parseMidiNoteMessage(event.data)
-
-          if (message) {
-            console.log("[MIDI Monitor]", message)
-          }
-        },
+        onMidiMessage,
       )
 
       disconnectActiveInput.current = disconnect

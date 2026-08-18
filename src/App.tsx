@@ -9,6 +9,7 @@ import { setAudioEnabled, startNote, stopNote } from './audio/sound'
 import { pianoNotes, type PianoLabelMode } from './data/piano'
 import { InputLayer } from './input/inputLayer'
 import { KeyboardController } from './input/keyboardController'
+import { MidiInputController } from './input/midiController'
 import {
   defaultKeyboardBaseNote,
   type KeyboardBaseNote,
@@ -59,6 +60,11 @@ function App() {
     [inputLayer],
   )
 
+  const midiInputController = useMemo(
+    () => new MidiInputController(inputLayer),
+    [inputLayer],
+  )
+
   function handleSoundChange(enabled: boolean) {
     setSoundEnabled(enabled)
     setAudioEnabled(enabled)
@@ -80,6 +86,23 @@ function App() {
     keyboardController.setBaseNote(keyboardBaseNote)
   }, [keyboardController, keyboardBaseNote])
 
+  useEffect(() => {
+    return () => {
+      midiInputController.reset()
+    }
+  }, [midiInputController])
+
+  const handleMidiConnectionChange = useCallback(
+    (deviceName: string | null) => {
+      if (!deviceName) {
+        midiInputController.reset()
+      }
+
+      setMidiDeviceName(deviceName)
+    },
+    [midiInputController],
+  )
+
   return (
     <div className="piano-trainer">
       <Header />
@@ -97,7 +120,8 @@ function App() {
       <MidiMonitor
         isOpen={midiPanelOpen}
         onClose={() => setMidiPanelOpen(false)}
-        onConnectionChange={setMidiDeviceName}
+        onConnectionChange={handleMidiConnectionChange}
+        onMidiMessage={midiInputController.handleMessage}
       />
 
       <GrandStaff pressedNotes={pressedNotes} />

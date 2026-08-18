@@ -25,6 +25,9 @@
 - 增加 Device Name、Manufacturer、Connection State 显示。
 - 增加连接成功后的 Status Bar 设备状态显示。
 - 增加 Note On / Note Off、Note Number、Velocity 的 Console Monitor。
+- 增加 `midiNumberToPianoNote()` 与 `pianoNoteToMidiNumber()` 双向转换接口。
+- 增加 `MidiInputController`，将 MIDI Note On / Note Off 接入 Input Layer。
+- 增加 MIDI 多键状态管理和设备断开时的活动音符释放。
 
 ### 变更
 
@@ -37,12 +40,13 @@
 - 电脑键盘默认基准音为 `E3`，使 H 键对应中央 C（C4）；基准音可通过下拉菜单切换，箭头每次移动 12 个半音。
 - 切换电脑键盘基准音时释放当前仍按下的电脑键盘音符。
 - 鼠标输入和电脑键盘输入统一经过 Input Layer；Input Layer 不感知具体输入来源。
+- MIDI 输入通过同一个 Input Layer 驱动 Piano、Grand Staff 和 Browser Sound。
 
 ### 未修改
 
-- 未加入 MIDI 演奏联动、Playback、Practice Mode 或 Metronome 功能。
-- 未接入 Input Layer，不驱动 Piano、Grand Staff 或 Audio。
-- 未支持多个 MIDI Input 同时监听、MIDI Output、Bluetooth MIDI、Sustain Pedal 或 Velocity 处理。
+- 未加入 Playback、Practice Mode 或 Metronome 功能。
+- 未支持多个 MIDI Input 同时监听、MIDI Output、Bluetooth MIDI、Sustain Pedal 或 Velocity 响应。
+- 未处理 Keyboard、Mouse、MIDI 同时触发同一个音符时的来源归属冲突。
 - 未修改钢琴、Grand Staff、Browser Sound 的既有音频和显示架构。
 
 ## [0.1.0] - 钢琴核心

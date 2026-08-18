@@ -11,10 +11,10 @@ v0.2.0 Piano Trainer（开发中）
 - P4-001：完整 88 键钢琴，已完成
 - P4-002：输入系统重构，已完成
 - P4-003：Web MIDI 技术验证，已完成
+- P4-004：MIDI 输入接入，已完成
 - 键盘音名显示模式，已完成
 - 当前电脑键盘白键使用 `A` 到 `'`，默认 A=`E3`、H=`C4`
-- 完整 88 键键盘的 MIDI 输入等待后续支持
-- Web MIDI 已完成单设备连接技术验证，尚未接入演奏逻辑
+- 完整 88 键键盘已支持基础 MIDI Input 接入
 
 ## v0.1.0 钢琴核心 ✅
 
@@ -225,6 +225,36 @@ P3-004 第一版只绘制高音谱表和实心音头，仅支持升号（♯）�
 - 不驱动 Piano、Grand Staff 或 Audio
 - 不支持多个 MIDI Input 同时监听
 - 不支持自动连接、Bluetooth MIDI、MIDI Output、Sustain Pedal 或 Velocity 处理
+
+---
+
+## P4-004：MIDI 输入接入
+
+状态：
+
+- [x] 已完成
+
+已完成：
+
+- [x] 建立 MIDI Input 到 Input Layer 的统一数据流
+- [x] 增加 MIDI Note Number 与 Piano Note 的双向转换接口
+- [x] 支持 Note On、Note Off 和 Note On + Velocity 0
+- [x] 支持 MIDI 多键同时按下
+- [x] 防止重复 Note On、重复 Note Off 和设备断开卡键
+- [x] MIDI 输入驱动 Piano、Grand Staff 和 Browser Sound
+- [x] 保持 Browser Sound 开关行为不变
+
+明确不包含：
+
+- 不支持 MIDI Velocity 响应
+- 不支持 Bluetooth MIDI、MIDI Output、Sustain Pedal、Aftertouch、Pitch Bend 或 Program Change
+- 不处理 Keyboard、Mouse、MIDI 同时触发同一个音符时的来源归属冲突
+
+技术债：
+
+当前 Input Layer 按音名管理状态。当 Keyboard、Mouse、MIDI 同时按下同一个
+音符时，释放顺序可能产生状态冲突。后续可通过 Input Source 或引用计数
+机制解决，本阶段不处理该问题。
 
 ---
 

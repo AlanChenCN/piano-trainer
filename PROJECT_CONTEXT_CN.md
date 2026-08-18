@@ -28,6 +28,7 @@ P4-001（完整 88 键钢琴）已完成。
 键盘音名显示模式已完成。
 P4-002（输入系统重构）已完成。
 P4-003（Web MIDI 技术验证）已完成。
+P4-004（MIDI 输入接入）已完成。
 
 v0.1.0 已完成：
 
@@ -62,7 +63,10 @@ v0.1.0 已完成：
 
 Toolbar 提供基准自然音下拉菜单，可选择 `A0-G6` 范围内的基准音；左右
 箭头每次将基准音移动一个八度。显示出的其余琴键暂时不绑定电脑按键，
-后续由 MIDI 输入补充。
+目前可通过 MIDI Input 接入完整 A0-C8 范围。
+
+MIDI Input 通过 Input Layer 统一驱动 Piano、Grand Staff 和 Browser Sound。
+当前支持一个 MIDI Input，且不处理 Velocity 响应。
 
 ## 音频系统
 
@@ -120,8 +124,11 @@ Toolbar 提供基准自然音下拉菜单，可选择 `A0-G6` 范围内的基准
     │       浏览器键盘事件、基准音和活动键释放
 
     ├── midi/
-    │   └── webMidi.ts
-    │       Web MIDI API 适配、设备枚举、连接和消息解析
+    │   ├── webMidi.ts
+    │   │   Web MIDI API 适配、设备枚举和连接
+    │   │
+    │   └── midiController.ts
+    │       MIDI 消息解析、Note 转换、去重和活动音符释放
 
     ├── App.tsx
     │   主应用逻辑
@@ -409,6 +416,50 @@ Sustain Pedal 或完整 Velocity 处理。
 
 ------------------------------------------------------------------------
 
+## 6.7 MIDI 输入接入（P4-004）
+
+状态：已完成
+
+已完成：
+
+-   MIDI Input 通过 `MidiInputController` 接入 Input Layer
+-   使用 `midiNumberToPianoNote()` 将 MIDI Note Number 转换为 Piano Note
+-   使用 `pianoNoteToMidiNumber()` 提供反向转换能力
+-   Note On 调用 `pressNote()`
+-   Note Off 或 Note On + Velocity 0 调用 `releaseNote()`
+-   支持 MIDI 多键同时按下
+-   忽略 A0-C8 之外的 MIDI 音符
+-   防止重复 Note On、重复 Note Off 和设备断开卡键
+-   保持 Browser Sound 开关逻辑不变
+
+输入链路：
+
+    MIDI Input
+          ↓
+    Web MIDI Adapter
+          ↓
+    MidiInputController
+          ↓
+    Input Layer
+          ↓
+    Piano、Grand Staff、Browser Sound
+
+明确不包含：
+
+-   MIDI Velocity 响应
+-   Bluetooth MIDI、MIDI Output、Sustain Pedal、Aftertouch、Pitch Bend
+-   Program Change
+-   多个 MIDI Input 同时监听
+
+技术债：
+
+-   当前 Input Layer 按音名管理状态。
+-   Keyboard、Mouse、MIDI 同时按下同一个音符时，释放顺序可能存在冲突。
+-   后续可通过 Input Source 或引用计数机制解决。
+-   本 Issue 不处理该问题。
+
+------------------------------------------------------------------------
+
 # 7. 后续规划
 
 ## 练习模式
@@ -422,7 +473,7 @@ Sustain Pedal 或完整 Velocity 处理。
 
 ## MIDI支持
 
-可能加入：
+已完成基础 MIDI Input 接入，后续可能加入：
 
 -   MIDI键盘输入
 -   MIDI力度（Velocity）
@@ -464,7 +515,7 @@ Sustain Pedal 或完整 Velocity 处理。
 当前开发版本：
 
     v0.2.0 钢琴训练工具
-    第 3.1 阶段、第 3.2 阶段、P3-003、P4-001、P4-002、P4-003 已完成，尚未正式发布
+    第 3.1 阶段、第 3.2 阶段、P3-003、P4-001、P4-002、P4-003、P4-004 已完成，尚未正式发布
 
 最新稳定版本：
 

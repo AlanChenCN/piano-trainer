@@ -74,3 +74,26 @@ for (
 
   pianoNotes.push(note)
 }
+
+/** Convert a standard MIDI note number to the matching piano data object. */
+export function midiNumberToPianoNote(
+  midiNumber: number,
+): PianoNote | undefined {
+  const noteIndex = midiNumber - firstMidiNumber
+
+  return pianoNotes[noteIndex]
+}
+
+/** Convert a piano data object or note name to its standard MIDI number. */
+export function pianoNoteToMidiNumber(
+  note: PianoNote | string,
+): number | undefined {
+  const noteName = typeof note === "string" ? note : note.name
+  const noteIndex = pianoNotes.findIndex(item => item.name === noteName)
+
+  if (noteIndex === -1) {
+    return undefined
+  }
+
+  return firstMidiNumber + noteIndex
+}
