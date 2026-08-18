@@ -204,6 +204,73 @@
 
 }
 
+.midi-monitor-panel {
+
+  width: min(100%, 840px);
+
+  padding: 16px;
+
+  border: 1px solid var(--border);
+
+  box-sizing: border-box;
+
+  text-align: left;
+
+}
+
+.midi-monitor-header {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 12px;
+
+}
+
+.midi-monitor-header h2 {
+
+  margin: 0;
+
+}
+
+.midi-status,
+.midi-error,
+.midi-monitor-note {
+
+  margin: 8px 0;
+
+}
+
+.midi-error {
+
+  color: #b42318;
+
+}
+
+.midi-device-table {
+
+  width: 100%;
+
+  margin: 12px 0;
+
+  border-collapse: collapse;
+
+}
+
+.midi-device-table th,
+.midi-device-table td {
+
+  padding: 8px;
+
+  border-bottom: 1px solid var(--border);
+
+  text-align: left;
+
+}
+
 .piano-key {
 
   position: relative;

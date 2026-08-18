@@ -27,6 +27,7 @@ P3-004（高音谱表实时音符显示）已完成。
 P4-001（完整 88 键钢琴）已完成。
 键盘音名显示模式已完成。
 P4-002（输入系统重构）已完成。
+P4-003（Web MIDI 技术验证）已完成。
 
 v0.1.0 已完成：
 
@@ -92,7 +93,9 @@ Toolbar 提供基准自然音下拉菜单，可选择 `A0-G6` 范围内的基准
     │   ├── GrandStaff.tsx
     │   ├── Piano.tsx
     │   ├── StatusBar.tsx
-    │   │   应用主布局组件
+    │   │   状态栏组件
+    │   ├── MidiMonitor.tsx
+    │   │   单 MIDI Input 连接和调试面板
     │   └── PianoKey.tsx
     │       单个琴键组件
 
@@ -114,7 +117,11 @@ Toolbar 提供基准自然音下拉菜单，可选择 `A0-G6` 范围内的基准
     │   │   电脑键盘到音符的动态映射
     │   │
     │   └── keyboardController.ts
-    │       浏览器键盘事件、映射范围和活动键释放
+    │       浏览器键盘事件、基准音和活动键释放
+
+    ├── midi/
+    │   └── webMidi.ts
+    │       Web MIDI API 适配、设备枚举、连接和消息解析
 
     ├── App.tsx
     │   主应用逻辑
@@ -376,6 +383,32 @@ Playback 等输入源。
 
 ------------------------------------------------------------------------
 
+## 6.6 Web MIDI 技术验证（P4-003）
+
+状态：已完成
+
+已完成：
+
+-   检测浏览器 Web MIDI API 支持情况
+-   通过用户操作请求 MIDI 权限
+-   获取 MIDI Input 设备名称、制造商和连接状态
+-   支持用户选择并连接一个 MIDI Input
+-   连接成功后在 Status Bar 显示设备状态
+-   在 Console 输出 Note On、Note Off、Note Number 和 Velocity
+
+架构边界：
+
+-   Web MIDI 逻辑位于 `src/midi/webMidi.ts`
+-   MIDI 面板位于 `src/components/MidiMonitor.tsx`
+-   当前不接入 Input Layer
+-   当前不驱动 Piano、Grand Staff 或 Audio
+-   当前只监听一个 MIDI Input
+
+本阶段是技术验证，不包含 MIDI 演奏逻辑、MIDI Output、Bluetooth MIDI、
+Sustain Pedal 或完整 Velocity 处理。
+
+------------------------------------------------------------------------
+
 # 7. 后续规划
 
 ## 练习模式
@@ -431,7 +464,7 @@ Playback 等输入源。
 当前开发版本：
 
     v0.2.0 钢琴训练工具
-    第 3.1 阶段、第 3.2 阶段、P3-003、P4-001、P4-002 已完成，尚未正式发布
+    第 3.1 阶段、第 3.2 阶段、P3-003、P4-001、P4-002、P4-003 已完成，尚未正式发布
 
 最新稳定版本：
 

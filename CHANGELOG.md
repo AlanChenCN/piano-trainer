@@ -20,6 +20,11 @@
 - 增加电脑键盘白键 `A` 到 `'` 的映射和 `WERTYUIOP[` 黑键候选位。
 - 增加基准自然音下拉菜单，可在 `A0-G6` 范围内选择基准音。
 - 增加 Toolbar 左右箭头按八度移动基准音的控制。
+- 增加 Web MIDI API 支持检测和浏览器权限申请。
+- 增加独立 MIDI 面板，支持选择并连接一个 MIDI Input。
+- 增加 Device Name、Manufacturer、Connection State 显示。
+- 增加连接成功后的 Status Bar 设备状态显示。
+- 增加 Note On / Note Off、Note Number、Velocity 的 Console Monitor。
 
 ### 变更
 
@@ -35,7 +40,9 @@
 
 ### 未修改
 
-- 未加入 MIDI、Playback、Practice Mode 或 Metronome 功能。
+- 未加入 MIDI 演奏联动、Playback、Practice Mode 或 Metronome 功能。
+- 未接入 Input Layer，不驱动 Piano、Grand Staff 或 Audio。
+- 未支持多个 MIDI Input 同时监听、MIDI Output、Bluetooth MIDI、Sustain Pedal 或 Velocity 处理。
 - 未修改钢琴、Grand Staff、Browser Sound 的既有音频和显示架构。
 
 ## [0.1.0] - 钢琴核心

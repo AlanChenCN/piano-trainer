@@ -10,9 +10,11 @@ v0.2.0 Piano Trainer（开发中）
 - P3-004：高音谱表实时音符显示，已完成
 - P4-001：完整 88 键钢琴，已完成
 - P4-002：输入系统重构，已完成
+- P4-003：Web MIDI 技术验证，已完成
 - 键盘音名显示模式，已完成
 - 当前电脑键盘白键使用 `A` 到 `'`，默认 A=`E3`、H=`C4`
 - 完整 88 键键盘的 MIDI 输入等待后续支持
+- Web MIDI 已完成单设备连接技术验证，尚未接入演奏逻辑
 
 ## v0.1.0 钢琴核心 ✅
 
@@ -118,7 +120,8 @@ C3 / C4 / C5
 - [ ] 改进视觉反馈
 - [ ] 增加模式选择
 
-P3-003 已完成基础布局、Grand Staff 占位区域和 Status Bar。Practice Mode、MIDI、Metronome 当前仅为占位控件。
+P3-003 已完成基础布局、Grand Staff 占位区域和 Status Bar。Practice Mode 和
+Metronome 当前仍为占位控件，MIDI 已由 P4-003 增加连接入口和独立技术验证面板。
 
 ---
 
@@ -198,6 +201,30 @@ P3-004 第一版只绘制高音谱表和实心音头，仅支持升号（♯）�
 - Keyboard Mapper 只负责白键顺序、黑键候选位置到音符的计算。
 
 本阶段不包含 MIDI、Playback、Practice Mode、Metronome 或 Toolbar 整体重构。
+
+---
+
+## P4-003：Web MIDI 技术验证
+
+状态：
+
+- [x] 已完成
+
+已完成：
+
+- [x] 检测 Web MIDI API 支持情况
+- [x] 通过浏览器标准流程请求 MIDI 权限
+- [x] 获取并显示 MIDI Input 的设备名称、制造商和连接状态
+- [x] 支持用户选择并连接一个 MIDI Input
+- [x] 连接成功后在 Status Bar 显示设备连接状态
+- [x] 在 Console 输出 Note On、Note Off、Note Number 和 Velocity
+
+明确不包含：
+
+- 不接入 Input Layer
+- 不驱动 Piano、Grand Staff 或 Audio
+- 不支持多个 MIDI Input 同时监听
+- 不支持自动连接、Bluetooth MIDI、MIDI Output、Sustain Pedal 或 Velocity 处理
 
 ---
 

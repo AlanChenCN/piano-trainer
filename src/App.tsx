@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import GrandStaff from './components/GrandStaff'
 import Header from './components/Header'
+import MidiMonitor from './components/MidiMonitor'
 import Piano from './components/Piano'
 import StatusBar from './components/StatusBar'
 import Toolbar from './components/Toolbar'
@@ -18,6 +19,8 @@ function App() {
   const [pressedNotes, setPressedNotes] = useState<string[]>([])
   const [soundEnabled, setSoundEnabled] = useState(true)
   const [labelMode, setLabelMode] = useState<PianoLabelMode>("all")
+  const [midiPanelOpen, setMidiPanelOpen] = useState(false)
+  const [midiDeviceName, setMidiDeviceName] = useState<string | null>(null)
 
   const [keyboardBaseNote, setKeyboardBaseNote] = useState<KeyboardBaseNote>(
     defaultKeyboardBaseNote,
@@ -88,6 +91,13 @@ function App() {
         onSoundChange={handleSoundChange}
         onLabelModeChange={handleLabelModeChange}
         onKeyboardBaseNoteChange={setKeyboardBaseNote}
+        onMidiConnect={() => setMidiPanelOpen(true)}
+      />
+
+      <MidiMonitor
+        isOpen={midiPanelOpen}
+        onClose={() => setMidiPanelOpen(false)}
+        onConnectionChange={setMidiDeviceName}
       />
 
       <GrandStaff pressedNotes={pressedNotes} />
@@ -99,7 +109,10 @@ function App() {
         onRelease={inputLayer.releaseNote}
       />
 
-      <StatusBar keyboardBaseNote={keyboardBaseNote} />
+      <StatusBar
+        keyboardBaseNote={keyboardBaseNote}
+        midiDeviceName={midiDeviceName}
+      />
     </div>
   )
 }
