@@ -21,6 +21,8 @@ const staffRight = 740
 const staffBottomY = 128
 const stepHeight = 12
 const noteCenterX = 420
+const visibleStaffMinStep = -2
+const visibleStaffMaxStep = 11
 
 
 function noteY(step: number) {
@@ -35,6 +37,11 @@ function GrandStaff({ pressedNotes }: GrandStaffProps) {
       note,
       position: staffPositionMap[note.name],
     }))
+    .filter(
+      ({ position }) =>
+        position.noteHeadStep >= visibleStaffMinStep &&
+        position.noteHeadStep <= visibleStaffMaxStep
+    )
 
   const noteGroups = positionedNotes.reduce<StaffNoteGroup[]>(
     (groups, positionedNote) => {

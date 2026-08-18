@@ -140,6 +140,26 @@
 
 }
 
+.label-control {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  font-size: 16px;
+
+}
+
+.label-control select {
+
+  padding: 4px 8px;
+
+  font: inherit;
+
+}
+
 
 .piano-key {
 
@@ -237,9 +257,19 @@
 
   height: 200px;
 
-  width: 840px;
+  width: 3120px;
 
-  min-width: 840px;
+  min-width: 3120px;
+
+}
+
+.piano-viewport {
+
+  width: min(100%, 840px);
+
+  overflow-x: auto;
+
+  overflow-y: hidden;
 
 }
 

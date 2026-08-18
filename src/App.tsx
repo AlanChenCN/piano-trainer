@@ -5,13 +5,14 @@ import Piano from './components/Piano'
 import StatusBar from './components/StatusBar'
 import Toolbar from './components/Toolbar'
 import { setAudioEnabled, startNote, stopNote } from './audio/sound'
-import { pianoNotes } from './data/piano'
+import { pianoNotes, type PianoLabelMode } from './data/piano'
 import { keyboardMap } from './data/keyboard'
 import './App.css'
 
 function App() {
   const [pressedNotes, setPressedNotes] = useState<string[]>([])
   const [soundEnabled, setSoundEnabled] = useState(true)
+  const [labelMode, setLabelMode] = useState<PianoLabelMode>("all")
 
   const activeKeys = useRef<string[]>([])
 
@@ -41,6 +42,10 @@ function App() {
   function handleSoundChange(enabled: boolean) {
     setSoundEnabled(enabled)
     setAudioEnabled(enabled)
+  }
+
+  function handleLabelModeChange(mode: PianoLabelMode) {
+    setLabelMode(mode)
   }
 
   useEffect(() => {
@@ -87,13 +92,16 @@ function App() {
 
       <Toolbar
         soundEnabled={soundEnabled}
+        labelMode={labelMode}
         onSoundChange={handleSoundChange}
+        onLabelModeChange={handleLabelModeChange}
       />
 
       <GrandStaff pressedNotes={pressedNotes} />
 
       <Piano
         pressedNotes={pressedNotes}
+        labelMode={labelMode}
         onPress={pressNote}
         onRelease={releaseNote}
       />

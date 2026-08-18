@@ -2,6 +2,8 @@ interface PianoKeyProps {
 
   note: string
 
+  displayLabel: string
+
   type: "white" | "black"
 
   position?: number
@@ -16,6 +18,7 @@ interface PianoKeyProps {
 
 function PianoKey({
   note,
+  displayLabel,
   type,
   position,
   pressed,
@@ -48,9 +51,11 @@ function PianoKey({
 
       onMouseLeave={onRelease}
 
+      aria-label={note}
+
     >
 
-      {note}
+      {displayLabel}
 
     </button>
 

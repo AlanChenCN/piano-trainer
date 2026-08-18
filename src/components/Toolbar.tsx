@@ -1,10 +1,19 @@
+import type { PianoLabelMode } from '../data/piano'
+
 interface ToolbarProps {
   soundEnabled: boolean
+  labelMode: PianoLabelMode
   onSoundChange: (enabled: boolean) => void
+  onLabelModeChange: (mode: PianoLabelMode) => void
 }
 
 
-function Toolbar({ soundEnabled, onSoundChange }: ToolbarProps) {
+function Toolbar({
+  soundEnabled,
+  labelMode,
+  onSoundChange,
+  onLabelModeChange,
+}: ToolbarProps) {
   return (
     <section className="toolbar" aria-label="Toolbar">
       <button className="toolbar-control" type="button" disabled>
@@ -18,6 +27,21 @@ function Toolbar({ soundEnabled, onSoundChange }: ToolbarProps) {
           onChange={event => onSoundChange(event.target.checked)}
         />
         Browser Sound
+      </label>
+
+      <label className="label-control">
+        Key Labels
+        <select
+          value={labelMode}
+          onChange={event =>
+            onLabelModeChange(event.target.value as PianoLabelMode)
+          }
+        >
+          <option value="hidden">Hidden</option>
+          <option value="white">White Keys</option>
+          <option value="c">C Notes</option>
+          <option value="all">All</option>
+        </select>
       </label>
 
       <button className="toolbar-control" type="button" disabled>
