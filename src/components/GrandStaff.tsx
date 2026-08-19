@@ -35,7 +35,7 @@ interface LedgerLine {
 const staffLineSteps = [0, 2, 4, 6, 8]
 const staffBottomY: Record<StaffName, number> = {
   treble: 245,
-  bass: 365,
+  bass: 341,
 }
 const staffLeft = 220
 const staffRight = 1380
