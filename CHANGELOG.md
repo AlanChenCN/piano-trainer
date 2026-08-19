@@ -76,7 +76,6 @@
 - Keyboard Mapping 左右移动按钮改为统一样式的三角方向图标，并移除原生下拉框外观。
 - Popover 增加紧凑 / 宽面板尺寸、内容留白和 viewport 安全边距；Dock Controls 增加垂直空间。
 - Grand Staff 在保持 P5-002 音乐坐标模型不变的前提下整体放大，并扩大 A0-C8 极端音符的 SVG 安全区域。
-- P5-004 最后一轮视觉收尾：缩小页面标题、弱化 Status Bar、降低 Score 边框对比度，并在 Single 模式下弱化未生效的左右手颜色配置。
 
 ### 未修改
 

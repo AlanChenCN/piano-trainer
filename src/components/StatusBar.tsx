@@ -23,24 +23,10 @@ function StatusBar({
   const midiStatus = connectedDevices.length
     ? connectedDevices.join(" | ")
     : "MIDI: Not Connected"
-  const statusItems = [
-    "Ready",
-    `Keyboard: ${keyboardRangeLabel(keyboardBaseNote)}`,
-    `Base: ${keyboardBaseNote}`,
-    midiStatus,
-    "v0.4.0-dev",
-  ]
 
   return (
     <footer className="status-bar">
-      {statusItems.map((item, index) => (
-        <span className="status-item" key={`${item}-${index}`}>
-          {index > 0 && (
-            <span className="status-separator" aria-hidden="true">|</span>
-          )}
-          <span>{item}</span>
-        </span>
-      ))}
+      Ready | Keyboard: {keyboardRangeLabel(keyboardBaseNote)} | Base: {keyboardBaseNote} | {midiStatus} | v0.4.0-dev
     </footer>
   )
 }
