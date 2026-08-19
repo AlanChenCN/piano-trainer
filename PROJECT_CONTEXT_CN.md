@@ -32,6 +32,7 @@ P4-004（MIDI 输入接入）已完成。
 P4-005（原生 Bluetooth LE MIDI 支持）已完成，ES120G 实机验证通过。
 P5-001（主页面布局重构）已完成。
 P5-002（完整 Grand Staff）已完成。
+P5-003（主界面交互布局重构）已完成。
 
 v0.1.0 已完成：
 
@@ -64,8 +65,8 @@ v0.1.0 已完成：
 黑键根据相邻白键之间是否存在钢琴黑键决定是否生成映射。W、Y、O 等
 位于 E-F 或 B-C 之间的候选键不会生成映射。
 
-Toolbar 提供基准自然音下拉菜单，可选择 `A0-G6` 范围内的基准音；左右
-箭头每次将基准音移动一个八度。显示出的其余琴键暂时不绑定电脑按键，
+Input & Piano Dock 提供基准自然音下拉菜单，可选择 `A0-G6` 范围内的基准音；
+左右箭头每次将基准音移动一个八度。显示出的其余琴键暂时不绑定电脑按键，
 目前可通过 MIDI Input 接入完整 A0-C8 范围。
 
 USB MIDI 和 Bluetooth MIDI 均通过 Input Layer 统一驱动 Piano、Grand Staff
@@ -98,14 +99,22 @@ USB MIDI 和 Bluetooth MIDI 均通过 Input Layer 统一驱动 Piano、Grand Sta
     ├── components/
     │   ├── Header.tsx
     │   ├── Toolbar.tsx
+    │   ├── Modal.tsx
+    │   │   通用 Modal、Escape、Overlay 和背景滚动锁定
+    │   ├── KeyLabelsModal.tsx
+    │   │   琴键音名显示模式选择
+    │   ├── InputPianoDock.tsx
+    │   │   底部输入控制和 88 键 Piano 区域
+    │   ├── InputDeviceButton.tsx
+    │   │   USB MIDI、Bluetooth MIDI 紧凑状态按钮
     │   ├── GrandStaff.tsx
     │   ├── Piano.tsx
     │   ├── StatusBar.tsx
     │   │   状态栏组件
     │   ├── MidiMonitor.tsx
-    │   │   单 MIDI Input 连接和调试面板
+    │   │   USB MIDI 连接和调试 Modal
     │   ├── BluetoothMidiPanel.tsx
-    │   │   Bluetooth MIDI 连接面板
+    │   │   Bluetooth MIDI 连接 Modal
     │   └── PianoKey.tsx
     │       单个琴键组件
 
@@ -639,6 +648,50 @@ Sustain Pedal 或完整 Velocity 处理。
 
 ------------------------------------------------------------------------
 
+## P5-003 主界面交互布局重构
+
+状态：已完成
+
+页面结构：
+
+    Header
+    Toolbar
+    Main Stage
+      ├── Grand Staff
+      └── Status Bar
+    Input & Piano Dock
+      ├── Keyboard Base
+      ├── USB MIDI
+      ├── Bluetooth MIDI
+      └── 88-Key Piano
+    Modal Layer
+
+已完成：
+
+-   Toolbar 的 Practice、Key Labels、Sound、Metronome 统一使用 Button 风格。
+-   Key Labels 通过 Modal 选择 Hidden、White Keys、C Notes、All。
+-   Browser Sound 通过 Button 的 Active / Inactive 状态表达开关。
+-   Keyboard Base 从 Toolbar 移动到 Input & Piano Dock，映射逻辑保持不变。
+-   USB MIDI、Bluetooth MIDI 入口移动到 Input & Piano Dock。
+-   USB MIDI、Bluetooth MIDI 使用紧凑的统一状态按钮。
+-   MIDI 和 Bluetooth 管理界面改为固定 Modal，不进入页面文档流。
+-   所有 Modal 支持 Close Button、Escape、Overlay 关闭和背景滚动锁定。
+-   Grand Staff 通过统一比例放大 SVG 内容，P5-002 音高几何模型保持不变。
+
+连接状态原则：
+
+-   `midiConnectionState` 和 `bluetoothConnectionState` 仅作为真实连接流程的 UI 映射。
+-   连接开始、成功、失败、用户取消、主动断开和设备物理断开均同步更新状态。
+-   不形成独立于真实设备连接的第二套 MIDI / Bluetooth 状态机。
+
+设计边界：
+
+-   不修改 Input Layer、MidiNoteController、Keyboard Mapper、Keyboard Controller。
+-   不修改 Web MIDI、Web Bluetooth、BLE MIDI Parser 或 Browser Sound 架构。
+-   不实现 Theme、Practice Mode、Recording、Playback、Metronome 逻辑或移动端专项设计。
+
+------------------------------------------------------------------------
+
 # 8. 后续规划
 
 ## 练习模式
@@ -694,7 +747,7 @@ Sustain Pedal 或完整 Velocity 处理。
 当前开发版本：
 
     v0.2.0 钢琴训练工具
-    第 3.1 阶段、第 3.2 阶段、P3-003、P4-001、P4-002、P4-003、P4-004、P4-005、P5-001、P5-002 已完成，尚未正式发布
+    第 3.1 阶段、第 3.2 阶段、P3-003、P4-001、P4-002、P4-003、P4-004、P4-005、P5-001、P5-002、P5-003 已完成，尚未正式发布
 
 最新稳定版本：
 

@@ -14,6 +14,8 @@ v0.2.0 Piano Trainer（开发中）
 - P4-004：MIDI 输入接入，已完成
 - P4-005：原生 Bluetooth LE MIDI 支持，已完成（ES120G 已验证）
 - P5-001：主页面布局重构，已完成
+- P5-002：完整 Grand Staff，已完成
+- P5-003：主界面交互布局重构，已完成
 - 键盘音名显示模式，已完成
 - 当前电脑键盘白键使用 `A` 到 `'`，默认 A=`E3`、H=`C4`
 - 完整 88 键键盘已支持基础 USB MIDI 和 Bluetooth LE MIDI Input 接入
@@ -386,6 +388,35 @@ P3-004 第一版只绘制高音谱表和实心音头，仅支持升号（♯）�
 - Ledger Line 按 `staff + staffStep` 去重，但不合并不同实际音高的音符头。
 - 不实现音符时值、符干、节奏、调号、录音、播放或练习模式。
 - 分谱策略通过独立函数维护，不嵌入 SVG 绘图逻辑。
+
+---
+
+## P5-003：重构主界面交互布局
+
+状态：
+
+- [x] 已完成
+
+已完成：
+
+- [x] Toolbar 统一使用 Button 风格
+- [x] Key Labels 改为 Modal，保留 Hidden、White Keys、C Notes、All 四种模式
+- [x] Browser Sound 改为 Active / Inactive Button
+- [x] Practice 和 Metronome 保留为 Disabled 占位按钮
+- [x] Keyboard Base 移动到 Input & Piano Dock
+- [x] USB MIDI、Bluetooth MIDI 移动到 Input & Piano Dock
+- [x] USB MIDI、Bluetooth MIDI 使用统一紧凑状态 Indicator
+- [x] MIDI、Bluetooth 管理面板改为固定 Modal，不进入页面文档流
+- [x] Modal 统一支持 Close Button、Escape、Overlay 关闭和背景滚动锁定
+- [x] Grand Staff 通过统一比例放大 SVG 内容，不改变 P5-002 几何模型
+- [x] 保持 Keyboard、Mouse、USB MIDI、Bluetooth MIDI、Browser Sound 和 Piano 功能
+
+设计边界：
+
+- 连接状态只映射真实设备连接流程：connecting、connected、disconnected。
+- 不修改 Input Layer、MidiNoteController、Keyboard Mapper、Keyboard Controller、
+  Web MIDI、Web Bluetooth、BLE MIDI Parser 或 Browser Sound 架构。
+- 不实现 Theme、Practice Mode、Recording、Playback、Metronome 或移动端专项设计。
 
 ---
 

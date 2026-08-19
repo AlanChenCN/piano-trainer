@@ -2,8 +2,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import GrandStaff from './components/GrandStaff'
 import Header from './components/Header'
 import BluetoothMidiPanel from './components/BluetoothMidiPanel'
+import InputPianoDock from './components/InputPianoDock'
+import type { InputConnectionState } from './components/InputDeviceButton'
 import MidiMonitor from './components/MidiMonitor'
-import Piano from './components/Piano'
 import StatusBar from './components/StatusBar'
 import Toolbar from './components/Toolbar'
 import { setAudioEnabled, startNote, stopNote } from './audio/sound'
@@ -24,10 +25,14 @@ function App() {
   const [labelMode, setLabelMode] = useState<PianoLabelMode>("all")
   const [midiPanelOpen, setMidiPanelOpen] = useState(false)
   const [midiDeviceName, setMidiDeviceName] = useState<string | null>(null)
+  const [midiConnectionState, setMidiConnectionState] =
+    useState<InputConnectionState>('disconnected')
   const [bluetoothPanelOpen, setBluetoothPanelOpen] = useState(false)
   const [bluetoothMidiDeviceName, setBluetoothMidiDeviceName] = useState<
     string | null
   >(null)
+  const [bluetoothConnectionState, setBluetoothConnectionState] =
+    useState<InputConnectionState>('disconnected')
 
   const [keyboardBaseNote, setKeyboardBaseNote] = useState<KeyboardBaseNote>(
     defaultKeyboardBaseNote,
@@ -118,6 +123,9 @@ function App() {
   const handleBluetoothConnectionChange = useCallback(
     (deviceName: string | null) => {
       setBluetoothMidiDeviceName(deviceName)
+      setBluetoothConnectionState(
+        deviceName ? 'connected' : 'disconnected',
+      )
     },
     [],
   )
@@ -139,30 +147,11 @@ function App() {
       <Toolbar
         soundEnabled={soundEnabled}
         labelMode={labelMode}
-        keyboardBaseNote={keyboardBaseNote}
         onSoundChange={handleSoundChange}
         onLabelModeChange={handleLabelModeChange}
-        onKeyboardBaseNoteChange={setKeyboardBaseNote}
-        onMidiConnect={() => setMidiPanelOpen(true)}
-        onBluetoothConnect={() => setBluetoothPanelOpen(true)}
       />
 
       <main className="main-content">
-        <MidiMonitor
-          isOpen={midiPanelOpen}
-          onClose={() => setMidiPanelOpen(false)}
-          onConnectionChange={handleMidiConnectionChange}
-          onMidiMessage={midiInputController.handleMessage}
-        />
-
-        <BluetoothMidiPanel
-          isOpen={bluetoothPanelOpen}
-          onClose={() => setBluetoothPanelOpen(false)}
-          onConnect={handleBluetoothConnect}
-          onDisconnect={handleBluetoothDisconnect}
-          connectedDeviceName={bluetoothMidiDeviceName}
-        />
-
         <GrandStaff pressedNotes={pressedNotes} />
 
         <StatusBar
@@ -172,16 +161,37 @@ function App() {
         />
       </main>
 
-      <div className="piano-dock" aria-label="Fixed virtual piano">
-        <div className="piano-dock-inner">
-          <Piano
-            pressedNotes={pressedNotes}
-            labelMode={labelMode}
-            onPress={inputLayer.pressNote}
-            onRelease={inputLayer.releaseNote}
-          />
-        </div>
-      </div>
+      <InputPianoDock
+        pressedNotes={pressedNotes}
+        labelMode={labelMode}
+        onPress={inputLayer.pressNote}
+        onRelease={inputLayer.releaseNote}
+        keyboardBaseNote={keyboardBaseNote}
+        onKeyboardBaseNoteChange={setKeyboardBaseNote}
+        midiConnectionState={midiConnectionState}
+        midiDeviceName={midiDeviceName}
+        onMidiConnect={() => setMidiPanelOpen(true)}
+        bluetoothConnectionState={bluetoothConnectionState}
+        bluetoothMidiDeviceName={bluetoothMidiDeviceName}
+        onBluetoothConnect={() => setBluetoothPanelOpen(true)}
+      />
+
+      <MidiMonitor
+        isOpen={midiPanelOpen}
+        onClose={() => setMidiPanelOpen(false)}
+        onConnectionChange={handleMidiConnectionChange}
+        onConnectionStateChange={setMidiConnectionState}
+        onMidiMessage={midiInputController.handleMessage}
+      />
+
+      <BluetoothMidiPanel
+        isOpen={bluetoothPanelOpen}
+        onClose={() => setBluetoothPanelOpen(false)}
+        onConnect={handleBluetoothConnect}
+        onDisconnect={handleBluetoothDisconnect}
+        connectedDeviceName={bluetoothMidiDeviceName}
+        onConnectionStateChange={setBluetoothConnectionState}
+      />
     </div>
   )
 }

@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { isWebBluetoothSupported } from '../midi/webBluetooth'
+import Modal from './Modal'
+import type { InputConnectionState } from './InputDeviceButton'
 
 type BluetoothStatus =
   | "idle"
@@ -15,6 +17,7 @@ interface BluetoothMidiPanelProps {
   onConnect: () => Promise<string>
   onDisconnect: () => Promise<void>
   connectedDeviceName: string | null
+  onConnectionStateChange: (state: InputConnectionState) => void
 }
 
 function statusText(status: BluetoothStatus) {
@@ -40,6 +43,7 @@ function BluetoothMidiPanel({
   onConnect,
   onDisconnect,
   connectedDeviceName,
+  onConnectionStateChange,
 }: BluetoothMidiPanelProps) {
   const [status, setStatus] = useState<BluetoothStatus>(() =>
     isWebBluetoothSupported() ? "idle" : "unsupported",
@@ -49,29 +53,30 @@ function BluetoothMidiPanel({
   async function handleConnect() {
     if (!isWebBluetoothSupported()) {
       setStatus("unsupported")
+      onConnectionStateChange('disconnected')
       return
     }
 
     setStatus("connecting")
     setErrorMessage("")
+    onConnectionStateChange('connecting')
 
     try {
       await onConnect()
       setStatus("connected")
+      onConnectionStateChange('connected')
     } catch (error) {
       const errorName = error instanceof DOMException ? error.name : "UnknownError"
       setStatus(errorName === "NotFoundError" ? "idle" : "error")
       setErrorMessage(`Bluetooth connection failed: ${errorName}`)
+      onConnectionStateChange('disconnected')
     }
   }
 
   async function handleDisconnect() {
     await onDisconnect()
     setStatus("disconnected")
-  }
-
-  if (!isOpen) {
-    return null
+    onConnectionStateChange('disconnected')
   }
 
   const currentStatus = connectedDeviceName
@@ -81,14 +86,8 @@ function BluetoothMidiPanel({
       : status
 
   return (
-    <section className="bluetooth-midi-panel" aria-label="Bluetooth MIDI">
-      <div className="bluetooth-midi-header">
-        <h2>Bluetooth MIDI</h2>
-        <button className="toolbar-control" type="button" onClick={onClose}>
-          Close
-        </button>
-      </div>
-
+    <Modal isOpen={isOpen} title="Bluetooth MIDI" onClose={onClose}>
+      <div className="bluetooth-midi-panel">
       <p className="midi-status">{statusText(currentStatus)}</p>
 
       {connectedDeviceName && <p>Device: {connectedDeviceName}</p>}
@@ -100,7 +99,7 @@ function BluetoothMidiPanel({
 
       {currentStatus !== "unsupported" && currentStatus !== "connected" && (
         <button
-          className="toolbar-control"
+          className="app-button"
           type="button"
           disabled={currentStatus === "connecting"}
           onClick={handleConnect}
@@ -113,14 +112,16 @@ function BluetoothMidiPanel({
 
       {currentStatus === "connected" && (
         <button
-          className="toolbar-control"
+          className="app-button"
           type="button"
           onClick={handleDisconnect}
         >
           Disconnect
         </button>
       )}
-    </section>
+
+      </div>
+    </Modal>
   )
 }
 

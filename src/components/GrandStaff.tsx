@@ -33,18 +33,36 @@ interface LedgerLine {
 }
 
 const staffLineSteps = [0, 2, 4, 6, 8]
-const staffBottomY: Record<StaffName, number> = {
+const staffScale = 1.15
+const baseViewBoxCenterY = 240
+const viewBoxCenterY = 290
+const baseStaffBottomY: Record<StaffName, number> = {
   treble: 245,
   bass: 341,
 }
-const staffLeft = 220
-const staffRight = 1380
-const staffConnectorX = 185
-const noteCenterX = 800
-const noteCollisionOffset = 26
-const noteHeadRadiusX = 9
-const ledgerLinePadding = 16
-const stepHeight = 8
+const baseStepHeight = 8
+
+function scaleX(value: number) {
+  return 800 + (value - 800) * staffScale
+}
+
+function scaleY(value: number) {
+  return viewBoxCenterY + (value - baseViewBoxCenterY) * staffScale
+}
+
+const staffBottomY: Record<StaffName, number> = {
+  treble: scaleY(baseStaffBottomY.treble),
+  bass: scaleY(baseStaffBottomY.bass),
+}
+const staffLeft = scaleX(220)
+const staffRight = scaleX(1380)
+const staffConnectorX = scaleX(185)
+const noteCenterX = scaleX(800)
+const noteCollisionOffset = 26 * staffScale
+const noteHeadRadiusX = 9 * staffScale
+const noteHeadRadiusY = 7 * staffScale
+const ledgerLinePadding = 16 * staffScale
+const stepHeight = baseStepHeight * staffScale
 
 function noteY(staff: StaffName, step: number) {
   return staffBottomY[staff] - step * stepHeight
@@ -180,7 +198,7 @@ function GrandStaff({ pressedNotes }: GrandStaffProps) {
     <section className="grand-staff" aria-label="Grand Staff">
       <svg
         className="grand-staff-svg"
-        viewBox="0 0 1600 480"
+        viewBox="0 0 1600 580"
         preserveAspectRatio="xMidYMid meet"
         role="img"
         aria-label="Grand staff with currently pressed notes"
@@ -254,8 +272,8 @@ function GrandStaff({ pressedNotes }: GrandStaffProps) {
             className="staff-note"
             cx={note.x}
             cy={noteY(note.staff, note.staffStep)}
-            rx="9"
-            ry="7"
+            rx={noteHeadRadiusX}
+            ry={noteHeadRadiusY}
           />
         ))}
       </svg>

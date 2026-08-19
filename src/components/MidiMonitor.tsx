@@ -6,6 +6,8 @@ import {
   requestMidiAccess,
   type MidiInputInfo,
 } from '../midi/webMidi'
+import Modal from './Modal'
+import type { InputConnectionState } from './InputDeviceButton'
 
 type MidiAccessStatus =
   | "idle"
@@ -19,6 +21,7 @@ interface MidiMonitorProps {
   isOpen: boolean
   onClose: () => void
   onConnectionChange: (deviceName: string | null) => void
+  onConnectionStateChange: (state: InputConnectionState) => void
   onMidiMessage: (event: MIDIMessageEvent) => void
 }
 
@@ -43,6 +46,7 @@ function MidiMonitor({
   isOpen,
   onClose,
   onConnectionChange,
+  onConnectionStateChange,
   onMidiMessage,
 }: MidiMonitorProps) {
   const [status, setStatus] = useState<MidiAccessStatus>(() =>
@@ -58,8 +62,10 @@ function MidiMonitor({
   useEffect(() => {
     return () => {
       void disconnectActiveInput.current?.()
+      onConnectionChange(null)
+      onConnectionStateChange('disconnected')
     }
-  }, [])
+  }, [onConnectionChange, onConnectionStateChange])
 
   useEffect(() => {
     if (!midiAccess) {
@@ -81,6 +87,7 @@ function MidiMonitor({
         disconnectActiveInput.current = null
         setConnectedInputId("")
         onConnectionChange(null)
+        onConnectionStateChange('disconnected')
       }
     }
 
@@ -90,7 +97,12 @@ function MidiMonitor({
     return () => {
       midiAccess.removeEventListener("statechange", updateInputs)
     }
-  }, [connectedInputId, midiAccess, onConnectionChange])
+  }, [
+    connectedInputId,
+    midiAccess,
+    onConnectionChange,
+    onConnectionStateChange,
+  ])
 
   async function handleRequestAccess() {
     if (!isWebMidiSupported()) {
@@ -100,16 +112,19 @@ function MidiMonitor({
 
     setStatus("requesting")
     setErrorMessage("")
+    onConnectionStateChange('connecting')
 
     try {
       const access = await requestMidiAccess()
       setMidiAccess(access)
       setInputs(listMidiInputs(access))
       setStatus("ready")
+      onConnectionStateChange('disconnected')
     } catch (error) {
       const errorName = error instanceof DOMException ? error.name : "UnknownError"
       setStatus(errorName === "NotAllowedError" ? "denied" : "error")
       setErrorMessage(`MIDI access failed: ${errorName}`)
+      onConnectionStateChange('disconnected')
     }
   }
 
@@ -121,6 +136,7 @@ function MidiMonitor({
     }
 
     setErrorMessage("")
+    onConnectionStateChange('connecting')
 
     try {
       const disconnectPreviousInput = disconnectActiveInput.current
@@ -137,26 +153,18 @@ function MidiMonitor({
       disconnectActiveInput.current = disconnect
       setConnectedInputId(selectedInput.id)
       onConnectionChange(selectedInput.name)
+      onConnectionStateChange('connected')
     } catch (error) {
       const errorName = error instanceof DOMException ? error.name : "UnknownError"
       setErrorMessage(`MIDI connection failed: ${errorName}`)
       onConnectionChange(null)
+      onConnectionStateChange('disconnected')
     }
   }
 
-  if (!isOpen) {
-    return null
-  }
-
   return (
-    <section className="midi-monitor-panel" aria-label="MIDI Monitor">
-      <div className="midi-monitor-header">
-        <h2>MIDI Monitor</h2>
-        <button className="toolbar-control" type="button" onClick={onClose}>
-          Close
-        </button>
-      </div>
-
+    <Modal isOpen={isOpen} title="USB MIDI" onClose={onClose}>
+      <div className="midi-monitor-panel">
       <p className="midi-status">{statusText(status)}</p>
 
       {errorMessage && <p className="midi-error">{errorMessage}</p>}
@@ -167,7 +175,7 @@ function MidiMonitor({
 
       {(status === "idle" || status === "denied" || status === "error") && (
         <button
-          className="toolbar-control"
+          className="app-button"
           type="button"
           onClick={handleRequestAccess}
         >
@@ -212,7 +220,7 @@ function MidiMonitor({
               </table>
 
               <button
-                className="toolbar-control"
+                className="app-button"
                 type="button"
                 disabled={!selectedInputId}
                 onClick={handleConnectSelectedInput}
@@ -229,7 +237,9 @@ function MidiMonitor({
           Note On / Note Off messages are logged to the browser Console.
         </p>
       )}
-    </section>
+
+      </div>
+    </Modal>
   )
 }
 

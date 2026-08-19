@@ -41,6 +41,9 @@
 - 增加完整 Grand Staff，包括高音谱表、低音谱表、谱号和统一连接结构。
 - 增加 A0-C8 全音域自动分谱和高低音谱表 Ledger Lines。
 - 增加基于 diatonicStep 和 staffStep 的统一音高位置模型。
+- 增加统一 Toolbar Button、Key Labels Modal 和输入设备管理 Modal。
+- 增加底部 Input & Piano Dock，集中显示 Keyboard Base、USB MIDI、Bluetooth MIDI 和 88 键 Piano。
+- 增加 USB MIDI、Bluetooth MIDI 的紧凑连接状态 Indicator。
 
 ### 变更
 
@@ -58,6 +61,8 @@
 - Layout 重构仅调整页面空间关系，不改变输入、音频和 Grand Staff 业务逻辑。
 - Grand Staff 保留不同实际音高的独立音符头；相同 staffStep 的 Ledger Line 可以去重，
   和弦音符共享主要横向位置，仅在视觉碰撞时局部错位。
+- MIDI / Bluetooth 连接状态仅映射真实连接流程，不改变 Web MIDI、Web Bluetooth 或 Input Layer 数据流。
+- Grand Staff 仅通过统一比例放大显示，不改变 P5-002 的音高和谱面几何模型。
 
 ### 未修改
 
@@ -66,7 +71,7 @@
 - Bluetooth MIDI 暂不支持自动重连、多个 BLE 设备和其他 MIDI 消息类型。
 - 未处理 Keyboard、Mouse、USB MIDI、Bluetooth MIDI 同时触发同一个音符时的来源归属冲突；
   多输入源同音符引用计数作为后续独立 Issue。
-- 未实现 Recording、Playback、Practice Mode、Metronome 或移动端专项适配。
+- 未实现 Recording、Playback、Practice Mode、Metronome 逻辑或移动端专项适配。
 - 未修改钢琴、Grand Staff、Browser Sound 的既有音频和显示架构。
 
 ## [0.1.0] - 钢琴核心
