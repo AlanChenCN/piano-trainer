@@ -33,9 +33,9 @@ interface LedgerLine {
 }
 
 const staffLineSteps = [0, 2, 4, 6, 8]
-const staffScale = 1.15
+const staffScale = 1.2
 const baseViewBoxCenterY = 240
-const viewBoxCenterY = 290
+const viewBoxCenterY = 320
 const baseStaffBottomY: Record<StaffName, number> = {
   treble: 245,
   bass: 341,
@@ -59,9 +59,9 @@ const staffRight = scaleX(1380)
 const staffConnectorX = scaleX(185)
 const noteCenterX = scaleX(800)
 const noteCollisionOffset = 26 * staffScale
-const noteHeadRadiusX = 9 * staffScale
-const noteHeadRadiusY = 7 * staffScale
-const ledgerLinePadding = 16 * staffScale
+const noteHeadRadiusX = 10 * staffScale
+const noteHeadRadiusY = 8 * staffScale
+const ledgerLinePadding = 18 * staffScale
 const stepHeight = baseStepHeight * staffScale
 
 function noteY(staff: StaffName, step: number) {
@@ -198,7 +198,7 @@ function GrandStaff({ pressedNotes }: GrandStaffProps) {
     <section className="grand-staff" aria-label="Grand Staff">
       <svg
         className="grand-staff-svg"
-        viewBox="0 0 1600 580"
+        viewBox="0 40 1600 560"
         preserveAspectRatio="xMidYMid meet"
         role="img"
         aria-label="Grand staff with currently pressed notes"

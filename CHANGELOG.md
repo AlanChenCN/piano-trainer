@@ -44,6 +44,10 @@
 - 增加统一 Toolbar Button、Key Labels Popover 和输入设备管理 Popover。
 - 增加底部 Input & Piano Dock，集中显示 Keyboard Mapping、Key Labels、Web Sound、USB MIDI、Bluetooth MIDI 和 88 键 Piano。
 - 增加 USB MIDI、Bluetooth MIDI 的紧凑连接状态 Indicator。
+- 增加 Theme Token 层、Dark / Light / Custom 主题预设和 Toolbar Theme Popover。
+- 增加跟随系统明暗偏好的 `system` 模式，以及清除自定义颜色并恢复系统主题的 Reset。
+- 增加页面背景、谱面背景、谱线颜色、活动音符颜色和左右手颜色配置。
+- 增加统一钢琴高亮颜色派生逻辑，分别生成白键和黑键高亮变体。
 
 ### 变更
 
@@ -71,6 +75,7 @@
 - Keyboard Mapping 中间按钮直接显示完整 Range，点击后通过 Keyboard Base Popover 选择 Base。
 - Keyboard Mapping 左右移动按钮改为统一样式的三角方向图标，并移除原生下拉框外观。
 - Popover 增加紧凑 / 宽面板尺寸、内容留白和 viewport 安全边距；Dock Controls 增加垂直空间。
+- Grand Staff 在保持 P5-002 音乐坐标模型不变的前提下整体放大，并扩大 A0-C8 极端音符的 SVG 安全区域。
 
 ### 未修改
 
@@ -81,6 +86,7 @@
   多输入源同音符引用计数作为后续独立 Issue。
 - 未实现 Recording、Playback、Practice Mode、Metronome 逻辑或移动端专项适配。
 - 未修改钢琴、Grand Staff、Browser Sound 的既有音频和显示架构。
+- 未修改 Input Layer、Keyboard Mapper、Keyboard Controller、MIDI / Bluetooth MIDI 数据流或 Browser Sound 业务逻辑。
 
 ## [0.1.0] - 钢琴核心
 

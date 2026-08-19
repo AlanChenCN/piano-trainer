@@ -33,6 +33,7 @@ P4-005（原生 Bluetooth LE MIDI 支持）已完成，ES120G 实机验证通过
 P5-001（主页面布局重构）已完成。
 P5-002（完整 Grand Staff）已完成。
 P5-003（主界面交互布局重构）已完成。
+P5-004（主题系统与乐谱视觉重设计）已完成。
 
 v0.1.0 已完成：
 
@@ -99,6 +100,8 @@ USB MIDI 和 Bluetooth MIDI 均通过 Input Layer 统一驱动 Piano、Grand Sta
     ├── components/
     │   ├── Header.tsx
     │   ├── Toolbar.tsx
+    │   ├── ThemePopover.tsx
+    │   │   Theme Token 预设、自定义颜色和主题模式选择
     │   ├── Modal.tsx
     │   │   通用锚定 Popover、Escape、外部点击和背景滚动锁定
     │   ├── KeyLabelsModal.tsx
@@ -156,6 +159,10 @@ USB MIDI 和 Bluetooth MIDI 均通过 Input Layer 统一驱动 Piano、Grand Sta
     │   │   BLE MIDI 时间戳、Running Status 和消息解析
     │   └── midiMessage.ts
     │       通用 MIDI 音符消息类型
+
+    ├── theme/
+    │   └── theme.ts
+    │       Theme Mode、Theme Token、Preset 和语义颜色派生逻辑
 
     ├── App.tsx
     │   主应用逻辑
@@ -266,6 +273,8 @@ USB MIDI 和 Bluetooth MIDI 均通过 Input Layer 统一驱动 Piano、Grand Sta
 -   电脑键盘基准音控制和当前映射范围状态显示
 -   Bluetooth MIDI 独立连接面板和设备状态显示
 -   桌面端全宽布局、固定底部 88 键 Piano 和响应式黑键位置
+-   System / Dark / Light / Custom 主题模式和自定义视觉颜色
+-   Grand Staff 的统一视觉放大和 A0-C8 安全显示区域
 
 计划：
 
@@ -703,6 +712,38 @@ Sustain Pedal 或完整 Velocity 处理。
 
 ------------------------------------------------------------------------
 
+## P5-004 主题系统与乐谱视觉重设计
+
+状态：已完成
+
+主题数据与显示层分离：
+
+    Theme Mode / Preset
+              ↓
+        Theme Tokens
+              ↓
+        CSS Variables
+
+已完成：
+
+-   `src/theme/theme.ts` 统一维护 `system`、`dark`、`light`、`custom` 状态语义、主题预设和颜色 Token。
+-   默认主题跟随系统明暗偏好；系统变化时，`system` 模式自动切换实际颜色。
+-   用户修改任一颜色后进入 `custom` 模式；Reset 清除自定义 Token 并恢复 `system` 模式。
+-   Toolbar 通过 `ThemePopover` 提供 Dark、Light、Custom 选择和颜色编辑。
+-   Page Background、Score Background、Staff Color、Active Note Color、左右手预留颜色均由 Theme Token 管理。
+-   Staff Color 统一应用于五线、谱号、Ledger Lines 和 Grand Staff 连接结构。
+-   Active Note Color 通过统一派生逻辑生成白键和黑键高亮变体。
+-   当前没有 hand metadata，因此 Single / Left-Right Hand 模式均以 Active Note Color 作为活动音符回退颜色；不根据音高猜测左右手。
+-   Grand Staff 仅进行统一比例放大和 SVG 安全区域调整，保留 `staffStep`、音高分谱、Middle C 位置和 Ledger Line 计算。
+
+设计边界：
+
+-   不修改 Input Layer、Keyboard Mapper、Keyboard Controller、MidiNoteController、MIDI、Bluetooth MIDI 或 Browser Sound 逻辑。
+-   不修改 Keyboard Mapping、Input & Piano Dock 布局和 Grand Staff 音高模型。
+-   不实现 Practice Mode、Recording、Playback、Metronome 或左右手音符归属判断。
+
+------------------------------------------------------------------------
+
 # 8. 后续规划
 
 ## 练习模式
@@ -758,7 +799,7 @@ Sustain Pedal 或完整 Velocity 处理。
 当前开发版本：
 
     v0.4.0-dev 钢琴训练工具
-    第 3.1 阶段、第 3.2 阶段、P3-003、P4-001、P4-002、P4-003、P4-004、P4-005、P5-001、P5-002、P5-003 已完成，尚未正式发布
+    第 3.1 阶段、第 3.2 阶段、P3-003、P4-001、P4-002、P4-003、P4-004、P4-005、P5-001、P5-002、P5-003、P5-004 已完成，尚未正式发布
 
 最新稳定版本：
 

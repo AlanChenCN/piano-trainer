@@ -7,6 +7,7 @@ import type { InputConnectionState } from './components/InputDeviceButton'
 import MidiMonitor from './components/MidiMonitor'
 import StatusBar from './components/StatusBar'
 import Toolbar from './components/Toolbar'
+import type { ConfigurableThemeToken } from './components/ThemePopover'
 import { setAudioEnabled, startNote, stopNote } from './audio/sound'
 import { pianoNotes, type PianoLabelMode } from './data/piano'
 import { InputLayer } from './input/inputLayer'
@@ -17,6 +18,17 @@ import {
   defaultKeyboardBaseNote,
   type KeyboardBaseNote,
 } from './input/keyboardMapper'
+import {
+  applyThemeToDocument,
+  createThemeSettings,
+  getSystemThemePreset,
+  resolveThemeDisplayPreset,
+  resolveThemeTokens,
+  selectThemeMode,
+  updateThemeToken,
+  type ThemePreset,
+  type ThemeMode,
+} from './theme/theme'
 import './App.css'
 
 function App() {
@@ -35,6 +47,20 @@ function App() {
     useState<InputConnectionState>('disconnected')
   const midiButtonRef = useRef<HTMLButtonElement>(null)
   const bluetoothButtonRef = useRef<HTMLButtonElement>(null)
+  const [systemThemePreset, setSystemThemePreset] = useState<ThemePreset>(
+    getSystemThemePreset,
+  )
+  const [themeSettings, setThemeSettings] = useState(() =>
+    createThemeSettings(getSystemThemePreset()),
+  )
+  const themeTokens = useMemo(
+    () => resolveThemeTokens(themeSettings, systemThemePreset),
+    [systemThemePreset, themeSettings],
+  )
+  const activeThemePreset = resolveThemeDisplayPreset(
+    themeSettings.mode,
+    systemThemePreset,
+  )
 
   const [keyboardBaseNote, setKeyboardBaseNote] = useState<KeyboardBaseNote>(
     defaultKeyboardBaseNote,
@@ -92,6 +118,52 @@ function App() {
     setLabelMode(mode)
   }
 
+  const handleThemeModeChange = useCallback(
+    (mode: ThemeMode) => {
+      setThemeSettings(settings =>
+        selectThemeMode(settings, mode, systemThemePreset),
+      )
+    },
+    [systemThemePreset],
+  )
+
+  const handleThemeTokenChange = useCallback(
+    (token: ConfigurableThemeToken, value: string) => {
+      setThemeSettings(settings =>
+        updateThemeToken(settings, token, value, systemThemePreset),
+      )
+    },
+    [systemThemePreset],
+  )
+
+  const handleNoteColorModeChange = useCallback(
+    (mode: 'single' | 'left-right') => {
+      setThemeSettings(settings => ({ ...settings, noteColorMode: mode }))
+    },
+    [],
+  )
+
+  const handleThemeReset = useCallback(() => {
+    setThemeSettings(createThemeSettings(systemThemePreset))
+  }, [systemThemePreset])
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    const handleSystemThemeChange = (event: MediaQueryListEvent) => {
+      setSystemThemePreset(event.matches ? 'dark' : 'light')
+    }
+
+    mediaQuery.addEventListener('change', handleSystemThemeChange)
+
+    return () => {
+      mediaQuery.removeEventListener('change', handleSystemThemeChange)
+    }
+  }, [])
+
+  useEffect(() => {
+    applyThemeToDocument(themeTokens)
+  }, [themeTokens])
+
   useEffect(() => {
     keyboardController.start()
 
@@ -146,7 +218,16 @@ function App() {
     <div className="piano-trainer">
       <Header />
 
-      <Toolbar />
+      <Toolbar
+        themeMode={themeSettings.mode}
+        activePreset={activeThemePreset}
+        themeTokens={themeTokens}
+        noteColorMode={themeSettings.noteColorMode}
+        onThemeModeChange={handleThemeModeChange}
+        onThemeTokenChange={handleThemeTokenChange}
+        onNoteColorModeChange={handleNoteColorModeChange}
+        onThemeReset={handleThemeReset}
+      />
 
       <main className="main-content">
         <GrandStaff pressedNotes={pressedNotes} />

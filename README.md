@@ -18,6 +18,7 @@ A browser-based piano practice tool built with React and TypeScript.
 - 📡 Bluetooth LE MIDI Input through the shared Input Layer
 - 🖥️ Responsive desktop layout with a fixed 88-key piano dock
 - 🪟 Anchored Popover controls for key labels, USB MIDI, and Bluetooth MIDI
+- 🎨 System-aware theme presets with custom score and piano colors
 
 The computer keyboard maps white keys from `A` through `'` and uses
 `WERTYUIOP[` as candidate black-key positions. Keyboard Mapping in the Input &
@@ -41,8 +42,8 @@ Version `v0.4.0-dev` is under development. The full 88-key keyboard, browser sou
 control, application layout, keyboard label modes, dynamic keyboard mapping,
 source-agnostic input layer, Web MIDI connection, MIDI Input integration,
 Bluetooth LE MIDI input, responsive desktop layout, real-time Grand Staff
-display, and the unified input dock are complete. Bluetooth LE MIDI has been
-verified with the ES120G; detailed UI improvements, advanced MIDI features,
+display, the unified input dock, and the first theme system are complete.
+Bluetooth LE MIDI has been verified with the ES120G; advanced MIDI features,
 sight reading, and practice features remain on the roadmap.
 
 ## Development

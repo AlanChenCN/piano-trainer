@@ -16,6 +16,7 @@ v0.4.0-dev Piano Trainer（开发中）
 - P5-001：主页面布局重构，已完成
 - P5-002：完整 Grand Staff，已完成
 - P5-003：主界面交互布局重构，已完成（含第二轮 UI 整改）
+- P5-004：主题系统与乐谱视觉重设计，已完成
 - 键盘音名显示模式，已完成
 - 当前电脑键盘白键使用 `A` 到 `'`，默认 A=`E3`、H=`C4`
 - 完整 88 键键盘已支持基础 USB MIDI 和 Bluetooth LE MIDI Input 接入
@@ -425,6 +426,33 @@ P3-004 第一版只绘制高音谱表和实心音头，仅支持升号（♯）�
 - 不修改 Input Layer、MidiNoteController、Keyboard Mapper、Keyboard Controller、
   Web MIDI、Web Bluetooth、BLE MIDI Parser 或 Browser Sound 架构。
 - 不实现 Theme、Practice Mode、Recording、Playback、Metronome 或移动端专项设计。
+
+---
+
+## P5-004：主题系统与乐谱视觉重设计
+
+状态：
+
+- [x] 已完成
+
+已完成：
+
+- [x] 增加独立 Theme Token 层，统一管理页面、表面、谱面、谱线、音符和钢琴颜色
+- [x] 增加 `system`、`dark`、`light`、`custom` 四种 Theme Mode
+- [x] 默认跟随系统明暗偏好，系统模式下自动响应系统主题变化
+- [x] 增加 Toolbar Theme 入口和锚定 Popover
+- [x] 支持独立调整 Page Background、Score Background、Staff Color、Active Note Color
+- [x] 支持 Single / Left-Right Hand Note Color Mode，并为当前无 hand metadata 的场景保留 Active Note Color fallback
+- [x] Piano 白键和黑键高亮由统一颜色工具派生，不在琴键组件内维护两套颜色
+- [x] Reset 清除 Custom 设置并恢复 Follow System
+- [x] 在不改变音高几何模型的前提下整体放大 Grand Staff，并为 A0-C8 保留安全显示空间
+
+设计边界：
+
+- 不修改 Input Layer、Keyboard Mapper、Keyboard Controller、MIDI、Bluetooth MIDI、Browser Sound 或 Keyboard Mapping 业务逻辑。
+- 不修改 `staffStep`、音高分谱、Middle C 位置和 Ledger Line 计算。
+- 不实现左右手音符归属判断；当前没有 hand metadata 时，左右手颜色配置回退到 Active Note Color。
+- 不改变 Input & Piano Dock 的布局，不引入移动端专项主题设计。
 
 ---
 
