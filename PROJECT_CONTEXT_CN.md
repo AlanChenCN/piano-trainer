@@ -735,6 +735,7 @@ Sustain Pedal 或完整 Velocity 处理。
 -   Active Note Color 通过统一派生逻辑生成白键和黑键高亮变体。
 -   当前没有 hand metadata，因此 Single / Left-Right Hand 模式均以 Active Note Color 作为活动音符回退颜色；不根据音高猜测左右手。
 -   Grand Staff 仅进行统一比例放大和 SVG 安全区域调整，保留 `staffStep`、音高分谱、Middle C 位置和 Ledger Line 计算。
+-   最终视觉收尾缩小页面标题、降低 Status Bar 权重、弱化 Score 边框，并在 Single 模式下弱化未生效的左右手颜色配置。
 
 设计边界：
 

@@ -446,6 +446,7 @@ P3-004 第一版只绘制高音谱表和实心音头，仅支持升号（♯）�
 - [x] Piano 白键和黑键高亮由统一颜色工具派生，不在琴键组件内维护两套颜色
 - [x] Reset 清除 Custom 设置并恢复 Follow System
 - [x] 在不改变音高几何模型的前提下整体放大 Grand Staff，并为 A0-C8 保留安全显示空间
+- [x] 完成标题、Status Bar、Score 边框和 Hand Color 控件的最终视觉收尾
 
 设计边界：
 

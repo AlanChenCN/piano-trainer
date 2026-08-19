@@ -131,7 +131,11 @@ function ThemePopover({
             Hand colors are reserved for future hand metadata. Current notes use
             Active Note Color.
           </p>
-          <div className="theme-color-list theme-hand-color-list">
+          <div
+            className="theme-color-list theme-hand-color-list"
+            data-enabled={noteColorMode === 'left-right'}
+            aria-disabled={noteColorMode === 'single'}
+          >
             {([
               ['leftHandColor', 'Left Hand Color'],
               ['rightHandColor', 'Right Hand Color'],
