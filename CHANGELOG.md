@@ -2,7 +2,24 @@
 
 本文件记录 Piano Trainer 各版本的重要功能与变更。
 
-## [未发布]
+## [v0.4.0-alpha] - P5 阶段发布
+
+### 阶段汇总
+
+- 完成 Desktop Layout 重构，建立 Header、Toolbar、Main Stage、Status Bar 和固定底部 Input & Piano Dock。
+- 完成 Complete Grand Staff，支持 Treble / Bass Staff、A0-C8、Ledger Lines、Sharp 和多音实时显示。
+- 完成 Main UI Interaction 重构，包括 Keyboard Mapping、Key Labels、Web Sound 和设备入口。
+- USB MIDI 与 Bluetooth MIDI 使用统一的 Anchored Popover 管理连接和设备状态。
+- 完成 Theme / Appearance System，支持 Dark、Light、Custom、Follow System 和 Reset。
+- 使用 Theme Tokens 与 CSS Variables 统一 Page、Score、Staff、Note Semantic Colors。
+- Note Color 统一驱动 Grand Staff 音符，并派生 Piano 白键和黑键 Highlight 颜色。
+- Grand Staff 在保持 P5-002 Staff Position Model 的基础上完成视觉放大和 A0-C8 安全显示调整。
+
+### Technical Debt
+
+- 多输入源同时持有同一音符时，Input Layer 尚未实现 ownership / reference counting。
+
+## [开发历史汇总]
 
 ### 新增
 

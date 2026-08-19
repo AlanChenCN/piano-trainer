@@ -18,7 +18,7 @@ Piano Trainer 是一个基于 React + TypeScript 开发的 Web 钢琴练习工�
 
 # 2. 当前版本
 
-## v0.4.0-dev 钢琴训练工具（开发中）
+## v0.4.0-alpha 钢琴训练工具（P5 阶段完成）
 
 第 3.1 阶段（双八度键盘）已完成。
 第 3.2 阶段（声音控制）已完成。
@@ -73,6 +73,26 @@ Input & Piano Dock 提供基准自然音下拉菜单，可选择 `A0-G6` 范围�
 USB MIDI 和 Bluetooth MIDI 均通过 Input Layer 统一驱动 Piano、Grand Staff
 和 Browser Sound。当前 USB MIDI 和 Bluetooth MIDI 各自支持一个输入设备，
 且不处理 Velocity 响应。
+
+当前输入架构：
+
+    Keyboard
+    Mouse
+    USB MIDI
+    Bluetooth MIDI
+            ↓
+        Input Layer
+            ↓
+    Application State
+            ↓
+    Piano、Grand Staff、Browser Sound
+
+当前 Technical Debt：
+
+-   多输入源同时持有同一音符时，Input Layer 尚未实现 ownership / reference counting。
+-   当前 Input Layer 按音名管理状态，Keyboard、Mouse、USB MIDI、Bluetooth MIDI
+    的释放顺序可能产生同音符状态冲突。
+-   后续可通过 Input Source 或引用计数机制解决，本阶段不处理。
 
 ## 音频系统
 
@@ -275,6 +295,22 @@ USB MIDI 和 Bluetooth MIDI 均通过 Input Layer 统一驱动 Piano、Grand Sta
 -   桌面端全宽布局、固定底部 88 键 Piano 和响应式黑键位置
 -   System / Dark / Light / Custom 主题模式和自定义视觉颜色
 -   Grand Staff 的统一视觉放大和 A0-C8 安全显示区域
+
+当前主界面结构：
+
+    Application Toolbar
+            ↓
+    Grand Staff / Main Stage
+            ↓
+        Status Bar
+            ↓
+    Input & Piano Dock
+            ↓
+        88-Key Piano
+
+Input & Piano Dock 当前包含 Keyboard Mapping、Key Labels、Web Sound、
+USB MIDI 和 Bluetooth MIDI。设置和设备管理使用 Anchored Popover，不进入
+页面正常文档流。
 
 计划：
 
@@ -632,6 +668,7 @@ Sustain Pedal 或完整 Velocity 处理。
 -   支持完整 A0-C8 音域，超出五线范围的音符使用完整 Ledger Lines。
 -   `C4` 及以上分配到高音谱表，`B3` 及以下分配到低音谱表。
 -   使用 `diatonicStep → Staff Assignment → staffStep` 计算音符位置。
+-   Middle C（C4）与相邻 B3、D4 保持连续等距的 Staff Position Model。
 -   Sharp 不改变 staffStep，只在音符左侧显示升号。
 -   不同实际音高保留独立音符头，即使它们拥有相同 staffStep。
 -   当前和弦共享主要横向位置，仅在相邻音符或同 staffStep 发生碰撞时局部错位。
@@ -727,13 +764,15 @@ Sustain Pedal 或完整 Velocity 处理。
 已完成：
 
 -   `src/theme/theme.ts` 统一维护 `system`、`dark`、`light`、`custom` 状态语义、主题预设和颜色 Token。
--   默认主题跟随系统明暗偏好；系统变化时，`system` 模式自动切换实际颜色。
--   用户修改任一颜色后进入 `custom` 模式；Reset 清除自定义 Token 并恢复 `system` 模式。
+-   默认主题为 Follow System；系统变化时，`system` 模式自动切换实际颜色。
+-   用户修改任一颜色后进入 `custom` 模式；Reset 清除自定义 Token 并恢复 Follow System。
 -   Toolbar 通过 `ThemePopover` 提供 Dark、Light、Custom 选择和颜色编辑。
+-   Theme Tokens 通过 CSS Variables 应用到页面、Toolbar、Popover、Score、Staff、Note 和 Piano。
 -   Page Background、Score Background、Staff Color、Active Note Color、左右手预留颜色均由 Theme Token 管理。
 -   Staff Color 统一应用于五线、谱号、Ledger Lines 和 Grand Staff 连接结构。
--   Active Note Color 通过统一派生逻辑生成白键和黑键高亮变体。
--   当前没有 hand metadata，因此 Single / Left-Right Hand 模式均以 Active Note Color 作为活动音符回退颜色；不根据音高猜测左右手。
+-   Active Note Color 通过统一派生逻辑生成白键和黑键 Piano Highlight 变体，并联动 Grand Staff 音符颜色。
+-   Left / Right Hand Color 数据结构已预留；当前尚未实现 Hand Assignment，不根据音高猜测左右手。
+-   当前没有 hand metadata，因此 Single / Left-Right Hand 模式均以 Active Note Color 作为活动音符回退颜色。
 -   Grand Staff 仅进行统一比例放大和 SVG 安全区域调整，保留 `staffStep`、音高分谱、Middle C 位置和 Ledger Line 计算。
 
 设计边界：
@@ -798,8 +837,9 @@ Sustain Pedal 或完整 Velocity 处理。
 
 当前开发版本：
 
-    v0.4.0-dev 钢琴训练工具
-    第 3.1 阶段、第 3.2 阶段、P3-003、P4-001、P4-002、P4-003、P4-004、P4-005、P5-001、P5-002、P5-003、P5-004 已完成，尚未正式发布
+    v0.4.0-alpha 钢琴训练工具
+    第 3.1 阶段、第 3.2 阶段、P3-003、P4-001、P4-002、P4-003、P4-004、P4-005、P5-001、P5-002、P5-003、P5-004 已完成
+    Release: v0.4.0-alpha
 
 最新稳定版本：
 

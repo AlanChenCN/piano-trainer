@@ -2,7 +2,7 @@
 
 ## 当前版本
 
-v0.4.0-dev Piano Trainer（开发中）
+v0.4.0-alpha Piano Trainer（P5 阶段完成）
 
 - 第 3.1 阶段：双八度键盘，已完成
 - 第 3.2 阶段：声音控制，已完成
@@ -21,6 +21,11 @@ v0.4.0-dev Piano Trainer（开发中）
 - 当前电脑键盘白键使用 `A` 到 `'`，默认 A=`E3`、H=`C4`
 - 完整 88 键键盘已支持基础 USB MIDI 和 Bluetooth LE MIDI Input 接入
 
+## P5 阶段状态
+
+P5 Complete
+Release: v0.4.0-alpha
+
 ## v0.1.0 钢琴核心 ✅
 
 已完成：
@@ -35,7 +40,7 @@ v0.4.0-dev Piano Trainer（开发中）
 
 ---
 
-# v0.4.0-dev 钢琴训练工具
+# v0.4.0-alpha 钢琴训练工具
 
 目标：
 
