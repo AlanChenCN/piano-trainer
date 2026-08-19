@@ -1,5 +1,14 @@
-import { pianoNotes, type PianoNote } from '../data/piano'
-import { staffPositionMap, type StaffNotePosition } from '../data/staff'
+import {
+  pianoNoteToMidiNumber,
+  pianoNotes,
+  type PianoNote,
+} from '../data/piano'
+import {
+  getLedgerLineSteps,
+  getStaffNotePosition,
+  isSharp,
+  type StaffName,
+} from '../data/staff'
 
 interface GrandStaffProps {
   pressedNotes: string[]
@@ -7,123 +16,248 @@ interface GrandStaffProps {
 
 interface PositionedNote {
   note: PianoNote
-  position: StaffNotePosition
+  midiNumber: number
+  staff: StaffName
+  staffStep: number
 }
 
-interface StaffNoteGroup {
-  noteHeadStep: number
-  notes: PianoNote[]
+interface RenderedNote extends PositionedNote {
+  x: number
+}
+
+interface LedgerLine {
+  staff: StaffName
+  step: number
+  x1: number
+  x2: number
 }
 
 const staffLineSteps = [0, 2, 4, 6, 8]
-const staffLeft = 100
-const staffRight = 740
-const staffBottomY = 128
-const stepHeight = 12
-const noteCenterX = 420
-const visibleStaffMinStep = -2
-const visibleStaffMaxStep = 11
+const staffBottomY: Record<StaffName, number> = {
+  treble: 245,
+  bass: 365,
+}
+const staffLeft = 220
+const staffRight = 1380
+const staffConnectorX = 185
+const noteCenterX = 800
+const noteCollisionOffset = 26
+const noteHeadRadiusX = 9
+const ledgerLinePadding = 16
+const stepHeight = 8
 
-
-function noteY(step: number) {
-  return staffBottomY - step * stepHeight
+function noteY(staff: StaffName, step: number) {
+  return staffBottomY[staff] - step * stepHeight
 }
 
+function layoutStaffNotes(notes: PositionedNote[]): RenderedNote[] {
+  const sortedNotes = [...notes].sort(
+    (left, right) => left.staffStep - right.staffStep || left.midiNumber - right.midiNumber,
+  )
+  const renderedNotes: RenderedNote[] = []
+  let collisionCluster: PositionedNote[] = []
 
-function GrandStaff({ pressedNotes }: GrandStaffProps) {
-  const positionedNotes: PositionedNote[] = pianoNotes
-    .filter(note => pressedNotes.includes(note.name))
-    .map(note => ({
-      note,
-      position: staffPositionMap[note.name],
-    }))
-    .filter(
-      ({ position }) =>
-        position.noteHeadStep >= visibleStaffMinStep &&
-        position.noteHeadStep <= visibleStaffMaxStep
-    )
+  function flushCluster() {
+    if (collisionCluster.length === 0) {
+      return
+    }
 
-  const noteGroups = positionedNotes.reduce<StaffNoteGroup[]>(
-    (groups, positionedNote) => {
-      const noteHeadStep = positionedNote.position.noteHeadStep
-      const existingGroup = groups.find(
-        group => group.noteHeadStep === noteHeadStep
-      )
+    collisionCluster.forEach((positionedNote, index) => {
+      const offset =
+        (index - (collisionCluster.length - 1) / 2) * noteCollisionOffset
 
-      if (existingGroup) {
-        existingGroup.notes.push(positionedNote.note)
+      renderedNotes.push({
+        ...positionedNote,
+        x: noteCenterX + offset,
+      })
+    })
+
+    collisionCluster = []
+  }
+
+  sortedNotes.forEach(note => {
+    const previousNote = collisionCluster[collisionCluster.length - 1]
+
+    if (previousNote && note.staffStep - previousNote.staffStep > 1) {
+      flushCluster()
+    }
+
+    collisionCluster.push(note)
+  })
+
+  flushCluster()
+
+  return renderedNotes
+}
+
+function collectLedgerLines(renderedNotes: RenderedNote[]): LedgerLine[] {
+  const ledgerLineMap = new Map<
+    string,
+    { staff: StaffName; step: number; xPositions: number[] }
+  >()
+
+  renderedNotes.forEach(note => {
+    getLedgerLineSteps(note.staffStep).forEach(step => {
+      const key = `${note.staff}-${step}`
+      const existingLine = ledgerLineMap.get(key)
+
+      if (existingLine) {
+        existingLine.xPositions.push(note.x)
       } else {
-        groups.push({
-          noteHeadStep,
-          notes: [positionedNote.note],
+        ledgerLineMap.set(key, {
+          staff: note.staff,
+          step,
+          xPositions: [note.x],
         })
       }
+    })
+  })
 
-      return groups
-    },
-    []
+  return Array.from(ledgerLineMap.values()).map(line => ({
+    staff: line.staff,
+    step: line.step,
+    x1: Math.min(...line.xPositions) - noteHeadRadiusX - ledgerLinePadding,
+    x2: Math.max(...line.xPositions) + noteHeadRadiusX + ledgerLinePadding,
+  }))
+}
+
+function collectAccidentalPositions(renderedNotes: RenderedNote[]) {
+  const accidentalMap = new Map<string, { staff: StaffName; step: number; x: number }>()
+
+  renderedNotes.forEach(note => {
+    if (!isSharp(note.note)) {
+      return
+    }
+
+    const key = `${note.staff}-${note.staffStep}`
+
+    if (accidentalMap.has(key)) {
+      return
+    }
+
+    const sameStepNotes = renderedNotes.filter(
+      otherNote =>
+        otherNote.staff === note.staff &&
+        otherNote.staffStep === note.staffStep,
+    )
+
+    accidentalMap.set(key, {
+      staff: note.staff,
+      step: note.staffStep,
+      x: Math.min(...sameStepNotes.map(sameStepNote => sameStepNote.x)) - 24,
+    })
+  })
+
+  return Array.from(accidentalMap.values())
+}
+
+function GrandStaff({ pressedNotes }: GrandStaffProps) {
+  const positionedNotes: PositionedNote[] = pressedNotes
+    .map(noteName => pianoNotes.find(note => note.name === noteName))
+    .filter((note): note is PianoNote => note !== undefined)
+    .map(note => {
+      const position = getStaffNotePosition(note)
+      const midiNumber = pianoNoteToMidiNumber(note)
+
+      return midiNumber === undefined
+        ? undefined
+        : {
+            note,
+            midiNumber,
+            staff: position.staff,
+            staffStep: position.staffStep,
+          }
+    })
+    .filter((note): note is PositionedNote => note !== undefined)
+
+  const renderedNotes = (['treble', 'bass'] as StaffName[]).flatMap(staff =>
+    layoutStaffNotes(positionedNotes.filter(note => note.staff === staff)),
   )
-
-  const ledgerLineSteps = noteGroups
-    .map(group => group.noteHeadStep)
-    .filter(step => (step < 0 || step > 8) && step % 2 === 0)
+  const ledgerLines = collectLedgerLines(renderedNotes)
+  const accidentalPositions = collectAccidentalPositions(renderedNotes)
 
   return (
     <section className="grand-staff" aria-label="Grand Staff">
       <svg
         className="grand-staff-svg"
-        viewBox="0 0 840 180"
+        viewBox="0 0 1600 480"
+        preserveAspectRatio="xMidYMid meet"
         role="img"
-        aria-label="Treble staff with currently pressed notes"
+        aria-label="Grand staff with currently pressed notes"
       >
-        {staffLineSteps.map(step => (
-          <line
-            key={`staff-line-${step}`}
-            className="staff-line"
-            x1={staffLeft}
-            x2={staffRight}
-            y1={noteY(step)}
-            y2={noteY(step)}
-          />
-        ))}
-
-        {ledgerLineSteps.map(step => (
-          <line
-            key={`ledger-line-${step}`}
-            className="staff-line"
-            x1={noteCenterX - 18}
-            x2={noteCenterX + 18}
-            y1={noteY(step)}
-            y2={noteY(step)}
-          />
-        ))}
-
-        {noteGroups.map(group => {
-          const hasSharp = group.notes.some(note =>
-            note.pitchClass.endsWith("#")
-          )
-
-          return (
-            <g key={`note-group-${group.noteHeadStep}`}>
-              {hasSharp && (
-                <text
-                  className="staff-accidental"
-                  x={noteCenterX - 24}
-                  y={noteY(group.noteHeadStep) + 7}
-                >
-                  ♯
-                </text>
-              )}
-
-              <circle
-                className="staff-note"
-                cx={noteCenterX}
-                cy={noteY(group.noteHeadStep)}
-                r="8"
+        {(['treble', 'bass'] as StaffName[]).map(staff => (
+          <g key={`${staff}-staff`}>
+            {staffLineSteps.map(step => (
+              <line
+                key={`${staff}-staff-line-${step}`}
+                className="staff-line"
+                x1={staffLeft}
+                x2={staffRight}
+                y1={noteY(staff, step)}
+                y2={noteY(staff, step)}
               />
-            </g>
-          )
-        })}
+            ))}
+          </g>
+        ))}
+
+        <line
+          className="staff-connector"
+          x1={staffConnectorX}
+          x2={staffConnectorX}
+          y1={noteY('treble', 8)}
+          y2={noteY('bass', 0)}
+        />
+
+        <text
+          className="staff-clef staff-clef-treble"
+          x="110"
+          y={noteY('treble', 4) + 30}
+          aria-label="Treble Clef"
+        >
+          𝄞
+        </text>
+
+        <text
+          className="staff-clef staff-clef-bass"
+          x="110"
+          y={noteY('bass', 4) + 24}
+          aria-label="Bass Clef"
+        >
+          𝄢
+        </text>
+
+        {ledgerLines.map(line => (
+          <line
+            key={`ledger-line-${line.staff}-${line.step}`}
+            className="staff-ledger-line"
+            x1={line.x1}
+            x2={line.x2}
+            y1={noteY(line.staff, line.step)}
+            y2={noteY(line.staff, line.step)}
+          />
+        ))}
+
+        {accidentalPositions.map(accidental => (
+          <text
+            key={`accidental-${accidental.staff}-${accidental.step}`}
+            className="staff-accidental"
+            x={accidental.x}
+            y={noteY(accidental.staff, accidental.step) + 6}
+          >
+            ♯
+          </text>
+        ))}
+
+        {renderedNotes.map(note => (
+          <ellipse
+            key={`note-${note.note.name}`}
+            className="staff-note"
+            cx={note.x}
+            cy={noteY(note.staff, note.staffStep)}
+            rx="9"
+            ry="7"
+          />
+        ))}
       </svg>
     </section>
   )

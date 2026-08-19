@@ -98,7 +98,7 @@
 
   width: 100%;
 
-  min-height: 320px;
+  min-height: 420px;
 
   min-width: 0;
 
@@ -116,11 +116,39 @@
 
   max-width: none;
 
-  height: 320px;
+  height: 420px;
 
 }
 
 .staff-line {
+
+  stroke: currentColor;
+
+  stroke-width: 1.5;
+
+}
+
+.staff-connector {
+
+  stroke: currentColor;
+
+  stroke-width: 2;
+
+}
+
+.staff-clef {
+
+  fill: currentColor;
+
+  font-family: "Noto Music", "Segoe UI Symbol", "Bravura", serif;
+
+  font-size: 88px;
+
+  text-anchor: middle;
+
+}
+
+.staff-ledger-line {
 
   stroke: currentColor;
 
@@ -140,7 +168,9 @@
 
   font-family: serif;
 
-  font-size: 26px;
+  font-size: 30px;
+
+  text-anchor: middle;
 
 }
 

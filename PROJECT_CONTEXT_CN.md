@@ -31,6 +31,7 @@ P4-003（Web MIDI 技术验证）已完成。
 P4-004（MIDI 输入接入）已完成。
 P4-005（原生 Bluetooth LE MIDI 支持）已完成，ES120G 实机验证通过。
 P5-001（主页面布局重构）已完成。
+P5-002（完整 Grand Staff）已完成。
 
 v0.1.0 已完成：
 
@@ -116,7 +117,7 @@ USB MIDI 和 Bluetooth MIDI 均通过 Input Layer 统一驱动 Piano、Grand Sta
     │   │   电脑键盘物理键位数据
     │   │
     │   └── staff.ts
-    │       高音谱表音头位置映射
+    │       统一 diatonicStep、Staff Assignment、staffStep 和 Ledger Lines 计算
 
     ├── input/
     │   ├── inputLayer.ts
@@ -600,6 +601,44 @@ Sustain Pedal 或完整 Velocity 处理。
 
 ------------------------------------------------------------------------
 
+## P5-002 完整 Grand Staff
+
+状态：已完成
+
+已完成：
+
+-   使用一个统一 SVG 绘制 Treble Staff 和 Bass Staff。
+-   增加 Treble Clef、Bass Clef 和左侧 Grand Staff 连接结构。
+-   支持完整 A0-C8 音域，超出五线范围的音符使用完整 Ledger Lines。
+-   `C4` 及以上分配到高音谱表，`B3` 及以下分配到低音谱表。
+-   使用 `diatonicStep → Staff Assignment → staffStep` 计算音符位置。
+-   Sharp 不改变 staffStep，只在音符左侧显示升号。
+-   不同实际音高保留独立音符头，即使它们拥有相同 staffStep。
+-   当前和弦共享主要横向位置，仅在相邻音符或同 staffStep 发生碰撞时局部错位。
+-   Ledger Lines 按 `staff + staffStep` 去重，避免重复绘制。
+-   保持 `viewBox`、`preserveAspectRatio` 和响应式页面布局。
+
+数据流：
+
+    App pressedNotes
+            ↓
+    GrandStaff
+            ↓
+    staff.ts 音高位置模型
+            ↓
+    Staff Assignment / staffStep
+            ↓
+    SVG 音符、升号和 Ledger Lines
+
+设计边界：
+
+-   Grand Staff 只负责当前活动音符的实时显示。
+-   不实现音符时值、符干、符尾、节奏、小节线、调号或谱面滚动。
+-   不直接连接 Keyboard、Mouse、USB MIDI 或 Bluetooth MIDI Controller。
+-   不修改 Input Layer、MidiNoteController、Piano 或 Browser Sound。
+
+------------------------------------------------------------------------
+
 # 8. 后续规划
 
 ## 练习模式
@@ -655,7 +694,7 @@ Sustain Pedal 或完整 Velocity 处理。
 当前开发版本：
 
     v0.2.0 钢琴训练工具
-    第 3.1 阶段、第 3.2 阶段、P3-003、P4-001、P4-002、P4-003、P4-004、P4-005、P5-001 已完成，尚未正式发布
+    第 3.1 阶段、第 3.2 阶段、P3-003、P4-001、P4-002、P4-003、P4-004、P4-005、P5-001、P5-002 已完成，尚未正式发布
 
 最新稳定版本：
 

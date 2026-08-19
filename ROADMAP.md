@@ -360,6 +360,35 @@ P3-004 第一版只绘制高音谱表和实心音头，仅支持升号（♯）�
 
 ---
 
+## P5-002：完成 Grand Staff
+
+状态：
+
+- [x] 已完成
+
+已完成：
+
+- [x] 绘制统一的 Treble Staff 和 Bass Staff
+- [x] 增加 Treble Clef、Bass Clef 和左侧 Grand Staff 连接结构
+- [x] 支持完整 A0-C8 音域
+- [x] 按 `C4` 分配到高音谱表、`B3` 分配到低音谱表
+- [x] 使用统一 `diatonicStep → staffStep` 模型计算音符位置
+- [x] 支持高低音谱表上下方完整 Ledger Lines
+- [x] 保持升号音符的纵向位置，并在音符左侧显示升号
+- [x] 不同实际音高保留独立音符头
+- [x] 当前和弦共享主要横向位置，仅在音符碰撞时局部错位
+- [x] 保持响应式 SVG、稳定 `viewBox` 和 `preserveAspectRatio`
+- [x] 保持 Keyboard、Mouse、USB MIDI、Bluetooth MIDI 和 Browser Sound 数据流
+
+设计边界：
+
+- Grand Staff 只显示当前活动音符，不记录历史音符。
+- Ledger Line 按 `staff + staffStep` 去重，但不合并不同实际音高的音符头。
+- 不实现音符时值、符干、节奏、调号、录音、播放或练习模式。
+- 分谱策略通过独立函数维护，不嵌入 SVG 绘图逻辑。
+
+---
+
 # 后续版本
 
 ## v0.3 MIDI 支持

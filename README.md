@@ -10,7 +10,7 @@ A browser-based piano practice tool built with React and TypeScript.
 - 🎵 Real-time Web Audio playback
 - 🔊 Browser sound toggle, enabled by default
 - 🧩 Application layout with toolbar and status bar
-- 🎼 Real-time treble staff note display
+- 🎼 Real-time Grand Staff note display for the full 88-key range
 - 🏷️ Four keyboard label display modes
 - 🎼 White and black key support
 - 🎶 Multi-note playback
@@ -36,12 +36,12 @@ separate Bluetooth Connect panel in supported secure Chromium browsers.
 ## Current Status
 
 Version `v0.2.0` is under development. The full 88-key keyboard, browser sound
-control, basic application layout, keyboard label modes, dynamic keyboard
-mapping, source-agnostic input layer, Web MIDI connection, MIDI Input
-integration, Bluetooth LE MIDI input, and the responsive desktop layout are
-complete. Bluetooth LE MIDI has been verified with the ES120G; detailed UI
-improvements, advanced MIDI features, sight reading, and practice features
-remain on the roadmap.
+control, application layout, keyboard label modes, dynamic keyboard mapping,
+source-agnostic input layer, Web MIDI connection, MIDI Input integration,
+Bluetooth LE MIDI input, responsive desktop layout, and real-time Grand Staff
+display are complete. Bluetooth LE MIDI has been verified with the ES120G;
+detailed UI improvements, advanced MIDI features, sight reading, and practice
+features remain on the roadmap.
 
 ## Development
 
