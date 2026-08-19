@@ -37,7 +37,7 @@ Bluetooth button in the Input & Piano Dock in supported secure Chromium browsers
 
 ## Current Status
 
-Version `v0.2.0` is under development. The full 88-key keyboard, browser sound
+Version `v0.4.0-dev` is under development. The full 88-key keyboard, browser sound
 control, application layout, keyboard label modes, dynamic keyboard mapping,
 source-agnostic input layer, Web MIDI connection, MIDI Input integration,
 Bluetooth LE MIDI input, responsive desktop layout, real-time Grand Staff
