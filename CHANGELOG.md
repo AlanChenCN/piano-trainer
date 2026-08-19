@@ -41,7 +41,7 @@
 - 增加完整 Grand Staff，包括高音谱表、低音谱表、谱号和统一连接结构。
 - 增加 A0-C8 全音域自动分谱和高低音谱表 Ledger Lines。
 - 增加基于 diatonicStep 和 staffStep 的统一音高位置模型。
-- 增加统一 Toolbar Button、Key Labels Modal 和输入设备管理 Modal。
+- 增加统一 Toolbar Button、Key Labels Popover 和输入设备管理 Popover。
 - 增加底部 Input & Piano Dock，集中显示 Keyboard Base、USB MIDI、Bluetooth MIDI 和 88 键 Piano。
 - 增加 USB MIDI、Bluetooth MIDI 的紧凑连接状态 Indicator。
 
@@ -63,6 +63,9 @@
   和弦音符共享主要横向位置，仅在视觉碰撞时局部错位。
 - MIDI / Bluetooth 连接状态仅映射真实连接流程，不改变 Web MIDI、Web Bluetooth 或 Input Layer 数据流。
 - Grand Staff 仅通过统一比例放大显示，不改变 P5-002 的音高和谱面几何模型。
+- 顶部 Toolbar 简化为 Practice、Sound、Metronome；Key Labels 移到底部 Input & Piano Dock。
+- 顶部与底部按钮统一尺寸和双行状态样式，Dock 按应用设置与外部输入设备左右分组。
+- Key Labels、USB MIDI、Bluetooth MIDI 面板改为靠近触发按钮的锚定 Popover，支持外部点击和 Escape 关闭。
 
 ### 未修改
 

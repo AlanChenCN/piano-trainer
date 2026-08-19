@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type RefObject } from 'react'
 import { isWebBluetoothSupported } from '../midi/webBluetooth'
 import Modal from './Modal'
 import type { InputConnectionState } from './InputDeviceButton'
@@ -14,6 +14,7 @@ type BluetoothStatus =
 interface BluetoothMidiPanelProps {
   isOpen: boolean
   onClose: () => void
+  anchorRef: RefObject<HTMLElement | null>
   onConnect: () => Promise<string>
   onDisconnect: () => Promise<void>
   connectedDeviceName: string | null
@@ -40,6 +41,7 @@ function statusText(status: BluetoothStatus) {
 function BluetoothMidiPanel({
   isOpen,
   onClose,
+  anchorRef,
   onConnect,
   onDisconnect,
   connectedDeviceName,
@@ -86,39 +88,45 @@ function BluetoothMidiPanel({
       : status
 
   return (
-    <Modal isOpen={isOpen} title="Bluetooth MIDI" onClose={onClose}>
+    <Modal
+      isOpen={isOpen}
+      title="Bluetooth MIDI"
+      anchorRef={anchorRef}
+      placement="top"
+      onClose={onClose}
+    >
       <div className="bluetooth-midi-panel">
-      <p className="midi-status">{statusText(currentStatus)}</p>
+        <p className="midi-status">{statusText(currentStatus)}</p>
 
-      {connectedDeviceName && <p>Device: {connectedDeviceName}</p>}
-      {errorMessage && <p className="midi-error">{errorMessage}</p>}
+        {connectedDeviceName && <p>Device: {connectedDeviceName}</p>}
+        {errorMessage && <p className="midi-error">{errorMessage}</p>}
 
-      {status === "unsupported" && (
-        <p>Use a supported desktop browser such as Chrome or Edge over HTTPS.</p>
-      )}
+        {status === "unsupported" && (
+          <p>Use a supported desktop browser such as Chrome or Edge over HTTPS.</p>
+        )}
 
-      {currentStatus !== "unsupported" && currentStatus !== "connected" && (
-        <button
-          className="app-button"
-          type="button"
-          disabled={currentStatus === "connecting"}
-          onClick={handleConnect}
-        >
-          {currentStatus === "connecting"
-            ? "Scanning..."
-            : "Scan and Connect BLE MIDI"}
-        </button>
-      )}
+        {currentStatus !== "unsupported" && currentStatus !== "connected" && (
+          <button
+            className="app-button app-button--compact"
+            type="button"
+            disabled={currentStatus === "connecting"}
+            onClick={handleConnect}
+          >
+            {currentStatus === "connecting"
+              ? "Scanning..."
+              : "Scan and Connect BLE MIDI"}
+          </button>
+        )}
 
-      {currentStatus === "connected" && (
-        <button
-          className="app-button"
-          type="button"
-          onClick={handleDisconnect}
-        >
-          Disconnect
-        </button>
-      )}
+        {currentStatus === "connected" && (
+          <button
+            className="app-button app-button--compact"
+            type="button"
+            onClick={handleDisconnect}
+          >
+            Disconnect
+          </button>
+        )}
 
       </div>
     </Modal>

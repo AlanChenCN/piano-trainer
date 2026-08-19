@@ -1,3 +1,5 @@
+import { forwardRef } from 'react'
+
 export type InputConnectionState =
   | 'disconnected'
   | 'connecting'
@@ -21,16 +23,18 @@ function stateLabel(state: InputConnectionState) {
   }
 }
 
-function InputDeviceButton({
-  label,
-  state,
-  deviceName,
-  onClick,
-}: InputDeviceButtonProps) {
+const InputDeviceButton = forwardRef<
+  HTMLButtonElement,
+  InputDeviceButtonProps
+>(function InputDeviceButton(
+  { label, state, deviceName, onClick },
+  ref,
+) {
   const connectionLabel = stateLabel(state)
 
   return (
     <button
+      ref={ref}
       className="app-button input-device-button"
       type="button"
       data-connection-state={state}
@@ -38,16 +42,15 @@ function InputDeviceButton({
       title={deviceName ? `${label}: ${deviceName}` : connectionLabel}
       onClick={onClick}
     >
-      <span>{label}</span>
-      <span
-        className="input-device-indicator"
-        aria-hidden="true"
-      >
-        ●
+      <span className="button-label">
+        {label}
+        <span className="input-device-indicator" aria-hidden="true">
+          ●
+        </span>
       </span>
-      <span className="visually-hidden">{connectionLabel}</span>
+      <span className="button-status">{connectionLabel}</span>
     </button>
   )
-}
+})
 
 export default InputDeviceButton

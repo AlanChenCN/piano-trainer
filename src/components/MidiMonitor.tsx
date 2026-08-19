@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type RefObject } from 'react'
 import {
   connectMidiInput,
   isWebMidiSupported,
@@ -20,6 +20,7 @@ type MidiAccessStatus =
 interface MidiMonitorProps {
   isOpen: boolean
   onClose: () => void
+  anchorRef: RefObject<HTMLElement | null>
   onConnectionChange: (deviceName: string | null) => void
   onConnectionStateChange: (state: InputConnectionState) => void
   onMidiMessage: (event: MIDIMessageEvent) => void
@@ -45,6 +46,7 @@ function statusText(status: MidiAccessStatus) {
 function MidiMonitor({
   isOpen,
   onClose,
+  anchorRef,
   onConnectionChange,
   onConnectionStateChange,
   onMidiMessage,
@@ -163,81 +165,86 @@ function MidiMonitor({
   }
 
   return (
-    <Modal isOpen={isOpen} title="USB MIDI" onClose={onClose}>
+    <Modal
+      isOpen={isOpen}
+      title="USB MIDI"
+      anchorRef={anchorRef}
+      placement="top"
+      onClose={onClose}
+    >
       <div className="midi-monitor-panel">
-      <p className="midi-status">{statusText(status)}</p>
+        <p className="midi-status">{statusText(status)}</p>
 
-      {errorMessage && <p className="midi-error">{errorMessage}</p>}
+        {errorMessage && <p className="midi-error">{errorMessage}</p>}
 
-      {status === "unsupported" && (
-        <p>Use a supported desktop browser such as Chrome or Edge.</p>
-      )}
+        {status === "unsupported" && (
+          <p>Use a supported desktop browser such as Chrome or Edge.</p>
+        )}
 
-      {(status === "idle" || status === "denied" || status === "error") && (
-        <button
-          className="app-button"
-          type="button"
-          onClick={handleRequestAccess}
-        >
-          Request MIDI Access
-        </button>
-      )}
+        {(status === "idle" || status === "denied" || status === "error") && (
+          <button
+            className="app-button app-button--compact"
+            type="button"
+            onClick={handleRequestAccess}
+          >
+            Request MIDI Access
+          </button>
+        )}
 
-      {status === "ready" && (
-        <>
-          {inputs.length === 0 ? (
-            <p>No MIDI Input devices found.</p>
-          ) : (
-            <>
-              <table className="midi-device-table">
-                <thead>
-                  <tr>
-                    <th>Select</th>
-                    <th>Device Name</th>
-                    <th>Manufacturer</th>
-                    <th>Connection State</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {inputs.map(input => (
-                    <tr key={input.id}>
-                      <td>
-                        <input
-                          type="radio"
-                          name="midi-input"
-                          value={input.id}
-                          checked={selectedInputId === input.id}
-                          onChange={() => setSelectedInputId(input.id)}
-                          aria-label={`Select ${input.name}`}
-                        />
-                      </td>
-                      <td>{input.name}</td>
-                      <td>{input.manufacturer}</td>
-                      <td>{input.state}</td>
+        {status === "ready" && (
+          <>
+            {inputs.length === 0 ? (
+              <p>No MIDI Input devices found.</p>
+            ) : (
+              <>
+                <table className="midi-device-table">
+                  <thead>
+                    <tr>
+                      <th>Select</th>
+                      <th>Device Name</th>
+                      <th>Manufacturer</th>
+                      <th>Connection State</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {inputs.map(input => (
+                      <tr key={input.id}>
+                        <td>
+                          <input
+                            type="radio"
+                            name="midi-input"
+                            value={input.id}
+                            checked={selectedInputId === input.id}
+                            onChange={() => setSelectedInputId(input.id)}
+                            aria-label={`Select ${input.name}`}
+                          />
+                        </td>
+                        <td>{input.name}</td>
+                        <td>{input.manufacturer}</td>
+                        <td>{input.state}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
 
-              <button
-                className="app-button"
-                type="button"
-                disabled={!selectedInputId}
-                onClick={handleConnectSelectedInput}
-              >
-                Connect Selected Input
-              </button>
-            </>
-          )}
-        </>
-      )}
+                <button
+                  className="app-button app-button--compact"
+                  type="button"
+                  disabled={!selectedInputId}
+                  onClick={handleConnectSelectedInput}
+                >
+                  Connect Selected Input
+                </button>
+              </>
+            )}
+          </>
+        )}
 
-      {connectedInputId && (
-        <p className="midi-monitor-note">
-          Note On / Note Off messages are logged to the browser Console.
-        </p>
-      )}
-
+        {connectedInputId && (
+          <p className="midi-monitor-note">
+            Note On / Note Off messages are logged to the browser Console.
+          </p>
+        )}
       </div>
     </Modal>
   )

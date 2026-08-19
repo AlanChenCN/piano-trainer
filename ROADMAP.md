@@ -175,7 +175,7 @@ P3-004 第一版只绘制高音谱表和实心音头，仅支持升号（♯）�
 
 当前 88 键键盘在 Piano 区域内横向滚动，保持现有琴键尺寸和整体布局。
 
-电脑键盘基准音可以在 Toolbar 下拉菜单中选择合法的自然音基准，范围为
+电脑键盘基准音可以在底部 Input & Piano Dock 下拉菜单中选择合法的自然音基准，范围为
 `A0-G6`。左右箭头以一个八度（12 个半音）为单位移动基准音，键盘白键和
 黑键候选位布局保持不变。
 
@@ -193,7 +193,7 @@ P3-004 第一版只绘制高音谱表和实心音头，仅支持升号（♯）�
 - [x] 建立 Keyboard Mapper，将固定白键和黑键候选位映射到当前音符范围
 - [x] 建立 Keyboard Controller，负责浏览器键盘事件和活动键释放
 - [x] 支持通过基准音下拉菜单选择任意合法自然音基准
-- [x] 在 Toolbar 使用左右箭头按八度移动基准音
+- [x] 在 Input & Piano Dock 使用左右箭头按八度移动基准音
 - [x] 在 Status Bar 显示当前映射范围
 - [x] 切换基准音时释放仍按下的电脑键盘音符
 - [x] 保持鼠标、Browser Sound、Grand Staff、88 键钢琴和音名显示正常
@@ -399,15 +399,18 @@ P3-004 第一版只绘制高音谱表和实心音头，仅支持升号（♯）�
 
 已完成：
 
-- [x] Toolbar 统一使用 Button 风格
-- [x] Key Labels 改为 Modal，保留 Hidden、White Keys、C Notes、All 四种模式
+- [x] Toolbar 仅保留 Practice、Sound、Metronome，并统一 Button 风格
+- [x] Key Labels 移动到 Input & Piano Dock，通过锚定 Popover 选择 Hidden、White Keys、C Notes、All 四种模式
 - [x] Browser Sound 改为 Active / Inactive Button
 - [x] Practice 和 Metronome 保留为 Disabled 占位按钮
 - [x] Keyboard Base 移动到 Input & Piano Dock
 - [x] USB MIDI、Bluetooth MIDI 移动到 Input & Piano Dock
-- [x] USB MIDI、Bluetooth MIDI 使用统一紧凑状态 Indicator
-- [x] MIDI、Bluetooth 管理面板改为固定 Modal，不进入页面文档流
-- [x] Modal 统一支持 Close Button、Escape、Overlay 关闭和背景滚动锁定
+- [x] 顶部与底部按钮统一高度、内边距、圆角、边框和状态样式
+- [x] 状态型按钮统一显示功能名称和当前状态两行文本
+- [x] Dock 按 Keyboard / Piano 设置与外部输入设备左右分组
+- [x] USB MIDI、Bluetooth MIDI 使用统一紧凑状态 Indicator，完整设备名称仅在 Popover 内显示
+- [x] MIDI、Bluetooth 管理面板改为锚定触发按钮的 Popover，不进入页面文档流
+- [x] Popover 统一支持 Close Button、Escape、外部点击关闭和背景滚动锁定
 - [x] Grand Staff 通过统一比例放大 SVG 内容，不改变 P5-002 几何模型
 - [x] 保持 Keyboard、Mouse、USB MIDI、Bluetooth MIDI、Browser Sound 和 Piano 功能
 

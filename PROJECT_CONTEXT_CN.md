@@ -100,7 +100,7 @@ USB MIDI 和 Bluetooth MIDI 均通过 Input Layer 统一驱动 Piano、Grand Sta
     │   ├── Header.tsx
     │   ├── Toolbar.tsx
     │   ├── Modal.tsx
-    │   │   通用 Modal、Escape、Overlay 和背景滚动锁定
+    │   │   通用锚定 Popover、Escape、外部点击和背景滚动锁定
     │   ├── KeyLabelsModal.tsx
     │   │   琴键音名显示模式选择
     │   ├── InputPianoDock.tsx
@@ -112,9 +112,9 @@ USB MIDI 和 Bluetooth MIDI 均通过 Input Layer 统一驱动 Piano、Grand Sta
     │   ├── StatusBar.tsx
     │   │   状态栏组件
     │   ├── MidiMonitor.tsx
-    │   │   USB MIDI 连接和调试 Modal
+    │   │   USB MIDI 连接和调试 Popover
     │   ├── BluetoothMidiPanel.tsx
-    │   │   Bluetooth MIDI 连接 Modal
+    │   │   Bluetooth MIDI 连接 Popover
     │   └── PianoKey.tsx
     │       单个琴键组件
 
@@ -664,18 +664,21 @@ Sustain Pedal 或完整 Velocity 处理。
       ├── USB MIDI
       ├── Bluetooth MIDI
       └── 88-Key Piano
-    Modal Layer
+    Popover Layer
 
 已完成：
 
--   Toolbar 的 Practice、Key Labels、Sound、Metronome 统一使用 Button 风格。
--   Key Labels 通过 Modal 选择 Hidden、White Keys、C Notes、All。
+-   Toolbar 仅保留 Practice、Sound、Metronome，并统一使用 Button 风格。
+-   Key Labels 移动到 Input & Piano Dock，通过锚定 Popover 选择 Hidden、White Keys、C Notes、All。
 -   Browser Sound 通过 Button 的 Active / Inactive 状态表达开关。
 -   Keyboard Base 从 Toolbar 移动到 Input & Piano Dock，映射逻辑保持不变。
 -   USB MIDI、Bluetooth MIDI 入口移动到 Input & Piano Dock。
--   USB MIDI、Bluetooth MIDI 使用紧凑的统一状态按钮。
--   MIDI 和 Bluetooth 管理界面改为固定 Modal，不进入页面文档流。
--   所有 Modal 支持 Close Button、Escape、Overlay 关闭和背景滚动锁定。
+-   顶部与底部按钮统一高度、内边距、圆角、边框、字号和状态样式。
+-   状态型按钮使用“功能名称 + 当前状态”双行结构，状态变化不改变按钮尺寸。
+-   Dock 左侧放置 Keyboard Base、Key Labels、Keyboard Range，右侧放置 USB MIDI、Bluetooth。
+-   USB MIDI、Bluetooth MIDI 使用紧凑的统一状态按钮，完整设备名称仅在 Popover 内显示。
+-   MIDI、Bluetooth 和 Key Labels 管理界面改为锚定触发按钮的 Popover，不进入页面文档流。
+-   所有 Popover 支持 Close Button、Escape、外部点击关闭和背景滚动锁定。
 -   Grand Staff 通过统一比例放大 SVG 内容，P5-002 音高几何模型保持不变。
 
 连接状态原则：

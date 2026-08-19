@@ -1,9 +1,11 @@
 import type { PianoLabelMode } from '../data/piano'
+import type { RefObject } from 'react'
 import Modal from './Modal'
 
 interface KeyLabelsModalProps {
   isOpen: boolean
   labelMode: PianoLabelMode
+  anchorRef: RefObject<HTMLElement | null>
   onClose: () => void
   onLabelModeChange: (mode: PianoLabelMode) => void
 }
@@ -18,6 +20,7 @@ const labelModes: Array<{ value: PianoLabelMode; label: string }> = [
 function KeyLabelsModal({
   isOpen,
   labelMode,
+  anchorRef,
   onClose,
   onLabelModeChange,
 }: KeyLabelsModalProps) {
@@ -27,7 +30,13 @@ function KeyLabelsModal({
   }
 
   return (
-    <Modal isOpen={isOpen} title="Key Labels" onClose={onClose}>
+    <Modal
+      isOpen={isOpen}
+      title="Key Labels"
+      anchorRef={anchorRef}
+      placement="top"
+      onClose={onClose}
+    >
       <div
         className="modal-option-list"
         role="radiogroup"
@@ -36,7 +45,7 @@ function KeyLabelsModal({
         {labelModes.map(mode => (
           <button
             key={mode.value}
-            className="app-button modal-option-button"
+            className="app-button app-button--compact modal-option-button"
             type="button"
             aria-pressed={labelMode === mode.value}
             data-active={labelMode === mode.value}

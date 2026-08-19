@@ -11,7 +11,7 @@
   --content-max-width: 1920px;
   --piano-white-height: clamp(140px, 15vh, 170px);
   --grand-staff-height: clamp(460px, 52vh, 560px);
-  --input-controls-height: 44px;
+  --input-controls-height: 60px;
   --piano-dock-height: calc(
     var(--piano-white-height) + var(--input-controls-height) + 24px
   );
@@ -50,7 +50,7 @@
 
   flex-wrap: wrap;
 
-  gap: 12px;
+  gap: 8px;
 
   width: min(100%, var(--content-max-width));
 
@@ -66,9 +66,15 @@
 
   justify-content: center;
 
-  min-height: 36px;
+  flex-direction: column;
 
-  padding: 6px 14px;
+  gap: 2px;
+
+  width: 128px;
+
+  min-height: 52px;
+
+  padding: 7px 12px;
 
   border: 1px solid var(--border);
 
@@ -85,6 +91,51 @@
   cursor: pointer;
 
   transition: background 0.15s, border-color 0.15s, opacity 0.15s;
+
+}
+
+.app-button--compact {
+
+  flex-direction: row;
+
+  gap: 6px;
+
+  width: auto;
+
+  min-height: 32px;
+
+  padding: 6px 12px;
+
+}
+
+.button-label,
+.button-status {
+
+  display: block;
+
+  overflow: hidden;
+
+  max-width: 100%;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+
+}
+
+.button-label {
+
+  font-size: 14px;
+
+}
+
+.button-status {
+
+  color: var(--text);
+
+  font-size: 11px;
+
+  font-weight: 400;
 
 }
 
@@ -277,6 +328,8 @@
 
   gap: 8px;
 
+  justify-content: space-between;
+
   width: 100%;
 
   height: var(--input-controls-height);
@@ -284,6 +337,32 @@
   min-width: 0;
 
   overflow: hidden;
+
+}
+
+.input-control-group {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  min-width: 0;
+
+}
+
+.input-control-group-left {
+
+  flex: 1 1 auto;
+
+}
+
+.input-control-group-right {
+
+  flex: 0 0 auto;
+
+  margin-left: auto;
 
 }
 
@@ -319,23 +398,41 @@
 
 .keyboard-range {
 
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  min-width: 108px;
+
   color: var(--text);
 
-  font-size: 13px;
+  font-size: 14px;
 
 }
 
 .input-device-button {
 
-  flex: 0 0 auto;
+  flex: 0 0 128px;
 
-  gap: 6px;
-
-  min-width: 112px;
-
-  padding: 6px 10px;
+  width: 128px;
 
   white-space: nowrap;
+
+}
+
+.input-device-button[data-connection-state="connecting"] {
+
+  border-color: #c58a00;
+
+}
+
+.input-device-button[data-connection-state="connected"] {
+
+  border-color: #15803d;
+
+  background: rgba(21, 128, 61, 0.08);
 
 }
 
@@ -363,7 +460,7 @@
 
 }
 
-.modal-overlay {
+.popover-layer {
 
   position: fixed;
 
@@ -371,29 +468,21 @@
 
   z-index: 100;
 
-  display: flex;
+  overflow: hidden;
 
-  align-items: center;
+}
 
-  justify-content: center;
+.popover-dialog {
 
-  padding: 24px;
+  position: fixed;
+
+  width: min(calc(100vw - 24px), 680px);
+
+  max-height: calc(100vh - 24px);
 
   overflow: auto;
 
   box-sizing: border-box;
-
-  background: rgba(8, 6, 13, 0.38);
-
-}
-
-.modal-dialog {
-
-  width: min(100%, 680px);
-
-  max-height: calc(100vh - 48px);
-
-  overflow: auto;
 
   border: 1px solid var(--border);
 
@@ -407,7 +496,7 @@
 
 }
 
-.modal-header {
+.popover-header {
 
   display: flex;
 
@@ -423,19 +512,23 @@
 
 }
 
-.modal-header h2 {
+.popover-header h2 {
 
   margin: 0;
 
 }
 
-.modal-content {
+.popover-content {
 
-  padding: 20px;
+  padding: 16px 20px 20px;
 
 }
 
-.modal-close-button {
+.popover-close-button {
+
+  flex: 0 0 34px;
+
+  width: 34px;
 
   min-width: 34px;
 
@@ -444,6 +537,8 @@
   padding: 4px;
 
   font-size: 22px;
+
+  line-height: 1;
 
 }
 
@@ -462,6 +557,12 @@
   border-color: var(--accent-border);
 
   background: var(--accent-bg);
+
+}
+
+.modal-option-button {
+
+  width: 100%;
 
 }
 
