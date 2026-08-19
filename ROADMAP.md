@@ -409,6 +409,7 @@ P3-004 第一版只绘制高音谱表和实心音头，仅支持升号（♯）�
 - [x] 顶部与底部按钮统一高度、内边距、圆角、边框和状态样式
 - [x] 状态型按钮统一显示功能名称和当前状态两行文本
 - [x] Keyboard Base 与 Keyboard Range 合并为统一的 Keyboard Mapping 控件
+- [x] Keyboard Mapping 使用三角方向按钮和完整 Range 按钮，Base 选择放入 Keyboard Base Popover
 - [x] Dock 按 Keyboard / Piano 设置与声音、外部输入设备左右分组
 - [x] USB MIDI、Bluetooth MIDI 使用统一紧凑状态 Indicator，完整设备名称仅在 Popover 内显示
 - [x] MIDI、Bluetooth 管理面板改为锚定触发按钮的 Popover，不进入页面文档流

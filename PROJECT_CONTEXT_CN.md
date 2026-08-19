@@ -103,6 +103,8 @@ USB MIDI 和 Bluetooth MIDI 均通过 Input Layer 统一驱动 Piano、Grand Sta
     │   │   通用锚定 Popover、Escape、外部点击和背景滚动锁定
     │   ├── KeyLabelsModal.tsx
     │   │   琴键音名显示模式选择
+    │   ├── KeyboardBaseModal.tsx
+    │   │   Keyboard Base 选择 Popover
     │   ├── InputPianoDock.tsx
     │   │   底部输入控制和 88 键 Piano 区域
     │   ├── InputDeviceButton.tsx
@@ -674,7 +676,8 @@ Sustain Pedal 或完整 Velocity 处理。
 -   Key Labels 移动到 Input & Piano Dock，通过锚定 Popover 选择 Hidden、White Keys、C Notes、All。
 -   Browser Sound 通过 Button 的 Active / Inactive 状态表达开关。
 -   Keyboard Base 从 Toolbar 移动到 Input & Piano Dock，映射逻辑保持不变。
--   Keyboard Base 与 Keyboard Range 合并为一个带边框的 Keyboard Mapping 控件，左右箭头和下拉选择保持原有行为。
+-   Keyboard Base 与 Keyboard Range 合并为一个带边框的 Keyboard Mapping 复合控件。
+-   Keyboard Mapping 中间按钮直接显示完整 Range；点击后通过 Keyboard Base Popover 选择 Base，左右按钮使用三角方向图标按八度移动。
 -   USB MIDI、Bluetooth MIDI 入口移动到 Input & Piano Dock。
 -   顶部与底部按钮统一高度、内边距、圆角、边框、字号和状态样式。
 -   状态型按钮使用“功能名称 + 当前状态”双行结构，状态变化不改变按钮尺寸。

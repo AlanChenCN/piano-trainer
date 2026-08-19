@@ -53,7 +53,7 @@
 - Grand Staff 第一版仅显示当前按下的音符，不记录历史音符。
 - 第一版高音谱表按同一音头位置显示自然音和升号音；P5-002 改为保留不同实际音高的独立音符头，并继续绘制升号（♯）。
 - 88 键键盘在 Piano 区域内横向滚动，保留现有琴键尺寸。
-- 电脑键盘默认基准音为 `E3`，使 H 键对应中央 C（C4）；基准音可通过下拉菜单切换，箭头每次移动 12 个半音。
+- 电脑键盘默认基准音为 `E3`，使 H 键对应中央 C（C4）；基准音可通过 Keyboard Base Popover 切换，三角按钮每次移动 12 个半音。
 - 切换电脑键盘基准音时释放当前仍按下的电脑键盘音符。
 - 鼠标输入和电脑键盘输入统一经过 Input Layer；Input Layer 不感知具体输入来源。
 - Keyboard、Mouse、USB MIDI 和 Bluetooth MIDI 均通过同一个 Input Layer 驱动
@@ -68,6 +68,8 @@
 - Key Labels、USB MIDI、Bluetooth MIDI 面板改为靠近触发按钮的锚定 Popover，支持外部点击和 Escape 关闭。
 - Web Sound 从顶部 Toolbar 移到 Input & Piano Dock 右侧，并保持原有声音开关逻辑。
 - Keyboard Base 与 Keyboard Range 合并为统一的 Keyboard Mapping 控件。
+- Keyboard Mapping 中间按钮直接显示完整 Range，点击后通过 Keyboard Base Popover 选择 Base。
+- Keyboard Mapping 左右移动按钮改为统一样式的三角方向图标，并移除原生下拉框外观。
 - Popover 增加紧凑 / 宽面板尺寸、内容留白和 viewport 安全边距；Dock Controls 增加垂直空间。
 
 ### 未修改
