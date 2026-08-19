@@ -35,6 +35,9 @@
 - 增加 `BluetoothMidiController` 和统一的 `MidiNoteController`。
 - 增加 Bluetooth MIDI 设备连接状态和断开后的活动音符释放。
 - 完成 ES120G Bluetooth MIDI 实机连接、演奏和断开释放验证。
+- 增加桌面端全宽主布局和固定底部 88 键虚拟钢琴区域。
+- 增加 Grand Staff 大尺寸主区域和页面底部安全空间。
+- 增加 88 键白键自适应宽度及黑键比例定位。
 
 ### 变更
 
@@ -49,6 +52,7 @@
 - 鼠标输入和电脑键盘输入统一经过 Input Layer；Input Layer 不感知具体输入来源。
 - Keyboard、Mouse、USB MIDI 和 Bluetooth MIDI 均通过同一个 Input Layer 驱动
   Piano、Grand Staff 和 Browser Sound。
+- Layout 重构仅调整页面空间关系，不改变输入、音频和 Grand Staff 业务逻辑。
 
 ### 未修改
 
@@ -57,6 +61,7 @@
 - Bluetooth MIDI 暂不支持自动重连、多个 BLE 设备和其他 MIDI 消息类型。
 - 未处理 Keyboard、Mouse、USB MIDI、Bluetooth MIDI 同时触发同一个音符时的来源归属冲突；
   多输入源同音符引用计数作为后续独立 Issue。
+- 未实现 Bass Staff、Recording、Playback、Practice Mode、Metronome 或移动端专项适配。
 - 未修改钢琴、Grand Staff、Browser Sound 的既有音频和显示架构。
 
 ## [0.1.0] - 钢琴核心

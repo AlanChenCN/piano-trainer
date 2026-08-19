@@ -13,6 +13,7 @@ v0.2.0 Piano Trainer（开发中）
 - P4-003：Web MIDI 技术验证，已完成
 - P4-004：MIDI 输入接入，已完成
 - P4-005：原生 Bluetooth LE MIDI 支持，已完成（ES120G 已验证）
+- P5-001：主页面布局重构，已完成
 - 键盘音名显示模式，已完成
 - 当前电脑键盘白键使用 `A` 到 `'`，默认 A=`E3`、H=`C4`
 - 完整 88 键键盘已支持基础 USB MIDI 和 Bluetooth LE MIDI Input 接入
@@ -313,6 +314,49 @@ P3-004 第一版只绘制高音谱表和实心音头，仅支持升号（♯）�
 - 当前 Input Layer 按音名管理状态。
 - Keyboard、Mouse、USB MIDI、Bluetooth MIDI 同时按下同一个音符时，释放顺序可能冲突。
 - 多输入源同音符引用计数作为后续独立 Issue 处理。
+
+---
+
+## P5-001：重构主页面布局并优化虚拟钢琴显示
+
+状态：
+
+- [x] 已完成
+
+已完成：
+
+- [x] 页面主体扩展为桌面端全宽布局，内容最大宽度约 `1920px`
+- [x] Grand Staff 扩展为主要视觉区域，高度约 `320px`
+- [x] 88 键虚拟钢琴固定在 viewport 底部
+- [x] Main Content 增加与 Piano Dock 共用的底部安全空间
+- [x] 52 个白键根据可用宽度自适应显示
+- [x] 黑键位置改为基于白键索引的百分比计算
+- [x] 默认无需横向滚动即可显示完整 A0-C8
+- [x] 保持四种 Key Labels 显示模式
+- [x] 保持 Keyboard、Mouse、USB MIDI、Bluetooth MIDI 输入功能
+
+布局结构：
+
+    Header / Toolbar
+            ↓
+    Main Content
+      ├── Grand Staff
+      └── Status Bar
+            ↓
+    Fixed Piano Dock
+
+设计边界：
+
+- Piano Dock 与主内容使用统一的最大宽度体系。
+- 黑键位置完全基于白键索引和百分比，不依赖旧版像素宽度。
+- Grand Staff 仅扩大容器，保留现有 SVG viewBox 和音符坐标逻辑。
+- 不使用全局 `overflow-x: hidden` 掩盖布局溢出。
+
+明确不包含：
+
+- 不实现 Bass Staff、Ledger Lines、Recording、Playback、Practice Mode 或 Metronome。
+- 不进行完整视觉主题重设计或移动端专项适配。
+- 不修改 Input Layer、MidiNoteController、Browser Sound 或现有音符业务逻辑。
 
 ---
 

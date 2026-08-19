@@ -147,35 +147,41 @@ function App() {
         onBluetoothConnect={() => setBluetoothPanelOpen(true)}
       />
 
-      <MidiMonitor
-        isOpen={midiPanelOpen}
-        onClose={() => setMidiPanelOpen(false)}
-        onConnectionChange={handleMidiConnectionChange}
-        onMidiMessage={midiInputController.handleMessage}
-      />
+      <main className="main-content">
+        <MidiMonitor
+          isOpen={midiPanelOpen}
+          onClose={() => setMidiPanelOpen(false)}
+          onConnectionChange={handleMidiConnectionChange}
+          onMidiMessage={midiInputController.handleMessage}
+        />
 
-      <BluetoothMidiPanel
-        isOpen={bluetoothPanelOpen}
-        onClose={() => setBluetoothPanelOpen(false)}
-        onConnect={handleBluetoothConnect}
-        onDisconnect={handleBluetoothDisconnect}
-        connectedDeviceName={bluetoothMidiDeviceName}
-      />
+        <BluetoothMidiPanel
+          isOpen={bluetoothPanelOpen}
+          onClose={() => setBluetoothPanelOpen(false)}
+          onConnect={handleBluetoothConnect}
+          onDisconnect={handleBluetoothDisconnect}
+          connectedDeviceName={bluetoothMidiDeviceName}
+        />
 
-      <GrandStaff pressedNotes={pressedNotes} />
+        <GrandStaff pressedNotes={pressedNotes} />
 
-      <Piano
-        pressedNotes={pressedNotes}
-        labelMode={labelMode}
-        onPress={inputLayer.pressNote}
-        onRelease={inputLayer.releaseNote}
-      />
+        <StatusBar
+          keyboardBaseNote={keyboardBaseNote}
+          midiDeviceName={midiDeviceName}
+          bluetoothMidiDeviceName={bluetoothMidiDeviceName}
+        />
+      </main>
 
-      <StatusBar
-        keyboardBaseNote={keyboardBaseNote}
-        midiDeviceName={midiDeviceName}
-        bluetoothMidiDeviceName={bluetoothMidiDeviceName}
-      />
+      <div className="piano-dock" aria-label="Fixed virtual piano">
+        <div className="piano-dock-inner">
+          <Piano
+            pressedNotes={pressedNotes}
+            labelMode={labelMode}
+            onPress={inputLayer.pressNote}
+            onRelease={inputLayer.releaseNote}
+          />
+        </div>
+      </div>
     </div>
   )
 }

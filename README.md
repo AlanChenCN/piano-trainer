@@ -16,6 +16,7 @@ A browser-based piano practice tool built with React and TypeScript.
 - 🎶 Multi-note playback
 - 🎹 MIDI Input through the shared Input Layer
 - 📡 Bluetooth LE MIDI Input through the shared Input Layer
+- 🖥️ Responsive desktop layout with a fixed 88-key piano dock
 
 The computer keyboard maps white keys from `A` through `'` and uses
 `WERTYUIOP[` as candidate black-key positions. The base note can be selected
@@ -37,9 +38,10 @@ separate Bluetooth Connect panel in supported secure Chromium browsers.
 Version `v0.2.0` is under development. The full 88-key keyboard, browser sound
 control, basic application layout, keyboard label modes, dynamic keyboard
 mapping, source-agnostic input layer, Web MIDI connection, MIDI Input
-integration, and Bluetooth LE MIDI input are complete. Bluetooth LE MIDI has
-been verified with the ES120G; detailed UI improvements, advanced MIDI
-features, sight reading, and practice features remain on the roadmap.
+integration, Bluetooth LE MIDI input, and the responsive desktop layout are
+complete. Bluetooth LE MIDI has been verified with the ES120G; detailed UI
+improvements, advanced MIDI features, sight reading, and practice features
+remain on the roadmap.
 
 ## Development
 

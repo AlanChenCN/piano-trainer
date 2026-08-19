@@ -34,9 +34,9 @@ function PianoKey({
       style={
         type === "black"
           ? {
-              left: `${position! * 60 + 42}px`
+              left: `${(((position ?? 0) + 0.7) / 52) * 100}%`,
             }
-          : {}
+          : undefined
       }
 
 
