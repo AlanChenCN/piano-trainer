@@ -20,9 +20,10 @@ A browser-based piano practice tool built with React and TypeScript.
 - 🪟 Anchored Popover controls for key labels, USB MIDI, and Bluetooth MIDI
 
 The computer keyboard maps white keys from `A` through `'` and uses
-`WERTYUIOP[` as candidate black-key positions. The base note can be selected
-in the Input & Piano Dock, while the arrow buttons move it by one octave. The default
-base is `E3`, placing middle C (`C4`) on `H`. MIDI Input can now drive the
+`WERTYUIOP[` as candidate black-key positions. Keyboard Mapping in the Input &
+Piano Dock selects the base note and moves it by one octave with the arrow buttons.
+The default base is `E3`, placing middle C (`C4`) on `H`. Web Sound, MIDI Input,
+and Bluetooth MIDI controls are grouped in the same dock. MIDI Input can drive the
 same Piano, Grand Staff, and Browser Sound flow through the shared Input Layer.
 Bluetooth LE MIDI uses the Web Bluetooth API and is available through the
 Bluetooth button in the Input & Piano Dock in supported secure Chromium browsers.

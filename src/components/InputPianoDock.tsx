@@ -16,6 +16,8 @@ interface InputPianoDockProps {
   pressedNotes: string[]
   labelMode: PianoLabelMode
   onLabelModeChange: (mode: PianoLabelMode) => void
+  soundEnabled: boolean
+  onSoundChange: (enabled: boolean) => void
   onPress: (noteName: string) => void
   onRelease: (noteName: string) => void
   keyboardBaseNote: KeyboardBaseNote
@@ -47,6 +49,8 @@ function InputPianoDock({
   pressedNotes,
   labelMode,
   onLabelModeChange,
+  soundEnabled,
+  onSoundChange,
   onPress,
   onRelease,
   keyboardBaseNote,
@@ -70,48 +74,58 @@ function InputPianoDock({
       <div className="piano-dock-inner">
         <div className="input-controls" role="toolbar" aria-label="Input controls">
           <div className="input-control-group input-control-group-left">
-            <div className="keyboard-base-control input-dock-control">
-              <span className="button-label">Keyboard Base</span>
-              <button
-                className="app-button app-button--compact keyboard-base-arrow"
-                type="button"
-                aria-label="Lower keyboard base by one octave"
-                disabled={lowerBaseNote === keyboardBaseNote}
-                onClick={() =>
-                  onKeyboardBaseNoteChange(
-                    shiftKeyboardBaseNote(keyboardBaseNote, -12),
-                  )
-                }
-              >
-                ←
-              </button>
-              <select
-                className="keyboard-base-select"
-                value={keyboardBaseNote}
-                aria-label="Keyboard base note"
-                onChange={event =>
-                  onKeyboardBaseNoteChange(event.target.value as KeyboardBaseNote)
-                }
-              >
-                {keyboardBaseNotes.map(baseNote => (
-                  <option key={baseNote} value={baseNote}>
-                    {baseNote}
-                  </option>
-                ))}
-              </select>
-              <button
-                className="app-button app-button--compact keyboard-base-arrow"
-                type="button"
-                aria-label="Raise keyboard base by one octave"
-                disabled={higherBaseNote === keyboardBaseNote}
-                onClick={() =>
-                  onKeyboardBaseNoteChange(
-                    shiftKeyboardBaseNote(keyboardBaseNote, 12),
-                  )
-                }
-              >
-                →
-              </button>
+            <div
+              className="keyboard-mapping-control input-dock-control"
+              aria-label="Keyboard Mapping"
+            >
+              <span className="button-label">Keyboard Mapping</span>
+              <div className="keyboard-mapping-row">
+                <button
+                  className="app-button app-button--compact keyboard-base-arrow"
+                  type="button"
+                  aria-label="Lower keyboard base by one octave"
+                  disabled={lowerBaseNote === keyboardBaseNote}
+                  onClick={() =>
+                    onKeyboardBaseNoteChange(
+                      shiftKeyboardBaseNote(keyboardBaseNote, -12),
+                    )
+                  }
+                >
+                  ←
+                </button>
+                <select
+                  className="keyboard-base-select"
+                  value={keyboardBaseNote}
+                  aria-label="Keyboard base note"
+                  onChange={event =>
+                    onKeyboardBaseNoteChange(
+                      event.target.value as KeyboardBaseNote,
+                    )
+                  }
+                >
+                  {keyboardBaseNotes.map(baseNote => (
+                    <option key={baseNote} value={baseNote}>
+                      {baseNote}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  className="app-button app-button--compact keyboard-base-arrow"
+                  type="button"
+                  aria-label="Raise keyboard base by one octave"
+                  disabled={higherBaseNote === keyboardBaseNote}
+                  onClick={() =>
+                    onKeyboardBaseNoteChange(
+                      shiftKeyboardBaseNote(keyboardBaseNote, 12),
+                    )
+                  }
+                >
+                  →
+                </button>
+              </div>
+              <span className="button-status">
+                {keyboardRangeLabel(keyboardBaseNote)}
+              </span>
             </div>
 
             <button
@@ -125,16 +139,22 @@ function InputPianoDock({
               <span className="button-label">Key Labels</span>
               <span className="button-status">{labelModeText(labelMode)}</span>
             </button>
-
-            <div className="keyboard-range" aria-label="Keyboard Range">
-              <span className="button-label">Keyboard Range</span>
-              <span className="button-status">
-                {keyboardRangeLabel(keyboardBaseNote)}
-              </span>
-            </div>
           </div>
 
           <div className="input-control-group input-control-group-right">
+            <button
+              className="app-button"
+              type="button"
+              aria-pressed={soundEnabled}
+              data-active={soundEnabled}
+              onClick={() => onSoundChange(!soundEnabled)}
+            >
+              <span className="button-label">Web Sound</span>
+              <span className="button-status">
+                {soundEnabled ? 'On' : 'Off'}
+              </span>
+            </button>
+
             <InputDeviceButton
               ref={midiButtonRef}
               label="USB MIDI"

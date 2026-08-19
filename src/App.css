@@ -11,9 +11,9 @@
   --content-max-width: 1920px;
   --piano-white-height: clamp(140px, 15vh, 170px);
   --grand-staff-height: clamp(460px, 52vh, 560px);
-  --input-controls-height: 60px;
+  --input-controls-height: 68px;
   --piano-dock-height: calc(
-    var(--piano-white-height) + var(--input-controls-height) + 24px
+    var(--piano-white-height) + var(--input-controls-height) + 32px
   );
 
   padding: 24px 24px calc(24px + var(--piano-dock-height));
@@ -127,6 +127,8 @@
 
   font-size: 14px;
 
+  line-height: 1.1;
+
 }
 
 .button-status {
@@ -136,6 +138,8 @@
   font-size: 11px;
 
   font-weight: 400;
+
+  line-height: 1.1;
 
 }
 
@@ -308,7 +312,7 @@
 
   flex-direction: column;
 
-  gap: 4px;
+  gap: 8px;
 
   width: min(100%, var(--content-max-width));
 
@@ -336,7 +340,7 @@
 
   min-width: 0;
 
-  overflow: hidden;
+  overflow: visible;
 
 }
 
@@ -378,9 +382,41 @@
 
 }
 
-.input-control-label {
+.keyboard-mapping-control {
 
-  font-weight: 600;
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  gap: 1px;
+
+  width: 214px;
+
+  height: 64px;
+
+  padding: 3px 10px;
+
+  box-sizing: border-box;
+
+  border: 1px solid var(--border);
+
+  border-radius: 6px;
+
+  background: var(--bg);
+
+  line-height: 1.1;
+
+}
+
+.keyboard-mapping-row {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
 
 }
 
@@ -393,22 +429,6 @@
   padding: 0;
 
   line-height: 1;
-
-}
-
-.keyboard-range {
-
-  display: flex;
-
-  flex-direction: column;
-
-  justify-content: center;
-
-  min-width: 108px;
-
-  color: var(--text);
-
-  font-size: 14px;
 
 }
 
@@ -476,9 +496,9 @@
 
   position: fixed;
 
-  width: min(calc(100vw - 24px), 680px);
+  width: min(calc(100vw - 32px), 320px);
 
-  max-height: calc(100vh - 24px);
+  max-height: calc(100vh - 32px);
 
   overflow: auto;
 
@@ -496,6 +516,12 @@
 
 }
 
+.popover-dialog--wide {
+
+  width: min(calc(100vw - 32px), 560px);
+
+}
+
 .popover-header {
 
   display: flex;
@@ -506,7 +532,7 @@
 
   gap: 16px;
 
-  padding: 16px 20px;
+  padding: 14px 18px;
 
   border-bottom: 1px solid var(--border);
 
@@ -520,7 +546,7 @@
 
 .popover-content {
 
-  padding: 16px 20px 20px;
+  padding: 20px 18px 22px;
 
 }
 
@@ -548,7 +574,7 @@
 
   grid-template-columns: repeat(2, minmax(0, 1fr));
 
-  gap: 10px;
+  gap: 12px;
 
 }
 
@@ -588,21 +614,11 @@
 
 }
 
-.keyboard-base-control {
-
-  display: inline-flex;
-
-  align-items: center;
-
-  gap: 8px;
-
-  font-size: 16px;
-
-}
-
 .keyboard-base-select {
 
   min-width: 72px;
+
+  height: 30px;
 
   padding: 4px 8px;
 

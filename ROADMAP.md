@@ -15,7 +15,7 @@ v0.2.0 Piano Trainer（开发中）
 - P4-005：原生 Bluetooth LE MIDI 支持，已完成（ES120G 已验证）
 - P5-001：主页面布局重构，已完成
 - P5-002：完整 Grand Staff，已完成
-- P5-003：主界面交互布局重构，已完成
+- P5-003：主界面交互布局重构，已完成（含第二轮 UI 整改）
 - 键盘音名显示模式，已完成
 - 当前电脑键盘白键使用 `A` 到 `'`，默认 A=`E3`、H=`C4`
 - 完整 88 键键盘已支持基础 USB MIDI 和 Bluetooth LE MIDI Input 接入
@@ -399,7 +399,8 @@ P3-004 第一版只绘制高音谱表和实心音头，仅支持升号（♯）�
 
 已完成：
 
-- [x] Toolbar 仅保留 Practice、Sound、Metronome，并统一 Button 风格
+- [x] Toolbar 仅保留 Practice、Metronome，并统一 Button 风格
+- [x] Web Sound 移动到 Input & Piano Dock 右侧，与外部输入设备统一分组
 - [x] Key Labels 移动到 Input & Piano Dock，通过锚定 Popover 选择 Hidden、White Keys、C Notes、All 四种模式
 - [x] Browser Sound 改为 Active / Inactive Button
 - [x] Practice 和 Metronome 保留为 Disabled 占位按钮
@@ -407,10 +408,13 @@ P3-004 第一版只绘制高音谱表和实心音头，仅支持升号（♯）�
 - [x] USB MIDI、Bluetooth MIDI 移动到 Input & Piano Dock
 - [x] 顶部与底部按钮统一高度、内边距、圆角、边框和状态样式
 - [x] 状态型按钮统一显示功能名称和当前状态两行文本
-- [x] Dock 按 Keyboard / Piano 设置与外部输入设备左右分组
+- [x] Keyboard Base 与 Keyboard Range 合并为统一的 Keyboard Mapping 控件
+- [x] Dock 按 Keyboard / Piano 设置与声音、外部输入设备左右分组
 - [x] USB MIDI、Bluetooth MIDI 使用统一紧凑状态 Indicator，完整设备名称仅在 Popover 内显示
 - [x] MIDI、Bluetooth 管理面板改为锚定触发按钮的 Popover，不进入页面文档流
 - [x] Popover 统一支持 Close Button、Escape、外部点击关闭和背景滚动锁定
+- [x] Popover 增加尺寸层级、内容留白和 viewport 安全边距
+- [x] 增加 Dock Controls 垂直空间，确保按钮边框、圆角与 Piano 区域完整显示
 - [x] Grand Staff 通过统一比例放大 SVG 内容，不改变 P5-002 几何模型
 - [x] 保持 Keyboard、Mouse、USB MIDI、Bluetooth MIDI、Browser Sound 和 Piano 功能
 

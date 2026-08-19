@@ -10,6 +10,7 @@ import {
 } from 'react'
 
 type PopoverPlacement = 'top' | 'bottom'
+type PopoverSize = 'compact' | 'wide'
 
 interface ModalProps {
   isOpen: boolean
@@ -17,6 +18,7 @@ interface ModalProps {
   onClose: () => void
   anchorRef: RefObject<HTMLElement | null>
   placement: PopoverPlacement
+  size?: PopoverSize
   children: ReactNode
 }
 
@@ -26,6 +28,7 @@ function Modal({
   onClose,
   anchorRef,
   placement,
+  size = 'compact',
   children,
 }: ModalProps) {
   const titleId = useId()
@@ -50,7 +53,7 @@ function Modal({
       }
 
       const anchorRect = anchor.getBoundingClientRect()
-      const viewportMargin = 12
+      const viewportMargin = 16
       const gap = 8
       const dialogWidth = dialog.offsetWidth
       const dialogHeight = dialog.offsetHeight
@@ -142,7 +145,7 @@ function Modal({
   return (
     <div className="popover-layer">
       <div
-        className="popover-dialog"
+        className={`popover-dialog popover-dialog--${size}`}
         ref={dialogRef}
         style={popoverStyle}
         role="dialog"
@@ -169,4 +172,5 @@ function Modal({
 }
 
 export type { PopoverPlacement }
+export type { PopoverSize }
 export default Modal

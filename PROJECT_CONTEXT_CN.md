@@ -660,25 +660,30 @@ Sustain Pedal 或完整 Velocity 处理。
       ├── Grand Staff
       └── Status Bar
     Input & Piano Dock
-      ├── Keyboard Base
+      ├── Keyboard Mapping
       ├── USB MIDI
       ├── Bluetooth MIDI
+      ├── Web Sound
       └── 88-Key Piano
     Popover Layer
 
 已完成：
 
--   Toolbar 仅保留 Practice、Sound、Metronome，并统一使用 Button 风格。
+-   Toolbar 仅保留 Practice、Metronome，并统一使用 Button 风格。
+-   Web Sound 移动到 Input & Piano Dock 右侧，与 USB MIDI、Bluetooth MIDI 同组，声音逻辑保持不变。
 -   Key Labels 移动到 Input & Piano Dock，通过锚定 Popover 选择 Hidden、White Keys、C Notes、All。
 -   Browser Sound 通过 Button 的 Active / Inactive 状态表达开关。
 -   Keyboard Base 从 Toolbar 移动到 Input & Piano Dock，映射逻辑保持不变。
+-   Keyboard Base 与 Keyboard Range 合并为一个带边框的 Keyboard Mapping 控件，左右箭头和下拉选择保持原有行为。
 -   USB MIDI、Bluetooth MIDI 入口移动到 Input & Piano Dock。
 -   顶部与底部按钮统一高度、内边距、圆角、边框、字号和状态样式。
 -   状态型按钮使用“功能名称 + 当前状态”双行结构，状态变化不改变按钮尺寸。
--   Dock 左侧放置 Keyboard Base、Key Labels、Keyboard Range，右侧放置 USB MIDI、Bluetooth。
+-   Dock 左侧放置 Keyboard Mapping、Key Labels，右侧放置 Web Sound、USB MIDI、Bluetooth。
 -   USB MIDI、Bluetooth MIDI 使用紧凑的统一状态按钮，完整设备名称仅在 Popover 内显示。
 -   MIDI、Bluetooth 和 Key Labels 管理界面改为锚定触发按钮的 Popover，不进入页面文档流。
 -   所有 Popover 支持 Close Button、Escape、外部点击关闭和背景滚动锁定。
+-   Popover 按内容分为紧凑和宽面板，并使用统一内容留白与 viewport 安全边距。
+-   Input Controls 增加垂直空间，避免按钮边框或圆角被 Dock 容器裁切。
 -   Grand Staff 通过统一比例放大 SVG 内容，P5-002 音高几何模型保持不变。
 
 连接状态原则：

@@ -93,6 +93,7 @@ function BluetoothMidiPanel({
       title="Bluetooth MIDI"
       anchorRef={anchorRef}
       placement="top"
+      size="wide"
       onClose={onClose}
     >
       <div className="bluetooth-midi-panel">

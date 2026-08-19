@@ -170,6 +170,7 @@ function MidiMonitor({
       title="USB MIDI"
       anchorRef={anchorRef}
       placement="top"
+      size="wide"
       onClose={onClose}
     >
       <div className="midi-monitor-panel">

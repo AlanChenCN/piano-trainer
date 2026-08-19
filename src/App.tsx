@@ -146,10 +146,7 @@ function App() {
     <div className="piano-trainer">
       <Header />
 
-      <Toolbar
-        soundEnabled={soundEnabled}
-        onSoundChange={handleSoundChange}
-      />
+      <Toolbar />
 
       <main className="main-content">
         <GrandStaff pressedNotes={pressedNotes} />
@@ -165,6 +162,8 @@ function App() {
         pressedNotes={pressedNotes}
         labelMode={labelMode}
         onLabelModeChange={handleLabelModeChange}
+        soundEnabled={soundEnabled}
+        onSoundChange={handleSoundChange}
         onPress={inputLayer.pressNote}
         onRelease={inputLayer.releaseNote}
         keyboardBaseNote={keyboardBaseNote}
