@@ -4,6 +4,14 @@
 
 ## [未发布]
 
+### P6-004：Practice Target Lifecycle 状态模型优化
+
+- 增加 Pending、Matching、Completed、Waiting Release 的 Practice Target 生命周期模型。
+- 正确 Note On 只完成当前 Target，不立即推进 Cursor。
+- 只有当前 Target 所有 Required Notes 对应的 NoteEvent Release 后才推进 Cursor。
+- 增加当前 Target 的 Event Ownership，预留 eventId、MIDI Number 和输入来源信息。
+- 提前输入下一个 Target 时保持无效，不影响当前练习目标。
+
 ### P6-003：Practice Canvas 与 Note Timeline 优化
 
 - Practice Phrase 扩展为 4 个 Measure、16 个 Note，并直接绘制在 Grand Staff 内。

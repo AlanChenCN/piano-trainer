@@ -1,4 +1,4 @@
-import type { NoteEvent } from '../music/noteEvent'
+import type { NoteEvent, NoteEventSource } from '../music/noteEvent'
 import type { PracticeNoteNameMode } from '../music/noteDisplay'
 import type { PianoNote } from '../data/piano'
 
@@ -7,6 +7,11 @@ export type PracticeSelection = 'free-play' | 'note-practice'
 export type PracticeSessionStatus = 'idle' | 'active' | 'completed'
 export type PracticeTaskStatus = 'pending' | 'active' | 'completed' | 'failed'
 export type PracticeNotePool = 'all' | 'white-only' | 'black-only'
+export type PracticeTargetLifecycleState =
+  | 'pending'
+  | 'matching'
+  | 'completed'
+  | 'waiting-release'
 
 export interface PracticeSettings {
   rangeStart: string
@@ -49,9 +54,21 @@ export interface PracticeCursor {
   beatPosition: number
 }
 
-export interface PracticeTask {
-  type: PracticeMode
+export interface PracticeTargetOwnership {
+  eventId: string
+  midiNumber: number
+  source?: NoteEventSource
+}
+
+export interface PracticeTarget {
   targetNotes: PianoNote[]
+  matchedNotes: PianoNote[]
+  ownedEvents: PracticeTargetOwnership[]
+  lifecycleState: PracticeTargetLifecycleState
+}
+
+export interface PracticeTask extends PracticeTarget {
+  type: PracticeMode
   timelineNoteId?: string
   status: PracticeTaskStatus
 }
@@ -82,6 +99,9 @@ export function createNotePracticeTask(
   return {
     type: 'note',
     targetNotes: [note],
+    matchedNotes: [],
+    ownedEvents: [],
+    lifecycleState: 'pending',
     timelineNoteId,
     status: 'pending',
   }

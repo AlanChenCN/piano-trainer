@@ -37,6 +37,7 @@ P5-004（主题系统与乐谱视觉重设计）已完成。
 P6-001（Note Event 与基础练习框架）开发中。
 P6-002（Note Practice Timeline 基础练习模式）开发中，待 Product 验收。
 P6-003（Practice Canvas 与 Note Timeline 优化）开发中，待 Product 验收。
+P6-004（Practice Target Lifecycle 状态模型优化）开发中，待 Product 验收。
 
 v0.1.0 已完成：
 
@@ -930,6 +931,41 @@ Note Display 通过 Grand Staff 下方独立的 Note Info 区域展示当前音�
 -   不实现节奏判断、Tempo、音符时值判断、动态滚动、MIDI 文件导入、Chord Practice 或左右手识别。
 -   不修改 Input Layer、Keyboard、Mouse、USB MIDI、Bluetooth MIDI、Piano 或 Browser Sound 逻辑。
 -   不处理极端音域下的音名避让和既有 Note Label Technical Debt。
+
+------------------------------------------------------------------------
+
+## P6-004 Practice Target Lifecycle 状态模型优化
+
+状态：开发中，待 Product 验收
+
+当前流程：
+
+    Note On NoteEvent
+            ↓
+      Target Evaluation
+            ↓
+      Target Complete
+            ↓
+       Note Release
+            ↓
+       Cursor Advance
+
+已完成：
+
+-   Practice Target 增加 Pending、Matching、Completed、Waiting Release 生命周期语义。
+-   `completed` 只表示 Required Notes 已满足，不代表 Cursor 已推进。
+-   当前 Target 通过 `PracticeTargetOwnership` 记录 `eventId`、MIDI Number 和可选输入来源。
+-   Note On 只匹配当前 Target；等待 Release 阶段提前输入下一个 Target 会被忽略。
+-   `NoteEventFactory.close()` 产生的关闭 NoteEvent 会进入 PracticeController 的 Release Evaluation。
+-   只有当前 Target 所有 Required Notes 对应事件均释放后，才推进 Cursor。
+-   Phrase 最后一个 Target 释放完成后，生成下一组 Phrase 并重置 Cursor。
+
+设计边界：
+
+-   PracticeController 只接收 NoteEvent，不感知 Keyboard、Mouse、USB MIDI 或 Bluetooth MIDI 原始消息。
+-   当前仍只生成单音 Target；`targetNotes`、`matchedNotes` 和 `ownedEvents` 为未来和弦扩展预留。
+-   不修改 Input Layer、Piano、Grand Staff、Browser Sound、MIDI / Bluetooth 数据流或 Parser。
+-   多输入源在 Input Layer 层面的 ownership / reference counting 继续作为既有 Technical Debt 保留。
 
 ------------------------------------------------------------------------
 

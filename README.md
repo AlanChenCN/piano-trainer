@@ -32,6 +32,8 @@ A browser-based piano practice tool built with React and TypeScript.
   Grand Staff 下方提供独立 Note Info 区域，支持 Off、Letter 和 Solfege 显示模式
 - 🎯 Practice Canvas with a 16-note static 4/4 phrase, white-key range bounds, and configurable note pool<br>
   支持 16 音符静态 4/4 练习乐句、白键范围上下界和可配置音符池的 Practice Canvas
+- 🔁 Practice Target lifecycle with release-gated cursor advancement<br>
+  支持等待当前目标音符释放后再推进 Cursor 的 Practice Target 生命周期
 - 🎼 White and black key support<br>
   支持白键和黑键
 - 🎶 Multi-note playback<br>

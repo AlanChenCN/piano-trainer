@@ -88,7 +88,10 @@ export class NoteEventFactory {
     const existingEvent = this.activeEvents.get(key)
 
     if (existingEvent) {
-      return existingEvent
+      // An already active Note On does not start a second lifecycle. This
+      // also prevents early input from being replayed after Practice Cursor
+      // advances to a new target.
+      return undefined
     }
 
     const event = createNoteEvent(

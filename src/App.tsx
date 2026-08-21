@@ -133,16 +133,20 @@ function App() {
       const midiNumber = pianoNoteToMidiNumber(note)
 
       if (midiNumber !== undefined) {
-        noteEventFactory.close({
+        const event = noteEventFactory.close({
           midiNumber,
           source: context.source,
         })
+
+        if (event) {
+          practiceController.handleNoteRelease(event)
+        }
       }
     }
 
     setPressedNotes(prev => prev.filter(item => item !== noteName))
     stopNote(noteName)
-  }, [noteEventFactory])
+  }, [noteEventFactory, practiceController])
 
   const inputLayer = useMemo(
     () => new InputLayer({ pressNote, releaseNote }),

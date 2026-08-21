@@ -83,6 +83,24 @@ Release: v0.4.0-alpha
 - 不修改 Input Layer、Keyboard、Mouse、USB MIDI、Bluetooth MIDI、Piano 或 Browser Sound 逻辑。
 - 不处理极端音域下的音名避让和 Note Label Technical Debt。
 
+## P6-004：Practice Target Lifecycle 状态模型优化
+
+状态：开发中，待 Product 验收
+
+已完成：
+
+- [x] 增加 Pending、Matching、Completed、Waiting Release 的 Target 生命周期模型。
+- [x] 正确 Note On 只完成当前 Target，不立即推进 Cursor。
+- [x] 当前 Target 所有 Required Notes 对应的 NoteEvent Release 后才推进 Cursor。
+- [x] 增加当前 Target 的 `eventId`、MIDI Number 和输入来源 Ownership。
+- [x] 等待 Release 阶段忽略提前输入的下一个 Target。
+
+设计边界：
+
+- 不实现 Chord Practice UI、Chord Generator、节奏判断、Tempo、Duration Score 或左右手识别。
+- 不修改 Input Layer、Keyboard、Mouse、USB MIDI、Bluetooth MIDI、Piano、Grand Staff 或 MIDI Parser。
+- 多输入源在 Input Layer 层面的 ownership / reference counting 继续作为既有 Technical Debt 保留。
+
 ## Technical Debt
 
 ### 五线谱 Note Label 显示布局优化
