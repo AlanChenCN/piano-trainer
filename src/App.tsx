@@ -302,7 +302,9 @@ function App() {
         noteDisplayMode={noteDisplayMode}
         onNoteDisplayModeChange={setNoteDisplayMode}
         practiceSelection={practiceSnapshot.selection}
+        practiceSettings={practiceSnapshot.settings}
         onPracticeSelectionChange={practiceController.selectMode}
+        onPracticeSettingsChange={practiceController.updateSettings}
       />
 
       <main className="main-content">
@@ -311,13 +313,12 @@ function App() {
           targetNotes={
             practiceSnapshot.session?.currentTask?.targetNotes ?? []
           }
-          practiceTimelineNotes={
-            practiceSnapshot.session?.timeline?.notes ?? []
-          }
+          practicePhrase={practiceSnapshot.session?.phrase ?? null}
           currentTargetIndex={
             practiceSnapshot.session?.cursor.noteIndex ?? -1
           }
           noteDisplayMode={noteDisplayMode}
+          practiceNoteNameMode={practiceSnapshot.settings.noteNameMode}
         />
 
         <StatusBar

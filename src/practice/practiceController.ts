@@ -3,28 +3,33 @@ import { PracticeEvaluator } from './practiceEvaluator'
 import {
   createNotePracticeTask,
   createPracticeSession,
+  createPracticeSettings,
+  type PracticePhrase,
   type PracticeResult,
   type PracticeSelection,
   type PracticeSession,
+  type PracticeSettings,
 } from './practiceTypes'
-import { createPracticeTimeline } from './timeline'
+import { createPracticePhrase } from './timeline'
 
 export interface PracticeControllerSnapshot {
   selection: PracticeSelection
   session: PracticeSession | null
+  settings: PracticeSettings
   lastResult: PracticeResult | null
 }
 
 const freePlaySnapshot: PracticeControllerSnapshot = {
   selection: 'free-play',
   session: null,
+  settings: createPracticeSettings(),
   lastResult: null,
 }
 
 export class PracticeController {
   private readonly evaluator = new PracticeEvaluator()
   private readonly listeners = new Set<() => void>()
-  private timelineNumber = 1
+  private phraseNumber = 1
   private snapshot: PracticeControllerSnapshot = freePlaySnapshot
 
   getSnapshot = () => this.snapshot
@@ -51,7 +56,44 @@ export class PracticeController {
       return
     }
 
-    this.snapshot = freePlaySnapshot
+    this.snapshot = {
+      ...this.snapshot,
+      selection: 'free-play',
+      session: null,
+      lastResult: null,
+    }
+    this.notify()
+  }
+
+  updateSettings = (updates: Partial<PracticeSettings>) => {
+    const settings = {
+      ...this.snapshot.settings,
+      ...updates,
+    }
+
+    const shouldRegeneratePhrase =
+      updates.range !== undefined || updates.notePool !== undefined
+
+    if (
+      this.snapshot.selection === 'note-practice' &&
+      shouldRegeneratePhrase
+    ) {
+      const phrase = this.createPhrase(settings)
+
+      this.snapshot = {
+        selection: 'note-practice',
+        session: this.sessionForPhrase(phrase, []),
+        settings,
+        lastResult: null,
+      }
+      this.notify()
+      return
+    }
+
+    this.snapshot = {
+      ...this.snapshot,
+      settings,
+    }
     this.notify()
   }
 
@@ -60,7 +102,7 @@ export class PracticeController {
 
     if (
       this.snapshot.selection !== 'note-practice' ||
-      !session?.timeline ||
+      !session?.phrase ||
       !session.currentTask
     ) {
       return
@@ -84,21 +126,23 @@ export class PracticeController {
 
     const nextNoteIndex = session.cursor.noteIndex + 1
 
-    if (nextNoteIndex >= session.timeline.notes.length) {
-      const nextTimeline = this.createTimeline()
+    if (nextNoteIndex >= session.phrase.notes.length) {
+      const nextPhrase = this.createPhrase(this.snapshot.settings)
+
       this.snapshot = {
         selection: 'note-practice',
-        session: this.sessionForTimeline(nextTimeline, history),
-        lastResult: result,
+        session: this.sessionForPhrase(nextPhrase, history),
+        settings: this.snapshot.settings,
+        lastResult: null,
       }
       this.notify()
       return
     }
 
-    const nextTimelineNote = session.timeline.notes[nextNoteIndex]
+    const nextPhraseNote = session.phrase.notes[nextNoteIndex]
     const nextTask = createNotePracticeTask(
-      nextTimelineNote.note,
-      nextTimelineNote.id,
+      nextPhraseNote.note,
+      nextPhraseNote.id,
     )
 
     this.snapshot = {
@@ -107,7 +151,7 @@ export class PracticeController {
         ...session,
         cursor: {
           noteIndex: nextNoteIndex,
-          beatPosition: nextTimelineNote.beatPosition,
+          beatPosition: nextPhraseNote.beatPosition,
         },
         currentTask: {
           ...nextTask,
@@ -115,38 +159,36 @@ export class PracticeController {
         },
         history,
       },
+      settings: this.snapshot.settings,
       lastResult: result,
     }
     this.notify()
   }
 
   private startNotePractice() {
-    const timeline = this.createTimeline()
+    const phrase = this.createPhrase(this.snapshot.settings)
 
     this.snapshot = {
       selection: 'note-practice',
-      session: this.sessionForTimeline(timeline, []),
+      session: this.sessionForPhrase(phrase, []),
+      settings: this.snapshot.settings,
       lastResult: null,
     }
     this.notify()
   }
 
-  private sessionForTimeline(
-    timeline: PracticeSession['timeline'],
+  private sessionForPhrase(
+    phrase: PracticePhrase,
     history: PracticeResult[],
   ): PracticeSession {
-    if (!timeline) {
-      throw new Error('A practice session requires a timeline')
-    }
-
-    const timelineNote = timeline.notes[0]
-    const task = createNotePracticeTask(timelineNote.note, timelineNote.id)
+    const phraseNote = phrase.notes[0]
+    const task = createNotePracticeTask(phraseNote.note, phraseNote.id)
 
     return {
-      ...createPracticeSession(task, timeline),
+      ...createPracticeSession(task, phrase),
       cursor: {
-        noteIndex: 0,
-        beatPosition: timelineNote.beatPosition,
+        noteIndex: phraseNote.index,
+        beatPosition: phraseNote.beatPosition,
       },
       currentTask: {
         ...task,
@@ -156,12 +198,13 @@ export class PracticeController {
     }
   }
 
-  private createTimeline() {
-    const timeline = createPracticeTimeline(
-      `practice-timeline-${this.timelineNumber}`,
+  private createPhrase(settings: PracticeSettings) {
+    const phrase = createPracticePhrase(
+      `practice-phrase-${this.phraseNumber}`,
+      settings,
     )
-    this.timelineNumber += 1
-    return timeline
+    this.phraseNumber += 1
+    return phrase
   }
 
   private notify() {

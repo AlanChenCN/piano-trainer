@@ -63,6 +63,26 @@ Release: v0.4.0-alpha
 - 不修改 Input Layer、Keyboard、Mouse、USB MIDI、Bluetooth MIDI、Piano 或 Browser Sound 逻辑。
 - 不处理 Note Label 与 Grand Staff 空间布局 Technical Debt。
 
+## P6-003：Practice Canvas 与 Note Timeline 优化
+
+状态：开发中，待 Product 验收
+
+已完成：
+
+- [x] 将 Practice Phrase 扩展为 4 个 Measure、16 个 Note。
+- [x] 在 Grand Staff 内横向排列完整 Practice Phrase，不增加独立 Timeline 面板。
+- [x] 增加 Future、Current、Completed 三种目标音符视觉状态。
+- [x] Practice 模式下让 Pressed Note 对齐当前目标位置，Free Play 保持原有位置逻辑。
+- [x] 增加 Grand Staff 上方的 Hide、C、C4 音名显示模式。
+- [x] 增加 Note Range、Note Pool 和 Note Name Practice Settings。
+- [x] 增加轻量 Measure 分隔线，且不参与 Cursor 或 Practice Logic。
+
+设计边界：
+
+- 不实现节奏判断、Tempo、音符时值判断、动态滚动、MIDI 文件导入、Chord Practice 或左右手识别。
+- 不修改 Input Layer、Keyboard、Mouse、USB MIDI、Bluetooth MIDI、Piano 或 Browser Sound 逻辑。
+- 不处理极端音域下的音名避让和 Note Label Technical Debt。
+
 ## Technical Debt
 
 ### 五线谱 Note Label 显示布局优化

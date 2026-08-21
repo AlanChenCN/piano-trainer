@@ -36,6 +36,7 @@ P5-003（主界面交互布局重构）已完成。
 P5-004（主题系统与乐谱视觉重设计）已完成。
 P6-001（Note Event 与基础练习框架）开发中。
 P6-002（Note Practice Timeline 基础练习模式）开发中，待 Product 验收。
+P6-003（Practice Canvas 与 Note Timeline 优化）开发中，待 Product 验收。
 
 v0.1.0 已完成：
 
@@ -221,7 +222,7 @@ USB MIDI 和 Bluetooth MIDI 均通过 Input Layer 统一驱动 Piano、Grand Sta
 
     ├── practice/
     │   ├── timeline.ts
-    │   │   C3-C5 静态 Practice Timeline 生成
+    │   │   固定音域预设的 Practice Phrase 生成
     │   ├── practiceController.ts
     │   │   NoteEvent 到 Practice Result 和 Cursor 推进
     │   ├── practiceTypes.ts
@@ -336,7 +337,8 @@ USB MIDI 和 Bluetooth MIDI 均通过 Input Layer 统一驱动 Piano、Grand Sta
 -   键盘音名显示模式：Hidden、White Keys、Letter、Solfege、All
 -   Grand Staff 下方独立 Note Info 区域：Off、Letter、Solfege，默认使用 Letter
 -   Practice：Free Play、Note Practice
--   Note Practice：Grand Staff 内部承载 C3-C5、固定 4/4 静态 Timeline、目标音符和 Cursor 反馈
+-   Note Practice：Grand Staff 内部承载 4 小节、16 音符的静态 Practice Phrase、目标状态和 Cursor 反馈
+-   Practice Settings：Note Range、Note Pool、Note Name（Hide、C、C4）
 -   88 键钢琴在 Piano 区域内横向滚动，保持现有琴键尺寸
 -   电脑键盘基准音控制和当前映射范围状态显示
 -   Bluetooth MIDI 独立连接面板和设备状态显示
@@ -897,6 +899,37 @@ Note Display 通过 Grand Staff 下方独立的 Note Info 区域展示当前音�
 
 -   不实现 Chord Practice、Scale Practice、Recording、Playback、Rhythm Detection、Tempo 或动态滚动。
 -   不修改 Input Layer、Piano、Browser Sound、MIDI / Bluetooth 数据流或现有 Note Label 布局。
+
+------------------------------------------------------------------------
+
+## P6-003 Practice Canvas 与 Note Timeline 优化
+
+状态：开发中，待 Product 验收
+
+当前模型：
+
+    Practice Phrase（4 个 Measure、16 个 Note）
+                    ↓
+            Grand Staff Practice Canvas
+                    ↓
+          Future / Current / Completed
+
+已完成：
+
+-   `PracticePhrase` 固定为 4/4、4 个小节、每小节 4 个音符；每个 `PracticeTimelineNote` 包含稳定 `id` 和 `index`。
+-   练习目标音符直接在 Grand Staff 内按时间顺序横向排列，不再增加独立 Timeline 面板。
+-   当前目标通过 `targetNotes` 数组传递，保留未来和弦目标的扩展接口。
+-   Practice 模式下当前 `pressedNotes` 与当前目标的 X 位置对齐；Free Play 继续使用原有实时显示位置。
+-   目标音符支持 Future、Current、Completed 三种视觉状态；小节线只用于视觉分隔，不参与 Cursor、X 坐标或练习判断。
+-   Practice Settings 支持固定音域预设、All / White Only / Black Only 音符池，以及 Hide / C / C4 音名显示模式。
+-   完成一个 Phrase 后生成下一组 Phrase，Cursor 重置为 0，反馈恢复 Ready，且不修改输入、音频和 Piano 行为。
+
+设计边界：
+
+-   `PracticeController` 只接收 `NoteEvent`，不感知具体输入源。
+-   不实现节奏判断、Tempo、音符时值判断、动态滚动、MIDI 文件导入、Chord Practice 或左右手识别。
+-   不修改 Input Layer、Keyboard、Mouse、USB MIDI、Bluetooth MIDI、Piano 或 Browser Sound 逻辑。
+-   不处理极端音域下的音名避让和既有 Note Label Technical Debt。
 
 ------------------------------------------------------------------------
 

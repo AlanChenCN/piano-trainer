@@ -4,6 +4,15 @@
 
 ## [未发布]
 
+### P6-003：Practice Canvas 与 Note Timeline 优化
+
+- Practice Phrase 扩展为 4 个 Measure、16 个 Note，并直接绘制在 Grand Staff 内。
+- 增加 Future、Current、Completed 三种练习目标状态。
+- Practice 模式下 Pressed Note 与当前目标位置对齐，Free Play 保持原有显示逻辑。
+- 增加 Grand Staff 上方 Hide、C、C4 音名显示模式。
+- 增加 Note Range、Note Pool 和 Note Name Practice Settings。
+- 增加仅用于视觉表达的 Measure 分隔线。
+
 ### P6-002：Note Practice Timeline 基础练习模式
 
 - 增加 Free Play / Note Practice 模式切换。

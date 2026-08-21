@@ -1,6 +1,7 @@
 import type { PianoNote, PianoLabelMode } from '../data/piano'
 
 export type NoteDisplayMode = 'hidden' | 'letter' | 'solfege'
+export type PracticeNoteNameMode = 'hidden' | 'letter' | 'full'
 
 const solfegeByPitchClass: Record<string, string> = {
   C: 'Do',
@@ -35,6 +36,17 @@ export function noteDisplayLabel(
 
   const name = mode === 'letter' ? letterNameFor(note) : solfegeNameFor(note)
   return `${name}${note.octave}`
+}
+
+export function practiceNoteNameFor(
+  note: PianoNote,
+  mode: PracticeNoteNameMode,
+) {
+  if (mode === 'hidden') {
+    return ''
+  }
+
+  return mode === 'letter' ? letterNameFor(note) : note.name
 }
 
 export function pianoLabelFor(note: PianoNote, mode: PianoLabelMode) {

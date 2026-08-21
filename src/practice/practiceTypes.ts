@@ -1,22 +1,45 @@
 import type { NoteEvent } from '../music/noteEvent'
+import type { PracticeNoteNameMode } from '../music/noteDisplay'
 import type { PianoNote } from '../data/piano'
 
 export type PracticeMode = 'note'
 export type PracticeSelection = 'free-play' | 'note-practice'
 export type PracticeSessionStatus = 'idle' | 'active' | 'completed'
 export type PracticeTaskStatus = 'pending' | 'active' | 'completed' | 'failed'
+export type PracticeRangePreset = 'c3-c5' | 'c4-c6'
+export type PracticeNotePool = 'all' | 'white-only' | 'black-only'
+
+export interface PracticeSettings {
+  range: PracticeRangePreset
+  notePool: PracticeNotePool
+  noteNameMode: PracticeNoteNameMode
+}
+
+export const defaultPracticeSettings: PracticeSettings = {
+  range: 'c3-c5',
+  notePool: 'all',
+  noteNameMode: 'full',
+}
+
+export function createPracticeSettings(): PracticeSettings {
+  return { ...defaultPracticeSettings }
+}
 
 export interface PracticeTimelineNote {
   id: string
+  index: number
   note: PianoNote
   midiNumber: number
+  measureIndex: number
   beatPosition: number
   duration?: number
 }
 
-export interface PracticeTimeline {
+export interface PracticePhrase {
   id: string
   timeSignature: '4/4'
+  measureCount: 4
+  beatsPerMeasure: 4
   notes: PracticeTimelineNote[]
 }
 
@@ -35,7 +58,7 @@ export interface PracticeTask {
 export interface PracticeSession {
   mode: PracticeMode
   status: PracticeSessionStatus
-  timeline: PracticeTimeline | null
+  phrase: PracticePhrase | null
   cursor: PracticeCursor
   currentTask: PracticeTask | null
   history: PracticeResult[]
@@ -65,12 +88,12 @@ export function createNotePracticeTask(
 
 export function createPracticeSession(
   task: PracticeTask | null = null,
-  timeline: PracticeTimeline | null = null,
+  phrase: PracticePhrase | null = null,
 ): PracticeSession {
   return {
     mode: 'note',
-    status: task && timeline ? 'active' : 'idle',
-    timeline,
+    status: task && phrase ? 'active' : 'idle',
+    phrase,
     cursor: {
       noteIndex: 0,
       beatPosition: 0,

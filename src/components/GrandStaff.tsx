@@ -10,15 +10,20 @@ import {
   isSharp,
   type StaffName,
 } from '../data/staff'
-import type { NoteDisplayMode } from '../music/noteDisplay'
-import type { PracticeTimelineNote } from '../practice/practiceTypes'
+import {
+  practiceNoteNameFor,
+  type NoteDisplayMode,
+  type PracticeNoteNameMode,
+} from '../music/noteDisplay'
+import type { PracticePhrase } from '../practice/practiceTypes'
 
 interface GrandStaffProps {
   pressedNotes: string[]
   targetNotes: PianoNote[]
-  practiceTimelineNotes: PracticeTimelineNote[]
+  practicePhrase: PracticePhrase | null
   currentTargetIndex: number
   noteDisplayMode: NoteDisplayMode
+  practiceNoteNameMode: PracticeNoteNameMode
 }
 
 interface PositionedNote {
@@ -219,29 +224,62 @@ function timelineNoteX(index: number, total: number) {
   return timelineLeft + ((timelineRight - timelineLeft) * index) / (total - 1)
 }
 
-function renderTimelineNotes(
-  timelineNotes: PracticeTimelineNote[],
+function renderPhraseNotes(
+  phrase: PracticePhrase | null,
   currentTargetIndex: number,
 ) {
-  return timelineNotes.flatMap((timelineNote, index) => {
-    if (index === currentTargetIndex) {
+  if (!phrase) {
+    return []
+  }
+
+  return phrase.notes.flatMap(phraseNote => {
+    if (phraseNote.index === currentTargetIndex) {
       return []
     }
 
-    const positionedNote = positionNotes([timelineNote.note])[0]
+    const positionedNote = positionNotes([phraseNote.note])[0]
 
     return positionedNote
-      ? [{ ...positionedNote, x: timelineNoteX(index, timelineNotes.length) }]
+      ? [
+          {
+            ...positionedNote,
+            x: timelineNoteX(phraseNote.index, phrase.notes.length),
+            index: phraseNote.index,
+            status:
+              phraseNote.index < currentTargetIndex ? 'completed' : 'future',
+          },
+        ]
       : []
   })
+}
+
+function measureLineXs(phrase: PracticePhrase | null) {
+  if (!phrase) {
+    return []
+  }
+
+  return Array.from(
+    { length: phrase.measureCount - 1 },
+    (_, measureIndex) => {
+      const leftIndex =
+        (measureIndex + 1) * phrase.beatsPerMeasure - 1
+      const rightIndex = leftIndex + 1
+
+      return (
+        timelineNoteX(leftIndex, phrase.notes.length) +
+        timelineNoteX(rightIndex, phrase.notes.length)
+      ) / 2
+    },
+  )
 }
 
 function GrandStaff({
   pressedNotes,
   targetNotes,
-  practiceTimelineNotes,
+  practicePhrase,
   currentTargetIndex,
   noteDisplayMode,
+  practiceNoteNameMode,
 }: GrandStaffProps) {
   const positionedNotes = positionNotes(
     pressedNotes
@@ -249,8 +287,8 @@ function GrandStaff({
       .filter((note): note is PianoNote => note !== undefined),
   )
   const currentTargetX =
-    currentTargetIndex >= 0 && practiceTimelineNotes.length > 0
-      ? timelineNoteX(currentTargetIndex, practiceTimelineNotes.length)
+    practicePhrase && currentTargetIndex >= 0
+      ? timelineNoteX(currentTargetIndex, practicePhrase.notes.length)
       : noteCenterX
 
   const renderedNotes = (['treble', 'bass'] as StaffName[]).flatMap(staff =>
@@ -259,8 +297,8 @@ function GrandStaff({
       currentTargetX,
     ),
   )
-  const renderedTimelineNotes = renderTimelineNotes(
-    practiceTimelineNotes,
+  const renderedPhraseNotes = renderPhraseNotes(
+    practicePhrase,
     currentTargetIndex,
   )
   const renderedCurrentTargetNotes = (['treble', 'bass'] as StaffName[]).flatMap(
@@ -272,9 +310,9 @@ function GrandStaff({
   )
   const ledgerLines = collectLedgerLines(renderedNotes)
   const accidentalPositions = collectAccidentalPositions(renderedNotes)
-  const timelineLedgerLines = collectLedgerLines(renderedTimelineNotes, true)
-  const timelineAccidentalPositions = collectAccidentalPositions(
-    renderedTimelineNotes,
+  const phraseLedgerLines = collectLedgerLines(renderedPhraseNotes, true)
+  const phraseAccidentalPositions = collectAccidentalPositions(
+    renderedPhraseNotes,
     true,
   )
   const currentTargetLedgerLines = collectLedgerLines(
@@ -283,6 +321,14 @@ function GrandStaff({
   const currentTargetAccidentalPositions = collectAccidentalPositions(
     renderedCurrentTargetNotes,
   )
+  const practiceNoteNames = practicePhrase && practiceNoteNameMode !== 'hidden'
+    ? practicePhrase.notes.map(phraseNote => ({
+        phraseNote,
+        label: practiceNoteNameFor(phraseNote.note, practiceNoteNameMode),
+      }))
+    : []
+  const measureLines = measureLineXs(practicePhrase)
+  const practiceNoteNameY = noteY('treble', 8) - 32
 
   return (
     <section className="grand-staff" aria-label="Grand Staff">
@@ -334,6 +380,32 @@ function GrandStaff({
           𝄢
         </text>
 
+        {practiceNoteNames.map(({ phraseNote, label }) => (
+          <text
+            key={`practice-note-name-${phraseNote.id}`}
+            className={`practice-note-name${
+              phraseNote.index === currentTargetIndex
+                ? ' practice-note-name--current'
+                : ''
+            }`}
+            x={timelineNoteX(phraseNote.index, practicePhrase?.notes.length ?? 1)}
+            y={practiceNoteNameY}
+          >
+            {label}
+          </text>
+        ))}
+
+        {measureLines.map((x, index) => (
+          <line
+            key={`practice-measure-line-${index}`}
+            className="practice-measure-line"
+            x1={x}
+            x2={x}
+            y1={noteY('treble', 8) - 16}
+            y2={noteY('bass', 0) + 16}
+          />
+        ))}
+
         {ledgerLines.map(line => (
           <line
             key={`ledger-line-${line.staff}-${line.step}`}
@@ -357,9 +429,9 @@ function GrandStaff({
         ))}
 
         <g className="staff-target" aria-label="Practice target notes">
-          {timelineLedgerLines.map(line => (
+          {phraseLedgerLines.map(line => (
             <line
-              key={`timeline-ledger-line-${line.staff}-${line.step}-${line.x1}`}
+              key={`phrase-ledger-line-${line.staff}-${line.step}-${line.x1}`}
               className="staff-target-ledger-line"
               x1={line.x1}
               x2={line.x2}
@@ -368,9 +440,9 @@ function GrandStaff({
             />
           ))}
 
-          {timelineAccidentalPositions.map(accidental => (
+          {phraseAccidentalPositions.map(accidental => (
             <text
-              key={`timeline-accidental-${accidental.staff}-${accidental.step}-${accidental.x}`}
+              key={`phrase-accidental-${accidental.staff}-${accidental.step}-${accidental.x}`}
               className="staff-target-accidental"
               x={accidental.x}
               y={noteY(accidental.staff, accidental.step) + 6}
@@ -379,10 +451,10 @@ function GrandStaff({
             </text>
           ))}
 
-          {renderedTimelineNotes.map(note => (
+          {renderedPhraseNotes.map(note => (
             <ellipse
-              key={`timeline-note-${note.note.name}-${note.x}`}
-              className="staff-target-note staff-target-note--timeline"
+              key={`phrase-note-${note.note.name}-${note.x}`}
+              className={`staff-target-note staff-target-note--${note.status}`}
               cx={note.x}
               cy={noteY(note.staff, note.staffStep)}
               rx={noteHeadRadiusX}

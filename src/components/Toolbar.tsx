@@ -10,7 +10,10 @@ import type {
   ThemeTokens,
 } from '../theme/theme'
 import type { NoteDisplayMode } from '../music/noteDisplay'
-import type { PracticeSelection } from '../practice/practiceTypes'
+import type {
+  PracticeSelection,
+  PracticeSettings,
+} from '../practice/practiceTypes'
 import PracticePopover from './PracticePopover'
 
 interface ToolbarProps {
@@ -25,7 +28,9 @@ interface ToolbarProps {
   noteDisplayMode: NoteDisplayMode
   onNoteDisplayModeChange: (mode: NoteDisplayMode) => void
   practiceSelection: PracticeSelection
+  practiceSettings: PracticeSettings
   onPracticeSelectionChange: (selection: PracticeSelection) => void
+  onPracticeSettingsChange: (updates: Partial<PracticeSettings>) => void
 }
 
 function Toolbar({
@@ -40,7 +45,9 @@ function Toolbar({
   noteDisplayMode,
   onNoteDisplayModeChange,
   practiceSelection,
+  practiceSettings,
   onPracticeSelectionChange,
+  onPracticeSettingsChange,
 }: ToolbarProps) {
   const [themePopoverOpen, setThemePopoverOpen] = useState(false)
   const [noteDisplayPopoverOpen, setNoteDisplayPopoverOpen] = useState(false)
@@ -127,9 +134,11 @@ function Toolbar({
       <PracticePopover
         isOpen={practicePopoverOpen}
         selection={practiceSelection}
+        settings={practiceSettings}
         anchorRef={practiceButtonRef}
         onClose={() => setPracticePopoverOpen(false)}
         onSelectionChange={onPracticeSelectionChange}
+        onSettingsChange={onPracticeSettingsChange}
       />
     </section>
   )

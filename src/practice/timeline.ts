@@ -3,20 +3,64 @@ import {
   pianoNotes,
   type PianoNote,
 } from '../data/piano'
-import type { PracticeTimeline, PracticeTimelineNote } from './practiceTypes'
+import type {
+  PracticeNotePool,
+  PracticePhrase,
+  PracticeRangePreset,
+  PracticeSettings,
+  PracticeTimelineNote,
+} from './practiceTypes'
 
-const firstPracticeMidiNumber = 48
-const lastPracticeMidiNumber = 72
-const notesPerTimeline = 4
+export const practiceRangeOptions: Array<{
+  value: PracticeRangePreset
+  label: string
+  startMidiNumber: number
+  endMidiNumber: number
+}> = [
+  {
+    value: 'c3-c5',
+    label: 'C3-C5',
+    startMidiNumber: 48,
+    endMidiNumber: 72,
+  },
+  {
+    value: 'c4-c6',
+    label: 'C4-C6',
+    startMidiNumber: 60,
+    endMidiNumber: 84,
+  },
+]
 
-function practiceNotes() {
+const measureCount = 4
+const beatsPerMeasure = 4
+const noteCount = measureCount * beatsPerMeasure
+
+function rangeForPreset(range: PracticeRangePreset) {
+  return practiceRangeOptions.find(option => option.value === range)
+    ?? practiceRangeOptions[0]
+}
+
+function noteMatchesPool(note: PianoNote, pool: PracticeNotePool) {
+  if (pool === 'all') {
+    return true
+  }
+
+  return pool === 'white-only'
+    ? note.type === 'white'
+    : note.type === 'black'
+}
+
+function practiceNotes(settings: PracticeSettings) {
+  const range = rangeForPreset(settings.range)
+
   return pianoNotes.filter(note => {
     const midiNumber = pianoNoteToMidiNumber(note)
 
     return (
       midiNumber !== undefined &&
-      midiNumber >= firstPracticeMidiNumber &&
-      midiNumber <= lastPracticeMidiNumber
+      midiNumber >= range.startMidiNumber &&
+      midiNumber <= range.endMidiNumber &&
+      noteMatchesPool(note, settings.notePool)
     )
   })
 }
@@ -30,14 +74,20 @@ function randomPracticeNote(notes: PianoNote[], random: () => number) {
   return notes[randomIndex]
 }
 
-export function createPracticeTimeline(
-  timelineId: string,
+export function createPracticePhrase(
+  phraseId: string,
+  settings: PracticeSettings,
   random: () => number = Math.random,
-): PracticeTimeline {
-  const availableNotes = practiceNotes()
+): PracticePhrase {
+  const availableNotes = practiceNotes(settings)
+
+  if (availableNotes.length === 0) {
+    throw new Error('Practice settings produced an empty note pool')
+  }
+
   const notes: PracticeTimelineNote[] = Array.from(
-    { length: notesPerTimeline },
-    (_, beatPosition) => {
+    { length: noteCount },
+    (_, index) => {
       const note = randomPracticeNote(availableNotes, random)
       const midiNumber = pianoNoteToMidiNumber(note)
 
@@ -46,17 +96,21 @@ export function createPracticeTimeline(
       }
 
       return {
-        id: `${timelineId}-note-${beatPosition}`,
+        id: `${phraseId}-note-${index}`,
+        index,
         note,
         midiNumber,
-        beatPosition,
+        measureIndex: Math.floor(index / beatsPerMeasure),
+        beatPosition: index % beatsPerMeasure,
       }
     },
   )
 
   return {
-    id: timelineId,
+    id: phraseId,
     timeSignature: '4/4',
+    measureCount,
+    beatsPerMeasure,
     notes,
   }
 }
