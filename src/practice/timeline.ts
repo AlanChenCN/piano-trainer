@@ -18,7 +18,7 @@ export const practiceLowerBoundOptions = pianoNotes
   }))
 
 export const practiceUpperBoundOptions = pianoNotes
-  .filter(note => note.type === 'white' && (note.octave > 4 || note.name === 'C4'))
+  .filter(note => note.type === 'white' && note.octave >= 4)
   .map(note => ({
     value: note.name,
     label: note.name,
