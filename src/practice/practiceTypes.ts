@@ -6,17 +6,18 @@ export type PracticeMode = 'note'
 export type PracticeSelection = 'free-play' | 'note-practice'
 export type PracticeSessionStatus = 'idle' | 'active' | 'completed'
 export type PracticeTaskStatus = 'pending' | 'active' | 'completed' | 'failed'
-export type PracticeRangePreset = 'c3-c5' | 'c4-c6'
 export type PracticeNotePool = 'all' | 'white-only' | 'black-only'
 
 export interface PracticeSettings {
-  range: PracticeRangePreset
+  rangeStart: string
+  rangeEnd: string
   notePool: PracticeNotePool
   noteNameMode: PracticeNoteNameMode
 }
 
 export const defaultPracticeSettings: PracticeSettings = {
-  range: 'c3-c5',
+  rangeStart: 'C3',
+  rangeEnd: 'C5',
   notePool: 'all',
   noteNameMode: 'full',
 }

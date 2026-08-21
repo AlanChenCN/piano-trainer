@@ -6,38 +6,43 @@ import {
 import type {
   PracticeNotePool,
   PracticePhrase,
-  PracticeRangePreset,
   PracticeSettings,
   PracticeTimelineNote,
 } from './practiceTypes'
 
-export const practiceRangeOptions: Array<{
-  value: PracticeRangePreset
+export const practiceLowerBoundOptions = pianoNotes
+  .filter(note => note.type === 'white' && (note.octave < 4 || note.name === 'C4'))
+  .map(note => ({
+    value: note.name,
+    label: note.name,
+  }))
+
+export const practiceUpperBoundOptions = pianoNotes
+  .filter(note => note.type === 'white' && (note.octave > 4 || note.name === 'C4'))
+  .map(note => ({
+    value: note.name,
+    label: note.name,
+  }))
+
+interface PracticeRange {
   label: string
   startMidiNumber: number
   endMidiNumber: number
-}> = [
-  {
-    value: 'c3-c5',
-    label: 'C3-C5',
-    startMidiNumber: 48,
-    endMidiNumber: 72,
-  },
-  {
-    value: 'c4-c6',
-    label: 'C4-C6',
-    startMidiNumber: 60,
-    endMidiNumber: 84,
-  },
-]
+}
 
-const measureCount = 4
-const beatsPerMeasure = 4
-const noteCount = measureCount * beatsPerMeasure
+function rangeForSettings(settings: PracticeSettings): PracticeRange {
+  const startMidiNumber = pianoNoteToMidiNumber(settings.rangeStart)
+  const endMidiNumber = pianoNoteToMidiNumber(settings.rangeEnd)
 
-function rangeForPreset(range: PracticeRangePreset) {
-  return practiceRangeOptions.find(option => option.value === range)
-    ?? practiceRangeOptions[0]
+  if (startMidiNumber === undefined || endMidiNumber === undefined) {
+    throw new Error('Practice settings contain an invalid note range')
+  }
+
+  return {
+    label: `${settings.rangeStart}-${settings.rangeEnd}`,
+    startMidiNumber,
+    endMidiNumber,
+  }
 }
 
 function noteMatchesPool(note: PianoNote, pool: PracticeNotePool) {
@@ -51,7 +56,7 @@ function noteMatchesPool(note: PianoNote, pool: PracticeNotePool) {
 }
 
 function practiceNotes(settings: PracticeSettings) {
-  const range = rangeForPreset(settings.range)
+  const range = rangeForSettings(settings)
 
   return pianoNotes.filter(note => {
     const midiNumber = pianoNoteToMidiNumber(note)
@@ -64,6 +69,14 @@ function practiceNotes(settings: PracticeSettings) {
     )
   })
 }
+
+export function hasPracticeNotes(settings: PracticeSettings) {
+  return practiceNotes(settings).length > 0
+}
+
+const measureCount = 4
+const beatsPerMeasure = 4
+const noteCount = measureCount * beatsPerMeasure
 
 function randomPracticeNote(notes: PianoNote[], random: () => number) {
   const randomIndex = Math.min(

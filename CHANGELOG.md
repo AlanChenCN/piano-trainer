@@ -10,7 +10,7 @@
 - 增加 Future、Current、Completed 三种练习目标状态。
 - Practice 模式下 Pressed Note 与当前目标位置对齐，Free Play 保持原有显示逻辑。
 - 增加 Grand Staff 上方 Hide、C、C4 音名显示模式。
-- 增加 Note Range、Note Pool 和 Note Name Practice Settings。
+- 增加白键上下边界、Note Pool 和 Note Name Practice Settings。
 - 增加仅用于视觉表达的 Measure 分隔线。
 
 ### P6-002：Note Practice Timeline 基础练习模式

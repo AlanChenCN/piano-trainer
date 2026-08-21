@@ -338,7 +338,7 @@ USB MIDI 和 Bluetooth MIDI 均通过 Input Layer 统一驱动 Piano、Grand Sta
 -   Grand Staff 下方独立 Note Info 区域：Off、Letter、Solfege，默认使用 Letter
 -   Practice：Free Play、Note Practice
 -   Note Practice：Grand Staff 内部承载 4 小节、16 音符的静态 Practice Phrase、目标状态和 Cursor 反馈
--   Practice Settings：Note Range、Note Pool、Note Name（Hide、C、C4）
+-   Practice Settings：白键 Lower / Upper Bound、Note Pool、Note Name（Hide、C、C4）
 -   88 键钢琴在 Piano 区域内横向滚动，保持现有琴键尺寸
 -   电脑键盘基准音控制和当前映射范围状态显示
 -   Bluetooth MIDI 独立连接面板和设备状态显示
@@ -921,7 +921,7 @@ Note Display 通过 Grand Staff 下方独立的 Note Info 区域展示当前音�
 -   当前目标通过 `targetNotes` 数组传递，保留未来和弦目标的扩展接口。
 -   Practice 模式下当前 `pressedNotes` 与当前目标的 X 位置对齐；Free Play 继续使用原有实时显示位置。
 -   目标音符支持 Future、Current、Completed 三种视觉状态；小节线只用于视觉分隔，不参与 Cursor、X 坐标或练习判断。
--   Practice Settings 支持固定音域预设、All / White Only / Black Only 音符池，以及 Hide / C / C4 音名显示模式。
+-   Practice Settings 支持白键 Lower / Upper Bound、All / White Only / Black Only 音符池，以及 Hide / C / C4 音名显示模式。
 -   完成一个 Phrase 后生成下一组 Phrase，Cursor 重置为 0，反馈恢复 Ready，且不修改输入、音频和 Piano 行为。
 
 设计边界：

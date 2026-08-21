@@ -74,7 +74,7 @@ Release: v0.4.0-alpha
 - [x] 增加 Future、Current、Completed 三种目标音符视觉状态。
 - [x] Practice 模式下让 Pressed Note 对齐当前目标位置，Free Play 保持原有位置逻辑。
 - [x] 增加 Grand Staff 上方的 Hide、C、C4 音名显示模式。
-- [x] 增加 Note Range、Note Pool 和 Note Name Practice Settings。
+- [x] 增加白键上下边界、Note Pool 和 Note Name Practice Settings。
 - [x] 增加轻量 Measure 分隔线，且不参与 Cursor 或 Practice Logic。
 
 设计边界：

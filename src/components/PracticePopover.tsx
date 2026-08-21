@@ -5,7 +5,10 @@ import {
   type PracticeSettings,
 } from '../practice/practiceTypes'
 import type { PracticeNoteNameMode } from '../music/noteDisplay'
-import { practiceRangeOptions } from '../practice/timeline'
+import {
+  practiceLowerBoundOptions,
+  practiceUpperBoundOptions,
+} from '../practice/timeline'
 import Modal from './Modal'
 
 interface PracticePopoverProps {
@@ -86,23 +89,41 @@ function PracticePopover({
       <section className="practice-settings" aria-label="Practice Settings">
         <h3>Practice Settings</h3>
 
-        <label className="practice-setting-field">
-          <span>Note Range</span>
-          <select
-            value={settings.range}
-            onChange={event =>
-              onSettingsChange({
-                range: event.target.value as PracticeSettings['range'],
-              })
-            }
-          >
-            {practiceRangeOptions.map(range => (
-              <option key={range.value} value={range.value}>
-                {range.label}
-              </option>
-            ))}
-          </select>
-        </label>
+        <div className="practice-range-fields">
+          <label className="practice-setting-field">
+            <span>Lower Bound</span>
+            <select
+              value={settings.rangeStart}
+              aria-label="Practice range lower bound"
+              onChange={event =>
+                onSettingsChange({ rangeStart: event.target.value })
+              }
+            >
+              {practiceLowerBoundOptions.map(option => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="practice-setting-field">
+            <span>Upper Bound</span>
+            <select
+              value={settings.rangeEnd}
+              aria-label="Practice range upper bound"
+              onChange={event =>
+                onSettingsChange({ rangeEnd: event.target.value })
+              }
+            >
+              {practiceUpperBoundOptions.map(option => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
 
         <PracticeSettingOptions
           label="Note Pool"

@@ -10,7 +10,7 @@ import {
   type PracticeSession,
   type PracticeSettings,
 } from './practiceTypes'
-import { createPracticePhrase } from './timeline'
+import { createPracticePhrase, hasPracticeNotes } from './timeline'
 
 export interface PracticeControllerSnapshot {
   selection: PracticeSelection
@@ -72,7 +72,13 @@ export class PracticeController {
     }
 
     const shouldRegeneratePhrase =
-      updates.range !== undefined || updates.notePool !== undefined
+      updates.rangeStart !== undefined ||
+      updates.rangeEnd !== undefined ||
+      updates.notePool !== undefined
+
+    if (shouldRegeneratePhrase && !hasPracticeNotes(settings)) {
+      settings.notePool = 'all'
+    }
 
     if (
       this.snapshot.selection === 'note-practice' &&
