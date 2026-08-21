@@ -5,7 +5,6 @@ import BluetoothMidiPanel from './components/BluetoothMidiPanel'
 import InputPianoDock from './components/InputPianoDock'
 import type { InputConnectionState } from './components/InputDeviceButton'
 import MidiMonitor from './components/MidiMonitor'
-import NoteInfo from './components/NoteInfo'
 import type { NoteDisplayMode } from './music/noteDisplay'
 import StatusBar from './components/StatusBar'
 import Toolbar from './components/Toolbar'
@@ -283,9 +282,8 @@ function App() {
       <main className="main-content">
         <GrandStaff
           pressedNotes={pressedNotes}
+          noteDisplayMode={noteDisplayMode}
         />
-
-        <NoteInfo pressedNotes={pressedNotes} mode={noteDisplayMode} />
 
         <StatusBar
           keyboardBaseNote={keyboardBaseNote}

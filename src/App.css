@@ -188,6 +188,8 @@
 
 .grand-staff {
 
+  position: relative;
+
   display: flex;
 
   align-items: center;
@@ -278,6 +280,14 @@
 
 .note-info {
 
+  position: absolute;
+
+  right: 24px;
+
+  bottom: 14px;
+
+  left: 24px;
+
   display: flex;
 
   align-items: center;
@@ -286,17 +296,13 @@
 
   gap: 10px;
 
-  min-height: 42px;
+  min-height: 28px;
 
-  padding: 8px 16px;
-
-  border: 1px solid color-mix(in srgb, var(--theme-border-color) 58%, transparent);
-
-  border-radius: 8px;
-
-  background: var(--theme-surface-background);
+  padding: 4px 12px;
 
   color: var(--theme-text-color);
+
+  pointer-events: none;
 
 }
 
@@ -304,7 +310,7 @@
 
   color: var(--theme-text-color);
 
-  font-size: 13px;
+  font-size: 12px;
 
   font-weight: 600;
 
@@ -318,7 +324,7 @@
 
   color: var(--theme-note-color);
 
-  font-size: 20px;
+  font-size: 18px;
 
   font-weight: 600;
 

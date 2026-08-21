@@ -3,15 +3,18 @@ import {
   pianoNotes,
   type PianoNote,
 } from '../data/piano'
+import NoteInfo from './NoteInfo'
 import {
   getLedgerLineSteps,
   getStaffNotePosition,
   isSharp,
   type StaffName,
 } from '../data/staff'
+import type { NoteDisplayMode } from '../music/noteDisplay'
 
 interface GrandStaffProps {
   pressedNotes: string[]
+  noteDisplayMode: NoteDisplayMode
 }
 
 interface PositionedNote {
@@ -169,7 +172,7 @@ function collectAccidentalPositions(renderedNotes: RenderedNote[]) {
   return Array.from(accidentalMap.values())
 }
 
-function GrandStaff({ pressedNotes }: GrandStaffProps) {
+function GrandStaff({ pressedNotes, noteDisplayMode }: GrandStaffProps) {
   const positionedNotes: PositionedNote[] = pressedNotes
     .map(noteName => pianoNotes.find(note => note.name === noteName))
     .filter((note): note is PianoNote => note !== undefined)
@@ -277,6 +280,8 @@ function GrandStaff({ pressedNotes }: GrandStaffProps) {
           />
         ))}
       </svg>
+
+      <NoteInfo pressedNotes={pressedNotes} mode={noteDisplayMode} />
     </section>
   )
 }

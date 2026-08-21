@@ -13,16 +13,19 @@ function NoteInfo({ pressedNotes, mode }: NoteInfoProps) {
   const currentNotes = pressedNotes
     .map(noteName => pianoNotes.find(note => note.name === noteName))
     .filter(note => note !== undefined)
-  const values = mode === 'hidden'
-    ? []
-    : currentNotes.map(note => noteDisplayLabel(note, mode))
+
+  if (mode === 'hidden' || currentNotes.length === 0) {
+    return null
+  }
+
+  const values = currentNotes.map(note => noteDisplayLabel(note, mode))
   const label = values.length > 1 ? 'Current Notes:' : 'Current Note:'
 
   return (
     <aside className="note-info" aria-label="Current Note" aria-live="polite">
       <span className="note-info-label">{label}</span>
       <span className="note-info-value">
-        {mode === 'hidden' || values.length === 0 ? '—' : values.join(' · ')}
+        {values.join(' · ')}
       </span>
     </aside>
   )
