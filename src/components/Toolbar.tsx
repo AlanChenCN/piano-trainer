@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import NoteDisplaySettings from './NoteDisplaySettings'
 import ThemePopover, {
   type ConfigurableThemeToken,
 } from './ThemePopover'
@@ -8,6 +9,7 @@ import type {
   ThemeMode,
   ThemeTokens,
 } from '../theme/theme'
+import type { NoteDisplayMode } from '../music/noteDisplay'
 
 interface ToolbarProps {
   themeMode: ThemeMode
@@ -18,6 +20,8 @@ interface ToolbarProps {
   onThemeTokenChange: (token: ConfigurableThemeToken, value: string) => void
   onNoteColorModeChange: (mode: NoteColorMode) => void
   onThemeReset: () => void
+  noteDisplayMode: NoteDisplayMode
+  onNoteDisplayModeChange: (mode: NoteDisplayMode) => void
 }
 
 function Toolbar({
@@ -29,9 +33,13 @@ function Toolbar({
   onThemeTokenChange,
   onNoteColorModeChange,
   onThemeReset,
+  noteDisplayMode,
+  onNoteDisplayModeChange,
 }: ToolbarProps) {
   const [themePopoverOpen, setThemePopoverOpen] = useState(false)
+  const [noteDisplayPopoverOpen, setNoteDisplayPopoverOpen] = useState(false)
   const themeButtonRef = useRef<HTMLButtonElement>(null)
+  const noteDisplayButtonRef = useRef<HTMLButtonElement>(null)
 
   return (
     <section className="toolbar" aria-label="Toolbar">
@@ -46,6 +54,24 @@ function Toolbar({
         <span className="button-label">Theme</span>
         <span className="button-status">
           {activePreset[0].toUpperCase() + activePreset.slice(1)}
+        </span>
+      </button>
+
+      <button
+        ref={noteDisplayButtonRef}
+        className="app-button"
+        type="button"
+        aria-haspopup="dialog"
+        aria-expanded={noteDisplayPopoverOpen}
+        onClick={() => setNoteDisplayPopoverOpen(true)}
+      >
+        <span className="button-label">Display Settings</span>
+        <span className="button-status">
+          {noteDisplayMode === 'hidden'
+            ? 'Off'
+            : noteDisplayMode === 'letter'
+              ? 'Letter'
+              : 'Solfege'}
         </span>
       </button>
 
@@ -71,6 +97,14 @@ function Toolbar({
         onTokenChange={onThemeTokenChange}
         onNoteColorModeChange={onNoteColorModeChange}
         onReset={onThemeReset}
+      />
+
+      <NoteDisplaySettings
+        isOpen={noteDisplayPopoverOpen}
+        mode={noteDisplayMode}
+        anchorRef={noteDisplayButtonRef}
+        onClose={() => setNoteDisplayPopoverOpen(false)}
+        onModeChange={onNoteDisplayModeChange}
       />
     </section>
   )

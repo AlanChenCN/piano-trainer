@@ -72,7 +72,7 @@ export class KeyboardController {
     }
 
     this.activeKeys.set(key, noteName)
-    this.inputLayer.pressNote(noteName)
+    this.inputLayer.pressNote(noteName, { source: 'keyboard' })
   }
 
   private readonly handleKeyUp = (event: KeyboardEvent) => {
@@ -84,7 +84,7 @@ export class KeyboardController {
     }
 
     this.activeKeys.delete(key)
-    this.inputLayer.releaseNote(noteName)
+    this.inputLayer.releaseNote(noteName, { source: 'keyboard' })
   }
 
   private readonly handleWindowBlur = () => {
@@ -93,7 +93,7 @@ export class KeyboardController {
 
   private releaseActiveKeys() {
     for (const noteName of this.activeKeys.values()) {
-      this.inputLayer.releaseNote(noteName)
+      this.inputLayer.releaseNote(noteName, { source: 'keyboard' })
     }
 
     this.activeKeys.clear()

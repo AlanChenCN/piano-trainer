@@ -2,6 +2,20 @@
 
 本文件记录 Piano Trainer 各版本的重要功能与变更。
 
+## [未发布]
+
+### P6-001：Note Event 与基础练习框架
+
+- 增加统一 Note Event Factory，记录音符、MIDI Number、Velocity、时间和输入来源。
+- 保留 `pressedNotes` 作为 Piano / Grand Staff 的实时状态，不用 NoteEvent 替代。
+- 增加 Grand Staff 下方独立 Note Info 区域，支持 Off、Letter、Solfege 显示模式，默认使用 Letter。
+- Key Labels 将旧的 C Notes 迁移为 Letter，并新增 Solfege；默认改为 White Keys。
+- 增加 Note Practice Task、Practice Session 和基于 MIDI Number 的 Practice Evaluator 基础类型。
+
+Technical Debt：
+
+- 多输入源同时持有同一音符时，Input Layer 尚未实现 ownership / reference counting。
+
 ## [v0.4.0-alpha] - P5 阶段发布
 
 ### 阶段汇总

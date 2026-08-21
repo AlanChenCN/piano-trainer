@@ -38,8 +38,11 @@ function labelModeText(labelMode: PianoLabelMode) {
       return 'Hidden'
     case 'white':
       return 'White Keys'
+    case 'letter':
     case 'c':
-      return 'C Notes'
+      return 'Letter'
+    case 'solfege':
+      return 'Solfege'
     default:
       return 'All'
   }

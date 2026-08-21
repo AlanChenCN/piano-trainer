@@ -12,7 +12,7 @@ export class MidiInputController {
   private readonly midiNoteController: MidiNoteController
 
   constructor(inputLayer: InputLayer) {
-    this.midiNoteController = new MidiNoteController(inputLayer)
+    this.midiNoteController = new MidiNoteController(inputLayer, 'usb-midi')
   }
 
   handleMessage = (event: MIDIMessageEvent) => {

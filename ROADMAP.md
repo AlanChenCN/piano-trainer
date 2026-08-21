@@ -26,6 +26,24 @@ v0.4.0-alpha Piano Trainer（P5 阶段完成）
 P5 Complete
 Release: v0.4.0-alpha
 
+## P6-001：Note Event 与基础练习框架
+
+状态：开发中
+
+已完成：
+
+- [x] 建立统一 Note Event Factory，集中管理 NoteEvent 创建、结束和持续时间。
+- [x] 保留 `pressedNotes`，与 NoteEvent 分别承担实时状态和音乐事件职责。
+- [x] 增加 Grand Staff 下方独立 Note Info 区域，支持 Off、Letter、Solfege 显示模式，默认使用 Letter。
+- [x] 将 Key Labels 的 C Notes 兼容迁移为 Letter，并新增 Solfege；默认改为 White Keys。
+- [x] 增加基于 MIDI Number 比较的 Practice Task、Practice Session 和 Practice Evaluator 基础类型。
+
+设计边界：
+
+- 不实现完整 Practice UI、Recording、Playback、Chord Recognition、Scale Analysis 或音乐理论分析。
+- 不修改 `staff.ts`、Grand Staff Pitch Model、Theme System、Browser Sound、MIDI Parser 或 Bluetooth MIDI Parser。
+- 不处理多输入源同音符的 ownership / reference counting 问题。
+
 ## v0.1.0 钢琴核心 ✅
 
 已完成：

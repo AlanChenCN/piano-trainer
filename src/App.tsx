@@ -5,12 +5,21 @@ import BluetoothMidiPanel from './components/BluetoothMidiPanel'
 import InputPianoDock from './components/InputPianoDock'
 import type { InputConnectionState } from './components/InputDeviceButton'
 import MidiMonitor from './components/MidiMonitor'
+import NoteInfo from './components/NoteInfo'
+import type { NoteDisplayMode } from './music/noteDisplay'
 import StatusBar from './components/StatusBar'
 import Toolbar from './components/Toolbar'
 import type { ConfigurableThemeToken } from './components/ThemePopover'
 import { setAudioEnabled, startNote, stopNote } from './audio/sound'
-import { pianoNotes, type PianoLabelMode } from './data/piano'
-import { InputLayer } from './input/inputLayer'
+import {
+  pianoNoteToMidiNumber,
+  pianoNotes,
+  type PianoLabelMode,
+} from './data/piano'
+import {
+  InputLayer,
+  type InputNoteContext,
+} from './input/inputLayer'
 import { KeyboardController } from './input/keyboardController'
 import { MidiInputController } from './input/midiController'
 import { BluetoothMidiController } from './input/bluetoothMidiController'
@@ -29,12 +38,15 @@ import {
   type ThemePreset,
   type ThemeMode,
 } from './theme/theme'
+import { NoteEventFactory } from './music/noteEvent'
 import './App.css'
 
 function App() {
   const [pressedNotes, setPressedNotes] = useState<string[]>([])
   const [soundEnabled, setSoundEnabled] = useState(true)
-  const [labelMode, setLabelMode] = useState<PianoLabelMode>("all")
+  const [labelMode, setLabelMode] = useState<PianoLabelMode>("white")
+  const [noteDisplayMode, setNoteDisplayMode] =
+    useState<NoteDisplayMode>('letter')
   const [midiPanelOpen, setMidiPanelOpen] = useState(false)
   const [midiDeviceName, setMidiDeviceName] = useState<string | null>(null)
   const [midiConnectionState, setMidiConnectionState] =
@@ -65,13 +77,23 @@ function App() {
   const [keyboardBaseNote, setKeyboardBaseNote] = useState<KeyboardBaseNote>(
     defaultKeyboardBaseNote,
   )
+  const noteEventFactory = useMemo(() => new NoteEventFactory(), [])
 
-  const pressNote = useCallback((noteName: string) => {
+  const pressNote = useCallback((
+    noteName: string,
+    context: InputNoteContext = { source: 'mouse' },
+  ) => {
     const note = pianoNotes.find(item => item.name === noteName)
 
     if (!note) {
       return
     }
+
+    noteEventFactory.create({
+      note,
+      source: context.source,
+      velocity: context.velocity,
+    })
 
     setPressedNotes(prev => {
       if (prev.includes(noteName)) {
@@ -82,12 +104,28 @@ function App() {
     })
 
     startNote(note.name, note.frequency)
-  }, [])
+  }, [noteEventFactory])
 
-  const releaseNote = useCallback((noteName: string) => {
+  const releaseNote = useCallback((
+    noteName: string,
+    context: InputNoteContext = { source: 'mouse' },
+  ) => {
+    const note = pianoNotes.find(item => item.name === noteName)
+
+    if (note) {
+      const midiNumber = pianoNoteToMidiNumber(note)
+
+      if (midiNumber !== undefined) {
+        noteEventFactory.close({
+          midiNumber,
+          source: context.source,
+        })
+      }
+    }
+
     setPressedNotes(prev => prev.filter(item => item !== noteName))
     stopNote(noteName)
-  }, [])
+  }, [noteEventFactory])
 
   const inputLayer = useMemo(
     () => new InputLayer({ pressNote, releaseNote }),
@@ -117,6 +155,16 @@ function App() {
   function handleLabelModeChange(mode: PianoLabelMode) {
     setLabelMode(mode)
   }
+
+  const pressMouseNote = useCallback(
+    (noteName: string) => inputLayer.pressNote(noteName, { source: 'mouse' }),
+    [inputLayer],
+  )
+
+  const releaseMouseNote = useCallback(
+    (noteName: string) => inputLayer.releaseNote(noteName, { source: 'mouse' }),
+    [inputLayer],
+  )
 
   const handleThemeModeChange = useCallback(
     (mode: ThemeMode) => {
@@ -180,8 +228,9 @@ function App() {
     return () => {
       midiInputController.reset()
       void bluetoothMidiController.disconnect()
+      noteEventFactory.reset()
     }
-  }, [bluetoothMidiController, midiInputController])
+  }, [bluetoothMidiController, midiInputController, noteEventFactory])
 
   const handleMidiConnectionChange = useCallback(
     (deviceName: string | null) => {
@@ -227,10 +276,16 @@ function App() {
         onThemeTokenChange={handleThemeTokenChange}
         onNoteColorModeChange={handleNoteColorModeChange}
         onThemeReset={handleThemeReset}
+        noteDisplayMode={noteDisplayMode}
+        onNoteDisplayModeChange={setNoteDisplayMode}
       />
 
       <main className="main-content">
-        <GrandStaff pressedNotes={pressedNotes} />
+        <GrandStaff
+          pressedNotes={pressedNotes}
+        />
+
+        <NoteInfo pressedNotes={pressedNotes} mode={noteDisplayMode} />
 
         <StatusBar
           keyboardBaseNote={keyboardBaseNote}
@@ -245,8 +300,8 @@ function App() {
         onLabelModeChange={handleLabelModeChange}
         soundEnabled={soundEnabled}
         onSoundChange={handleSoundChange}
-        onPress={inputLayer.pressNote}
-        onRelease={inputLayer.releaseNote}
+        onPress={pressMouseNote}
+        onRelease={releaseMouseNote}
         keyboardBaseNote={keyboardBaseNote}
         onKeyboardBaseNoteChange={setKeyboardBaseNote}
         midiButtonRef={midiButtonRef}

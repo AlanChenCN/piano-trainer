@@ -276,6 +276,58 @@
 
 }
 
+.note-info {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 10px;
+
+  min-height: 42px;
+
+  padding: 8px 16px;
+
+  border: 1px solid color-mix(in srgb, var(--theme-border-color) 58%, transparent);
+
+  border-radius: 8px;
+
+  background: var(--theme-surface-background);
+
+  color: var(--theme-text-color);
+
+}
+
+.note-info-label {
+
+  color: var(--theme-text-color);
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+}
+
+.note-info-value {
+
+  min-height: 1.3em;
+
+  overflow: hidden;
+
+  color: var(--theme-note-color);
+
+  font-size: 20px;
+
+  font-weight: 600;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+
+}
+
 .status-bar {
 
   width: 100%;

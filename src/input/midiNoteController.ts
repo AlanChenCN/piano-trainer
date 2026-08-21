@@ -1,5 +1,6 @@
 import { midiNumberToPianoNote } from '../data/piano'
 import type { MidiNoteMessage } from '../midi/midiMessage'
+import type { NoteEventSource } from '../music/noteEvent'
 import { InputLayer } from './inputLayer'
 
 /**
@@ -8,9 +9,11 @@ import { InputLayer } from './inputLayer'
 export class MidiNoteController {
   private readonly activeNotes = new Map<number, string>()
   private readonly inputLayer: InputLayer
+  private readonly source: NoteEventSource
 
-  constructor(inputLayer: InputLayer) {
+  constructor(inputLayer: InputLayer, source: NoteEventSource) {
     this.inputLayer = inputLayer
+    this.source = source
   }
 
   handleMessage = (message: MidiNoteMessage) => {
@@ -26,7 +29,10 @@ export class MidiNoteController {
       }
 
       this.activeNotes.set(message.noteNumber, note.name)
-      this.inputLayer.pressNote(note.name)
+      this.inputLayer.pressNote(note.name, {
+        source: this.source,
+        velocity: message.velocity,
+      })
       return
     }
 
@@ -37,12 +43,12 @@ export class MidiNoteController {
     }
 
     this.activeNotes.delete(message.noteNumber)
-    this.inputLayer.releaseNote(activeNoteName)
+    this.inputLayer.releaseNote(activeNoteName, { source: this.source })
   }
 
   reset = () => {
     for (const noteName of this.activeNotes.values()) {
-      this.inputLayer.releaseNote(noteName)
+      this.inputLayer.releaseNote(noteName, { source: this.source })
     }
 
     this.activeNotes.clear()

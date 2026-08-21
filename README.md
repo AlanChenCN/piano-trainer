@@ -26,8 +26,10 @@ A browser-based piano practice tool built with React and TypeScript.
   包含工具栏、Input & Piano Dock 和状态栏的应用布局
 - 🎼 Complete Grand Staff with treble/bass staves for the full 88-key range<br>
   支持完整 88 键音域的高音谱表与低音谱表
-- 🏷️ Four keyboard label display modes<br>
-  四种琴键音名显示模式
+- 🏷️ Five keyboard label display modes<br>
+  五种琴键音名显示模式：Hidden、White Keys、Letter、Solfege、All
+- 🎼 Independent Note Info area below Grand Staff with Off, Letter, and Solfege modes<br>
+  Grand Staff 下方提供独立 Note Info 区域，支持 Off、Letter 和 Solfege 显示模式
 - 🎼 White and black key support<br>
   支持白键和黑键
 - 🎶 Multi-note playback<br>

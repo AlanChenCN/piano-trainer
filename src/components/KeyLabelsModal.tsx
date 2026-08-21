@@ -13,7 +13,8 @@ interface KeyLabelsModalProps {
 const labelModes: Array<{ value: PianoLabelMode; label: string }> = [
   { value: 'hidden', label: 'Hidden' },
   { value: 'white', label: 'White Keys' },
-  { value: 'c', label: 'C Notes' },
+  { value: 'letter', label: 'Letter' },
+  { value: 'solfege', label: 'Solfege' },
   { value: 'all', label: 'All' },
 ]
 
@@ -47,8 +48,14 @@ function KeyLabelsModal({
             key={mode.value}
             className="app-button app-button--compact modal-option-button"
             type="button"
-            aria-pressed={labelMode === mode.value}
-            data-active={labelMode === mode.value}
+            aria-pressed={
+              labelMode === mode.value ||
+              (mode.value === 'letter' && labelMode === 'c')
+            }
+            data-active={
+              labelMode === mode.value ||
+              (mode.value === 'letter' && labelMode === 'c')
+            }
             onClick={() => handleModeChange(mode.value)}
           >
             {mode.label}

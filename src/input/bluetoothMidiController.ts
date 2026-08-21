@@ -15,7 +15,10 @@ export class BluetoothMidiController {
   private onConnectionChange: BluetoothConnectionChangeHandler | null = null
 
   constructor(inputLayer: InputLayer) {
-    this.midiNoteController = new MidiNoteController(inputLayer)
+    this.midiNoteController = new MidiNoteController(
+      inputLayer,
+      'bluetooth-midi',
+    )
   }
 
   connect = async (onConnectionChange: BluetoothConnectionChangeHandler) => {

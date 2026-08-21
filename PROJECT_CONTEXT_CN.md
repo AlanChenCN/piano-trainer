@@ -34,6 +34,7 @@ P5-001（主页面布局重构）已完成。
 P5-002（完整 Grand Staff）已完成。
 P5-003（主界面交互布局重构）已完成。
 P5-004（主题系统与乐谱视觉重设计）已完成。
+P6-001（Note Event 与基础练习框架）开发中。
 
 v0.1.0 已完成：
 
@@ -122,6 +123,10 @@ USB MIDI 和 Bluetooth MIDI 均通过 Input Layer 统一驱动 Piano、Grand Sta
     │   ├── Toolbar.tsx
     │   ├── ThemePopover.tsx
     │   │   Theme Token 预设、自定义颜色和主题模式选择
+    │   ├── NoteDisplaySettings.tsx
+    │   │   Note Display 模式选择
+    │   ├── NoteInfo.tsx
+    │   │   Grand Staff 下方的当前音符辅助信息区域
     │   ├── Modal.tsx
     │   │   通用锚定 Popover、Escape、外部点击和背景滚动锁定
     │   ├── KeyLabelsModal.tsx
@@ -183,6 +188,18 @@ USB MIDI 和 Bluetooth MIDI 均通过 Input Layer 统一驱动 Piano、Grand Sta
     ├── theme/
     │   └── theme.ts
     │       Theme Mode、Theme Token、Preset 和语义颜色派生逻辑
+
+    ├── music/
+    │   ├── noteEvent.ts
+    │   │   NoteEvent 数据模型和统一生命周期 Factory
+    │   └── noteDisplay.ts
+    │       Letter、Solfege 和 Piano Key Label 显示格式化
+
+    ├── practice/
+    │   ├── practiceTypes.ts
+    │   │   Practice Session、Task 和 Result 基础类型
+    │   └── practiceEvaluator.ts
+    │       基于 MIDI Number 的 Note Practice 比较
 
     ├── App.tsx
     │   主应用逻辑
@@ -288,7 +305,8 @@ USB MIDI 和 Bluetooth MIDI 均通过 Input Layer 统一驱动 Piano、Grand Sta
 -   Header、Toolbar、Grand Staff、Piano、Status Bar
 -   高音谱表实时显示当前按下的音符
 -   A0-C8 完整 88 键钢琴
--   键盘音名显示模式：隐藏、仅白键、仅 C 音、全部
+-   键盘音名显示模式：Hidden、White Keys、Letter、Solfege、All
+-   Grand Staff 下方独立 Note Info 区域：Off、Letter、Solfege，默认使用 Letter
 -   88 键钢琴在 Piano 区域内横向滚动，保持现有琴键尺寸
 -   电脑键盘基准音控制和当前映射范围状态显示
 -   Bluetooth MIDI 独立连接面板和设备状态显示
@@ -783,6 +801,41 @@ Sustain Pedal 或完整 Velocity 处理。
 
 ------------------------------------------------------------------------
 
+## P6-001 Note Event 与基础练习框架
+
+状态：开发中
+
+当前数据流：
+
+    Keyboard、Mouse、USB MIDI、Bluetooth MIDI
+                    ↓
+                Input Layer
+                    ↓
+          pressedNotes + Note Event Factory
+                    ↓
+          Visualization / Practice
+
+其中，Grand Staff 只负责 Clef、Staff Lines、Notes、Ledger Lines 和 Accidentals。
+Note Display 通过 Grand Staff 下方独立的 Note Info 区域展示当前音符，不直接绘制在谱面音符附近。
+
+已完成：
+
+-   `src/music/noteEvent.ts` 提供统一 `NoteEvent` 模型和 Factory，集中负责创建、结束和持续时间计算。
+-   `NoteEvent` 包含 note、MIDI Number、可选 Velocity、开始时间、结束时间、持续时间和输入来源。
+-   Keyboard、Mouse、USB MIDI、Bluetooth MIDI 只提供 Raw Note Message，不分别维护 NoteEvent 生命周期。
+-   `pressedNotes` 继续负责 Piano Highlight 和 Grand Staff 实时显示；NoteEvent 不替代当前状态。
+-   `Note Display Mode` 统一为 `hidden`、`letter`、`solfege`，通过 Grand Staff 下方 Note Info 区域展示，默认使用 Letter。
+-   Key Labels 将旧的 `C Notes` 兼容迁移为 `Letter`，并增加 `Solfege`；默认改为 `White Keys`。
+-   `PracticeTask`、`PracticeSession` 和 `PracticeResult` 已建立，`PracticeEvaluator` 使用 MIDI Number 比较音符。
+
+设计边界：
+
+-   不实现完整 Practice UI、Recording、Playback、Chord Recognition、Scale Analysis、Rhythm Detection 或 Music Theory Analysis。
+-   不修改 `staff.ts`、Grand Staff Pitch Model、Theme System、Browser Sound、MIDI Parser 或 BLE MIDI Parser。
+-   不处理多输入源同时持有同一音符时的 ownership / reference counting。
+
+------------------------------------------------------------------------
+
 # 8. 后续规划
 
 ## 练习模式
@@ -840,6 +893,7 @@ Sustain Pedal 或完整 Velocity 处理。
     v0.4.0-alpha 钢琴训练工具
     第 3.1 阶段、第 3.2 阶段、P3-003、P4-001、P4-002、P4-003、P4-004、P4-005、P5-001、P5-002、P5-003、P5-004 已完成
     Release: v0.4.0-alpha
+    当前开发：P6-001 Note Event 与基础练习框架
 
 最新稳定版本：
 

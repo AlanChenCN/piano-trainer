@@ -2,30 +2,14 @@ import PianoKey from './PianoKey'
 import {
   pianoNotes,
   type PianoLabelMode,
-  type PianoNote,
 } from '../data/piano'
+import { pianoLabelFor } from '../music/noteDisplay'
 
 interface PianoProps {
   pressedNotes: string[]
   labelMode: PianoLabelMode
   onPress: (noteName: string) => void
   onRelease: (noteName: string) => void
-}
-
-function displayLabelFor(note: PianoNote, labelMode: PianoLabelMode) {
-  if (labelMode === "hidden") {
-    return ""
-  }
-
-  if (labelMode === "white") {
-    return note.type === "white" ? note.name : ""
-  }
-
-  if (labelMode === "c") {
-    return note.pitchClass === "C" ? note.name : ""
-  }
-
-  return note.name
 }
 
 function Piano({
@@ -45,7 +29,7 @@ function Piano({
             <PianoKey
               key={note.name}
               note={note.name}
-              displayLabel={displayLabelFor(note, labelMode)}
+              displayLabel={pianoLabelFor(note, labelMode)}
               type={note.type}
               position={note.position}
               pressed={pressedNotes.includes(note.name)}
@@ -60,7 +44,7 @@ function Piano({
             <PianoKey
               key={note.name}
               note={note.name}
-              displayLabel={displayLabelFor(note, labelMode)}
+              displayLabel={pianoLabelFor(note, labelMode)}
               type={note.type}
               position={note.position}
               pressed={pressedNotes.includes(note.name)}

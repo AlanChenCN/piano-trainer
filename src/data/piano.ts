@@ -12,7 +12,14 @@ export type PitchClass =
   | "A#"
   | "B"
 
-export type PianoLabelMode = "hidden" | "white" | "c" | "all"
+export type PianoLabelMode =
+  | "hidden"
+  | "white"
+  | "letter"
+  | "solfege"
+  | "all"
+  /** @deprecated Kept as a compatibility alias for the former C Notes mode. */
+  | "c"
 
 export interface PianoNote {
   /** Full note name, for example A0 or C#4. */
