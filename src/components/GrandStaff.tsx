@@ -11,10 +11,13 @@ import {
   type StaffName,
 } from '../data/staff'
 import type { NoteDisplayMode } from '../music/noteDisplay'
+import type { PracticeTimelineNote } from '../practice/practiceTypes'
 
 interface GrandStaffProps {
   pressedNotes: string[]
   targetNotes: PianoNote[]
+  practiceTimelineNotes: PracticeTimelineNote[]
+  currentTargetIndex: number
   noteDisplayMode: NoteDisplayMode
 }
 
@@ -72,7 +75,10 @@ function noteY(staff: StaffName, step: number) {
   return staffBottomY[staff] - step * stepHeight
 }
 
-function layoutStaffNotes(notes: PositionedNote[]): RenderedNote[] {
+function layoutStaffNotes(
+  notes: PositionedNote[],
+  x = noteCenterX,
+): RenderedNote[] {
   const sortedNotes = [...notes].sort(
     (left, right) => left.staffStep - right.staffStep || left.midiNumber - right.midiNumber,
   )
@@ -90,7 +96,7 @@ function layoutStaffNotes(notes: PositionedNote[]): RenderedNote[] {
 
       renderedNotes.push({
         ...positionedNote,
-        x: noteCenterX + offset,
+        x: x + offset,
       })
     })
 
@@ -112,7 +118,10 @@ function layoutStaffNotes(notes: PositionedNote[]): RenderedNote[] {
   return renderedNotes
 }
 
-function collectLedgerLines(renderedNotes: RenderedNote[]): LedgerLine[] {
+function collectLedgerLines(
+  renderedNotes: RenderedNote[],
+  separateByX = false,
+): LedgerLine[] {
   const ledgerLineMap = new Map<
     string,
     { staff: StaffName; step: number; xPositions: number[] }
@@ -120,7 +129,9 @@ function collectLedgerLines(renderedNotes: RenderedNote[]): LedgerLine[] {
 
   renderedNotes.forEach(note => {
     getLedgerLineSteps(note.staffStep).forEach(step => {
-      const key = `${note.staff}-${step}`
+      const key = separateByX
+        ? `${note.staff}-${step}-${note.x}`
+        : `${note.staff}-${step}`
       const existingLine = ledgerLineMap.get(key)
 
       if (existingLine) {
@@ -143,7 +154,10 @@ function collectLedgerLines(renderedNotes: RenderedNote[]): LedgerLine[] {
   }))
 }
 
-function collectAccidentalPositions(renderedNotes: RenderedNote[]) {
+function collectAccidentalPositions(
+  renderedNotes: RenderedNote[],
+  separateByX = false,
+) {
   const accidentalMap = new Map<string, { staff: StaffName; step: number; x: number }>()
 
   renderedNotes.forEach(note => {
@@ -151,7 +165,9 @@ function collectAccidentalPositions(renderedNotes: RenderedNote[]) {
       return
     }
 
-    const key = `${note.staff}-${note.staffStep}`
+    const key = separateByX
+      ? `${note.staff}-${note.staffStep}-${note.x}`
+      : `${note.staff}-${note.staffStep}`
 
     if (accidentalMap.has(key)) {
       return
@@ -160,7 +176,8 @@ function collectAccidentalPositions(renderedNotes: RenderedNote[]) {
     const sameStepNotes = renderedNotes.filter(
       otherNote =>
         otherNote.staff === note.staff &&
-        otherNote.staffStep === note.staffStep,
+        otherNote.staffStep === note.staffStep &&
+        (!separateByX || otherNote.x === note.x),
     )
 
     accidentalMap.set(key, {
@@ -191,9 +208,39 @@ function positionNotes(notes: PianoNote[]): PositionedNote[] {
     .filter((note): note is PositionedNote => note !== undefined)
 }
 
+function timelineNoteX(index: number, total: number) {
+  const timelineLeft = staffLeft + 180
+  const timelineRight = staffRight - 80
+
+  if (total <= 1) {
+    return noteCenterX
+  }
+
+  return timelineLeft + ((timelineRight - timelineLeft) * index) / (total - 1)
+}
+
+function renderTimelineNotes(
+  timelineNotes: PracticeTimelineNote[],
+  currentTargetIndex: number,
+) {
+  return timelineNotes.flatMap((timelineNote, index) => {
+    if (index === currentTargetIndex) {
+      return []
+    }
+
+    const positionedNote = positionNotes([timelineNote.note])[0]
+
+    return positionedNote
+      ? [{ ...positionedNote, x: timelineNoteX(index, timelineNotes.length) }]
+      : []
+  })
+}
+
 function GrandStaff({
   pressedNotes,
   targetNotes,
+  practiceTimelineNotes,
+  currentTargetIndex,
   noteDisplayMode,
 }: GrandStaffProps) {
   const positionedNotes = positionNotes(
@@ -201,22 +248,40 @@ function GrandStaff({
       .map(noteName => pianoNotes.find(note => note.name === noteName))
       .filter((note): note is PianoNote => note !== undefined),
   )
-  const positionedTargetNotes = positionNotes(targetNotes)
+  const currentTargetX =
+    currentTargetIndex >= 0 && practiceTimelineNotes.length > 0
+      ? timelineNoteX(currentTargetIndex, practiceTimelineNotes.length)
+      : noteCenterX
 
   const renderedNotes = (['treble', 'bass'] as StaffName[]).flatMap(staff =>
-    layoutStaffNotes(positionedNotes.filter(note => note.staff === staff)),
+    layoutStaffNotes(
+      positionedNotes.filter(note => note.staff === staff),
+      currentTargetX,
+    ),
   )
-  const renderedTargetNotes = (['treble', 'bass'] as StaffName[]).flatMap(
+  const renderedTimelineNotes = renderTimelineNotes(
+    practiceTimelineNotes,
+    currentTargetIndex,
+  )
+  const renderedCurrentTargetNotes = (['treble', 'bass'] as StaffName[]).flatMap(
     staff =>
       layoutStaffNotes(
-        positionedTargetNotes.filter(note => note.staff === staff),
+        positionNotes(targetNotes).filter(note => note.staff === staff),
+        currentTargetX,
       ),
   )
   const ledgerLines = collectLedgerLines(renderedNotes)
   const accidentalPositions = collectAccidentalPositions(renderedNotes)
-  const targetLedgerLines = collectLedgerLines(renderedTargetNotes)
-  const targetAccidentalPositions = collectAccidentalPositions(
-    renderedTargetNotes,
+  const timelineLedgerLines = collectLedgerLines(renderedTimelineNotes, true)
+  const timelineAccidentalPositions = collectAccidentalPositions(
+    renderedTimelineNotes,
+    true,
+  )
+  const currentTargetLedgerLines = collectLedgerLines(
+    renderedCurrentTargetNotes,
+  )
+  const currentTargetAccidentalPositions = collectAccidentalPositions(
+    renderedCurrentTargetNotes,
   )
 
   return (
@@ -292,9 +357,9 @@ function GrandStaff({
         ))}
 
         <g className="staff-target" aria-label="Practice target notes">
-          {targetLedgerLines.map(line => (
+          {timelineLedgerLines.map(line => (
             <line
-              key={`target-ledger-line-${line.staff}-${line.step}`}
+              key={`timeline-ledger-line-${line.staff}-${line.step}-${line.x1}`}
               className="staff-target-ledger-line"
               x1={line.x1}
               x2={line.x2}
@@ -303,9 +368,9 @@ function GrandStaff({
             />
           ))}
 
-          {targetAccidentalPositions.map(accidental => (
+          {timelineAccidentalPositions.map(accidental => (
             <text
-              key={`target-accidental-${accidental.staff}-${accidental.step}`}
+              key={`timeline-accidental-${accidental.staff}-${accidental.step}-${accidental.x}`}
               className="staff-target-accidental"
               x={accidental.x}
               y={noteY(accidental.staff, accidental.step) + 6}
@@ -314,10 +379,43 @@ function GrandStaff({
             </text>
           ))}
 
-          {renderedTargetNotes.map(note => (
+          {renderedTimelineNotes.map(note => (
             <ellipse
-              key={`target-note-${note.note.name}`}
-              className="staff-target-note"
+              key={`timeline-note-${note.note.name}-${note.x}`}
+              className="staff-target-note staff-target-note--timeline"
+              cx={note.x}
+              cy={noteY(note.staff, note.staffStep)}
+              rx={noteHeadRadiusX}
+              ry={noteHeadRadiusY}
+            />
+          ))}
+
+          {currentTargetLedgerLines.map(line => (
+            <line
+              key={`current-target-ledger-line-${line.staff}-${line.step}`}
+              className="staff-target-ledger-line staff-target-ledger-line--current"
+              x1={line.x1}
+              x2={line.x2}
+              y1={noteY(line.staff, line.step)}
+              y2={noteY(line.staff, line.step)}
+            />
+          ))}
+
+          {currentTargetAccidentalPositions.map(accidental => (
+            <text
+              key={`current-target-accidental-${accidental.staff}-${accidental.step}`}
+              className="staff-target-accidental staff-target-accidental--current"
+              x={accidental.x}
+              y={noteY(accidental.staff, accidental.step) + 6}
+            >
+              ♯
+            </text>
+          ))}
+
+          {renderedCurrentTargetNotes.map(note => (
+            <ellipse
+              key={`current-target-note-${note.note.name}`}
+              className="staff-target-note staff-target-note--current"
               cx={note.x}
               cy={noteY(note.staff, note.staffStep)}
               rx={noteHeadRadiusX}

@@ -12,7 +12,6 @@ import BluetoothMidiPanel from './components/BluetoothMidiPanel'
 import InputPianoDock from './components/InputPianoDock'
 import type { InputConnectionState } from './components/InputDeviceButton'
 import MidiMonitor from './components/MidiMonitor'
-import PracticePanel from './components/PracticePanel'
 import type { NoteDisplayMode } from './music/noteDisplay'
 import StatusBar from './components/StatusBar'
 import Toolbar from './components/Toolbar'
@@ -312,15 +311,14 @@ function App() {
           targetNotes={
             practiceSnapshot.session?.currentTask?.targetNotes ?? []
           }
+          practiceTimelineNotes={
+            practiceSnapshot.session?.timeline?.notes ?? []
+          }
+          currentTargetIndex={
+            practiceSnapshot.session?.cursor.noteIndex ?? -1
+          }
           noteDisplayMode={noteDisplayMode}
         />
-
-        {practiceSnapshot.session && (
-          <PracticePanel
-            session={practiceSnapshot.session}
-            lastResult={practiceSnapshot.lastResult}
-          />
-        )}
 
         <StatusBar
           keyboardBaseNote={keyboardBaseNote}

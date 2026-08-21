@@ -150,10 +150,6 @@ USB MIDI 和 Bluetooth MIDI 均通过 Input Layer 统一驱动 Piano、Grand Sta
     │   │   Grand Staff 下方的当前音符辅助信息区域
     │   ├── PracticePopover.tsx
     │   │   Free Play / Note Practice 模式选择
-    │   ├── PracticePanel.tsx
-    │   │   Note Practice 目标、反馈和 Timeline 区域
-    │   ├── PracticeTimeline.tsx
-    │   │   静态 4/4 练习时间轴和 Cursor 显示
     │   ├── Modal.tsx
     │   │   通用锚定 Popover、Escape、外部点击和背景滚动锁定
     │   ├── KeyLabelsModal.tsx
@@ -165,6 +161,7 @@ USB MIDI 和 Bluetooth MIDI 均通过 Input Layer 统一驱动 Piano、Grand Sta
     │   ├── InputDeviceButton.tsx
     │   │   USB MIDI、Bluetooth MIDI 紧凑状态按钮
     │   ├── GrandStaff.tsx
+    │   │   Grand Staff 乐谱和 Note Practice 静态目标时间轴
     │   ├── Piano.tsx
     │   ├── StatusBar.tsx
     │   │   状态栏组件
@@ -339,7 +336,7 @@ USB MIDI 和 Bluetooth MIDI 均通过 Input Layer 统一驱动 Piano、Grand Sta
 -   键盘音名显示模式：Hidden、White Keys、Letter、Solfege、All
 -   Grand Staff 下方独立 Note Info 区域：Off、Letter、Solfege，默认使用 Letter
 -   Practice：Free Play、Note Practice
--   Note Practice：C3-C5、固定 4/4 静态 Timeline、目标音符和 Cursor 反馈
+-   Note Practice：Grand Staff 内部承载 C3-C5、固定 4/4 静态 Timeline、目标音符和 Cursor 反馈
 -   88 键钢琴在 Piano 区域内横向滚动，保持现有琴键尺寸
 -   电脑键盘基准音控制和当前映射范围状态显示
 -   Bluetooth MIDI 独立连接面板和设备状态显示
@@ -875,9 +872,9 @@ Note Display 通过 Grand Staff 下方独立的 Note Info 区域展示当前音�
 
 当前流程：
 
-    Practice Timeline
+    Practice Timeline（位于 Grand Staff 内部）
             ↓
-    Grand Staff Target Note
+    当前目标位置
             ↓
     NoteEvent
             ↓
@@ -892,7 +889,8 @@ Note Display 通过 Grand Staff 下方独立的 Note Info 区域展示当前音�
 -   `PracticeTimelineNote` 包含稳定 `id`、Note、MIDI Number、Beat Position 和可选 Duration。
 -   Timeline 固定为 4/4、4 个 Beat、每个 Beat 一个 Note，音域为 C3-C5。
 -   `PracticeController` 只接收 `NoteEvent`，不感知 Keyboard、Mouse、USB MIDI 或 Bluetooth MIDI。
--   Grand Staff 通过 `targetNotes` 接收练习目标，目标音符与 `pressedNotes` 保持独立。
+-   Grand Staff 通过 `targetNotes` 和 Timeline Note 接收练习目标，四个目标音符按 Beat 横向排列。
+-   当前用户输入的 `pressedNotes` 始终对齐当前目标位置，并与目标音符保持独立。
 -   正确输入推进 Cursor，错误输入保持当前目标并提供反馈。
 
 设计边界：

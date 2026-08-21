@@ -53,7 +53,7 @@ Release: v0.4.0-alpha
 - [x] 增加 Free Play / Note Practice 模式切换入口。
 - [x] 建立 C3-C5 音域的静态 4/4 Practice Timeline，每个 Beat 一个 Note。
 - [x] 增加稳定的 PracticeTimelineNote ID 和 Cursor。
-- [x] 在 Grand Staff 上独立显示练习目标音符，并保持目标音符与实际按下音符分离。
+- [x] 让 Grand Staff 直接承载横向静态练习时间轴，并保持目标音符与实际按下音符分离。
 - [x] 通过 NoteEvent 和 PracticeController 判断正确输入并推进 Cursor。
 - [x] 正确输入推进下一个目标，错误输入保持当前目标并提供反馈。
 

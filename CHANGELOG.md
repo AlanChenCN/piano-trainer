@@ -10,7 +10,7 @@
 - 增加 C3-C5 音域、固定 4/4、每拍一个音符的静态 Practice Timeline。
 - 增加稳定的 Timeline Note ID、Cursor 和基础目标音符反馈。
 - 通过 NoteEvent 和 PracticeController 判断正确输入并推进练习目标。
-- Grand Staff 目标音符与当前实际按下音符保持独立。
+- Grand Staff 直接承载横向静态目标音符序列，当前实际按下音符与当前目标位置对齐并保持数据独立。
 - 不包含和弦、节奏判断、动态滚动、Recording 或 Playback。
 
 ### P6-001：Note Event 与基础练习框架
