@@ -10,6 +10,8 @@ import type {
   ThemeTokens,
 } from '../theme/theme'
 import type { NoteDisplayMode } from '../music/noteDisplay'
+import type { PracticeSelection } from '../practice/practiceTypes'
+import PracticePopover from './PracticePopover'
 
 interface ToolbarProps {
   themeMode: ThemeMode
@@ -22,6 +24,8 @@ interface ToolbarProps {
   onThemeReset: () => void
   noteDisplayMode: NoteDisplayMode
   onNoteDisplayModeChange: (mode: NoteDisplayMode) => void
+  practiceSelection: PracticeSelection
+  onPracticeSelectionChange: (selection: PracticeSelection) => void
 }
 
 function Toolbar({
@@ -35,11 +39,15 @@ function Toolbar({
   onThemeReset,
   noteDisplayMode,
   onNoteDisplayModeChange,
+  practiceSelection,
+  onPracticeSelectionChange,
 }: ToolbarProps) {
   const [themePopoverOpen, setThemePopoverOpen] = useState(false)
   const [noteDisplayPopoverOpen, setNoteDisplayPopoverOpen] = useState(false)
+  const [practicePopoverOpen, setPracticePopoverOpen] = useState(false)
   const themeButtonRef = useRef<HTMLButtonElement>(null)
   const noteDisplayButtonRef = useRef<HTMLButtonElement>(null)
+  const practiceButtonRef = useRef<HTMLButtonElement>(null)
 
   return (
     <section className="toolbar" aria-label="Toolbar">
@@ -75,9 +83,18 @@ function Toolbar({
         </span>
       </button>
 
-      <button className="app-button" type="button" disabled>
+      <button
+        ref={practiceButtonRef}
+        className="app-button"
+        type="button"
+        aria-haspopup="dialog"
+        aria-expanded={practicePopoverOpen}
+        onClick={() => setPracticePopoverOpen(true)}
+      >
         <span className="button-label">Practice</span>
-        <span className="button-status">Disabled</span>
+        <span className="button-status">
+          {practiceSelection === 'note-practice' ? 'Note Practice' : 'Free Play'}
+        </span>
       </button>
 
       <button className="app-button" type="button" disabled>
@@ -105,6 +122,14 @@ function Toolbar({
         anchorRef={noteDisplayButtonRef}
         onClose={() => setNoteDisplayPopoverOpen(false)}
         onModeChange={onNoteDisplayModeChange}
+      />
+
+      <PracticePopover
+        isOpen={practicePopoverOpen}
+        selection={practiceSelection}
+        anchorRef={practiceButtonRef}
+        onClose={() => setPracticePopoverOpen(false)}
+        onSelectionChange={onPracticeSelectionChange}
       />
     </section>
   )

@@ -30,6 +30,8 @@ A browser-based piano practice tool built with React and TypeScript.
   五种琴键音名显示模式：Hidden、White Keys、Letter、Solfege、All
 - 🎼 Independent Note Info area below Grand Staff with Off, Letter, and Solfege modes<br>
   Grand Staff 下方提供独立 Note Info 区域，支持 Off、Letter 和 Solfege 显示模式
+- 🎯 Basic Note Practice with a static 4/4 timeline for `C3-C5`<br>
+  支持 C3-C5 音域的基础单音练习和静态 4/4 时间轴
 - 🎼 White and black key support<br>
   支持白键和黑键
 - 🎶 Multi-note playback<br>

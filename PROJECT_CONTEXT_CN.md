@@ -35,6 +35,7 @@ P5-002（完整 Grand Staff）已完成。
 P5-003（主界面交互布局重构）已完成。
 P5-004（主题系统与乐谱视觉重设计）已完成。
 P6-001（Note Event 与基础练习框架）开发中。
+P6-002（Note Practice Timeline 基础练习模式）开发中，待 Product 验收。
 
 v0.1.0 已完成：
 
@@ -147,6 +148,12 @@ USB MIDI 和 Bluetooth MIDI 均通过 Input Layer 统一驱动 Piano、Grand Sta
     │   │   Note Display 模式选择
     │   ├── NoteInfo.tsx
     │   │   Grand Staff 下方的当前音符辅助信息区域
+    │   ├── PracticePopover.tsx
+    │   │   Free Play / Note Practice 模式选择
+    │   ├── PracticePanel.tsx
+    │   │   Note Practice 目标、反馈和 Timeline 区域
+    │   ├── PracticeTimeline.tsx
+    │   │   静态 4/4 练习时间轴和 Cursor 显示
     │   ├── Modal.tsx
     │   │   通用锚定 Popover、Escape、外部点击和背景滚动锁定
     │   ├── KeyLabelsModal.tsx
@@ -216,6 +223,10 @@ USB MIDI 和 Bluetooth MIDI 均通过 Input Layer 统一驱动 Piano、Grand Sta
     │       Letter、Solfege 和 Piano Key Label 显示格式化
 
     ├── practice/
+    │   ├── timeline.ts
+    │   │   C3-C5 静态 Practice Timeline 生成
+    │   ├── practiceController.ts
+    │   │   NoteEvent 到 Practice Result 和 Cursor 推进
     │   ├── practiceTypes.ts
     │   │   Practice Session、Task 和 Result 基础类型
     │   └── practiceEvaluator.ts
@@ -327,6 +338,8 @@ USB MIDI 和 Bluetooth MIDI 均通过 Input Layer 统一驱动 Piano、Grand Sta
 -   A0-C8 完整 88 键钢琴
 -   键盘音名显示模式：Hidden、White Keys、Letter、Solfege、All
 -   Grand Staff 下方独立 Note Info 区域：Off、Letter、Solfege，默认使用 Letter
+-   Practice：Free Play、Note Practice
+-   Note Practice：C3-C5、固定 4/4 静态 Timeline、目标音符和 Cursor 反馈
 -   88 键钢琴在 Piano 区域内横向滚动，保持现有琴键尺寸
 -   电脑键盘基准音控制和当前映射范围状态显示
 -   Bluetooth MIDI 独立连接面板和设备状态显示
@@ -817,7 +830,7 @@ Sustain Pedal 或完整 Velocity 处理。
 
 -   不修改 Input Layer、Keyboard Mapper、Keyboard Controller、MidiNoteController、MIDI、Bluetooth MIDI 或 Browser Sound 逻辑。
 -   不修改 Keyboard Mapping、Input & Piano Dock 布局和 Grand Staff 音高模型。
--   不实现 Practice Mode、Recording、Playback、Metronome 或左右手音符归属判断。
+-   不实现 Recording、Playback、Metronome 或左右手音符归属判断。
 
 ------------------------------------------------------------------------
 
@@ -853,6 +866,39 @@ Note Display 通过 Grand Staff 下方独立的 Note Info 区域展示当前音�
 -   不实现完整 Practice UI、Recording、Playback、Chord Recognition、Scale Analysis、Rhythm Detection 或 Music Theory Analysis。
 -   不修改 `staff.ts`、Grand Staff Pitch Model、Theme System、Browser Sound、MIDI Parser 或 BLE MIDI Parser。
 -   不处理多输入源同时持有同一音符时的 ownership / reference counting。
+
+------------------------------------------------------------------------
+
+## P6-002 Note Practice Timeline 基础练习模式
+
+状态：开发中，待 Product 验收
+
+当前流程：
+
+    Practice Timeline
+            ↓
+    Grand Staff Target Note
+            ↓
+    NoteEvent
+            ↓
+    PracticeController
+            ↓
+    PracticeEvaluator
+            ↓
+    Cursor / Practice Result
+
+已完成：
+
+-   `PracticeTimelineNote` 包含稳定 `id`、Note、MIDI Number、Beat Position 和可选 Duration。
+-   Timeline 固定为 4/4、4 个 Beat、每个 Beat 一个 Note，音域为 C3-C5。
+-   `PracticeController` 只接收 `NoteEvent`，不感知 Keyboard、Mouse、USB MIDI 或 Bluetooth MIDI。
+-   Grand Staff 通过 `targetNotes` 接收练习目标，目标音符与 `pressedNotes` 保持独立。
+-   正确输入推进 Cursor，错误输入保持当前目标并提供反馈。
+
+设计边界：
+
+-   不实现 Chord Practice、Scale Practice、Recording、Playback、Rhythm Detection、Tempo 或动态滚动。
+-   不修改 Input Layer、Piano、Browser Sound、MIDI / Bluetooth 数据流或现有 Note Label 布局。
 
 ------------------------------------------------------------------------
 

@@ -44,6 +44,25 @@ Release: v0.4.0-alpha
 - 不修改 `staff.ts`、Grand Staff Pitch Model、Theme System、Browser Sound、MIDI Parser 或 Bluetooth MIDI Parser。
 - 不处理多输入源同音符的 ownership / reference counting 问题。
 
+## P6-002：Note Practice Timeline 基础练习模式
+
+状态：开发中，待 Product 验收
+
+已完成：
+
+- [x] 增加 Free Play / Note Practice 模式切换入口。
+- [x] 建立 C3-C5 音域的静态 4/4 Practice Timeline，每个 Beat 一个 Note。
+- [x] 增加稳定的 PracticeTimelineNote ID 和 Cursor。
+- [x] 在 Grand Staff 上独立显示练习目标音符，并保持目标音符与实际按下音符分离。
+- [x] 通过 NoteEvent 和 PracticeController 判断正确输入并推进 Cursor。
+- [x] 正确输入推进下一个目标，错误输入保持当前目标并提供反馈。
+
+设计边界：
+
+- 不实现 Chord Practice、Scale Practice、Recording、Playback、节奏判断、Tempo 或动态滚动。
+- 不修改 Input Layer、Keyboard、Mouse、USB MIDI、Bluetooth MIDI、Piano 或 Browser Sound 逻辑。
+- 不处理 Note Label 与 Grand Staff 空间布局 Technical Debt。
+
 ## Technical Debt
 
 ### 五线谱 Note Label 显示布局优化

@@ -1,10 +1,18 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from 'react'
 import GrandStaff from './components/GrandStaff'
 import Header from './components/Header'
 import BluetoothMidiPanel from './components/BluetoothMidiPanel'
 import InputPianoDock from './components/InputPianoDock'
 import type { InputConnectionState } from './components/InputDeviceButton'
 import MidiMonitor from './components/MidiMonitor'
+import PracticePanel from './components/PracticePanel'
 import type { NoteDisplayMode } from './music/noteDisplay'
 import StatusBar from './components/StatusBar'
 import Toolbar from './components/Toolbar'
@@ -38,6 +46,7 @@ import {
   type ThemeMode,
 } from './theme/theme'
 import { NoteEventFactory } from './music/noteEvent'
+import { PracticeController } from './practice/practiceController'
 import './App.css'
 
 function App() {
@@ -77,6 +86,12 @@ function App() {
     defaultKeyboardBaseNote,
   )
   const noteEventFactory = useMemo(() => new NoteEventFactory(), [])
+  const practiceController = useMemo(() => new PracticeController(), [])
+  const practiceSnapshot = useSyncExternalStore(
+    practiceController.subscribe,
+    practiceController.getSnapshot,
+    practiceController.getSnapshot,
+  )
 
   const pressNote = useCallback((
     noteName: string,
@@ -88,11 +103,15 @@ function App() {
       return
     }
 
-    noteEventFactory.create({
+    const event = noteEventFactory.create({
       note,
       source: context.source,
       velocity: context.velocity,
     })
+
+    if (event) {
+      practiceController.handleNoteEvent(event)
+    }
 
     setPressedNotes(prev => {
       if (prev.includes(noteName)) {
@@ -103,7 +122,7 @@ function App() {
     })
 
     startNote(note.name, note.frequency)
-  }, [noteEventFactory])
+  }, [noteEventFactory, practiceController])
 
   const releaseNote = useCallback((
     noteName: string,
@@ -228,8 +247,14 @@ function App() {
       midiInputController.reset()
       void bluetoothMidiController.disconnect()
       noteEventFactory.reset()
+      practiceController.selectMode('free-play')
     }
-  }, [bluetoothMidiController, midiInputController, noteEventFactory])
+  }, [
+    bluetoothMidiController,
+    midiInputController,
+    noteEventFactory,
+    practiceController,
+  ])
 
   const handleMidiConnectionChange = useCallback(
     (deviceName: string | null) => {
@@ -277,13 +302,25 @@ function App() {
         onThemeReset={handleThemeReset}
         noteDisplayMode={noteDisplayMode}
         onNoteDisplayModeChange={setNoteDisplayMode}
+        practiceSelection={practiceSnapshot.selection}
+        onPracticeSelectionChange={practiceController.selectMode}
       />
 
       <main className="main-content">
         <GrandStaff
           pressedNotes={pressedNotes}
+          targetNotes={
+            practiceSnapshot.session?.currentTask?.targetNotes ?? []
+          }
           noteDisplayMode={noteDisplayMode}
         />
+
+        {practiceSnapshot.session && (
+          <PracticePanel
+            session={practiceSnapshot.session}
+            lastResult={practiceSnapshot.lastResult}
+          />
+        )}
 
         <StatusBar
           keyboardBaseNote={keyboardBaseNote}

@@ -14,6 +14,7 @@ import type { NoteDisplayMode } from '../music/noteDisplay'
 
 interface GrandStaffProps {
   pressedNotes: string[]
+  targetNotes: PianoNote[]
   noteDisplayMode: NoteDisplayMode
 }
 
@@ -172,10 +173,8 @@ function collectAccidentalPositions(renderedNotes: RenderedNote[]) {
   return Array.from(accidentalMap.values())
 }
 
-function GrandStaff({ pressedNotes, noteDisplayMode }: GrandStaffProps) {
-  const positionedNotes: PositionedNote[] = pressedNotes
-    .map(noteName => pianoNotes.find(note => note.name === noteName))
-    .filter((note): note is PianoNote => note !== undefined)
+function positionNotes(notes: PianoNote[]): PositionedNote[] {
+  return notes
     .map(note => {
       const position = getStaffNotePosition(note)
       const midiNumber = pianoNoteToMidiNumber(note)
@@ -190,12 +189,35 @@ function GrandStaff({ pressedNotes, noteDisplayMode }: GrandStaffProps) {
           }
     })
     .filter((note): note is PositionedNote => note !== undefined)
+}
+
+function GrandStaff({
+  pressedNotes,
+  targetNotes,
+  noteDisplayMode,
+}: GrandStaffProps) {
+  const positionedNotes = positionNotes(
+    pressedNotes
+      .map(noteName => pianoNotes.find(note => note.name === noteName))
+      .filter((note): note is PianoNote => note !== undefined),
+  )
+  const positionedTargetNotes = positionNotes(targetNotes)
 
   const renderedNotes = (['treble', 'bass'] as StaffName[]).flatMap(staff =>
     layoutStaffNotes(positionedNotes.filter(note => note.staff === staff)),
   )
+  const renderedTargetNotes = (['treble', 'bass'] as StaffName[]).flatMap(
+    staff =>
+      layoutStaffNotes(
+        positionedTargetNotes.filter(note => note.staff === staff),
+      ),
+  )
   const ledgerLines = collectLedgerLines(renderedNotes)
   const accidentalPositions = collectAccidentalPositions(renderedNotes)
+  const targetLedgerLines = collectLedgerLines(renderedTargetNotes)
+  const targetAccidentalPositions = collectAccidentalPositions(
+    renderedTargetNotes,
+  )
 
   return (
     <section className="grand-staff" aria-label="Grand Staff">
@@ -268,6 +290,41 @@ function GrandStaff({ pressedNotes, noteDisplayMode }: GrandStaffProps) {
             ♯
           </text>
         ))}
+
+        <g className="staff-target" aria-label="Practice target notes">
+          {targetLedgerLines.map(line => (
+            <line
+              key={`target-ledger-line-${line.staff}-${line.step}`}
+              className="staff-target-ledger-line"
+              x1={line.x1}
+              x2={line.x2}
+              y1={noteY(line.staff, line.step)}
+              y2={noteY(line.staff, line.step)}
+            />
+          ))}
+
+          {targetAccidentalPositions.map(accidental => (
+            <text
+              key={`target-accidental-${accidental.staff}-${accidental.step}`}
+              className="staff-target-accidental"
+              x={accidental.x}
+              y={noteY(accidental.staff, accidental.step) + 6}
+            >
+              ♯
+            </text>
+          ))}
+
+          {renderedTargetNotes.map(note => (
+            <ellipse
+              key={`target-note-${note.note.name}`}
+              className="staff-target-note"
+              cx={note.x}
+              cy={noteY(note.staff, note.staffStep)}
+              rx={noteHeadRadiusX}
+              ry={noteHeadRadiusY}
+            />
+          ))}
+        </g>
 
         {renderedNotes.map(note => (
           <ellipse

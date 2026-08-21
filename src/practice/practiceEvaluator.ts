@@ -27,6 +27,7 @@ export class PracticeEvaluator {
       expectedMidiNumbers,
       receivedMidiNumbers,
       eventId: event.id,
+      timelineNoteId: task.timelineNoteId,
     }
   }
 }
