@@ -16,6 +16,17 @@ Technical Debt：
 
 - 多输入源同时持有同一音符时，Input Layer 尚未实现 ownership / reference counting。
 
+### 五线谱 Note Label 显示布局优化
+
+当前 Note Display 已支持音名辅助显示，但 Note Label 与 Grand Staff 的空间关系仍需要进一步优化。
+
+- Note Label 与音符、加线之间的布局规则未完全确定；
+- 极端音域（A0-C8）下可能影响谱面空间；
+- 多音、和弦、左右手显示场景下需要重新设计。
+- 后续将保持 Note Label 与对应 Note 的关联，避免覆盖五线谱线条、音符头和 Ledger Line，
+  并支持多音、和弦、左右手及根据音符位置的自适应布局。
+- 暂不影响当前 P6-001 功能验收。
+
 ## [v0.4.0-alpha] - P5 阶段发布
 
 ### 阶段汇总

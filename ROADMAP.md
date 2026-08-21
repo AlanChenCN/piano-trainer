@@ -44,6 +44,28 @@ Release: v0.4.0-alpha
 - 不修改 `staff.ts`、Grand Staff Pitch Model、Theme System、Browser Sound、MIDI Parser 或 Bluetooth MIDI Parser。
 - 不处理多输入源同音符的 ownership / reference counting 问题。
 
+## Technical Debt
+
+### 五线谱 Note Label 显示布局优化
+
+当前 Note Display 已支持音名辅助显示，但 Note Label 与 Grand Staff 的空间关系仍需要进一步优化。
+
+当前问题：
+
+- Note Label 与音符、加线之间的布局规则未完全确定；
+- 极端音域（A0-C8）下可能影响谱面空间；
+- 多音、和弦、左右手显示场景下需要重新设计。
+
+后续优化方向：
+
+- 保持 Note Label 与对应 Note 的关联关系；
+- 避免覆盖五线谱线条、音符头和 Ledger Line；
+- 支持多音同时显示；
+- 支持和弦、左右手等扩展场景；
+- 根据音符位置进行自适应布局。
+
+暂不影响当前 P6-001 功能验收。
+
 ## v0.1.0 钢琴核心 ✅
 
 已完成：
