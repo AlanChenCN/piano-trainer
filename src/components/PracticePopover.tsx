@@ -27,7 +27,7 @@ const practiceModes: Array<{
   label: string
 }> = [
   { value: 'free-play', label: 'Free Play' },
-  { value: 'note-practice', label: 'Note Practice' },
+  { value: 'note-practice', label: 'Practice' },
 ]
 
 const notePools: Array<{ value: PracticeNotePool; label: string }> = [

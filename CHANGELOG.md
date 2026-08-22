@@ -40,7 +40,7 @@
 
 ### P6-002：Note Practice Timeline 基础练习模式
 
-- 增加 Free Play / Note Practice 模式切换。
+- 增加 Free Play / Practice 模式切换。
 - 增加 C3-C5 音域、固定 4/4、每拍一个音符的静态 Practice Timeline。
 - 增加稳定的 Timeline Note ID、Cursor 和基础目标音符反馈。
 - 通过 NoteEvent 和 PracticeController 判断正确输入并推进练习目标。

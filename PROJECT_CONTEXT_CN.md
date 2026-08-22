@@ -153,7 +153,7 @@ USB MIDI 和 Bluetooth MIDI 均通过 Input Layer 统一驱动 Piano、Grand Sta
     │   ├── NoteInfo.tsx
     │   │   Grand Staff 下方的当前音符辅助信息区域
     │   ├── PracticePopover.tsx
-    │   │   Free Play / Note Practice 模式选择
+    │   │   Free Play / Practice 模式选择
     │   ├── Modal.tsx
     │   │   通用锚定 Popover、Escape、外部点击和背景滚动锁定
     │   ├── KeyLabelsModal.tsx
@@ -165,7 +165,7 @@ USB MIDI 和 Bluetooth MIDI 均通过 Input Layer 统一驱动 Piano、Grand Sta
     │   ├── InputDeviceButton.tsx
     │   │   USB MIDI、Bluetooth MIDI 紧凑状态按钮
     │   ├── GrandStaff.tsx
-    │   │   Grand Staff 乐谱和 Note Practice 静态目标时间轴
+    │   │   Grand Staff 乐谱和 Practice 静态目标时间轴
     │   ├── Piano.tsx
     │   ├── StatusBar.tsx
     │   │   状态栏组件
@@ -231,7 +231,7 @@ USB MIDI 和 Bluetooth MIDI 均通过 Input Layer 统一驱动 Piano、Grand Sta
     │   ├── practiceTypes.ts
     │   │   Practice Session、Task 和 Result 基础类型
     │   └── practiceEvaluator.ts
-    │       基于 MIDI Number 的 Note Practice 比较
+    │       基于 MIDI Number 的 Practice Note 比较
 
     ├── App.tsx
     │   主应用逻辑
@@ -339,8 +339,9 @@ USB MIDI 和 Bluetooth MIDI 均通过 Input Layer 统一驱动 Piano、Grand Sta
 -   A0-C8 完整 88 键钢琴
 -   键盘音名显示模式：Hidden、White Keys、Letter、Solfege、All
 -   Grand Staff 下方独立 Note Info 区域：Off、Letter、Solfege，默认使用 Letter
--   Practice：Free Play、Note Practice
--   Note Practice：Grand Staff 内部承载 4 小节、16 音符的静态 Practice Phrase、目标状态和 Cursor 反馈
+-   Practice 入口：Free Play、Practice
+-   Practice Type：Note、Chord
+-   Practice：Grand Staff 内部承载 4 小节、16 个时间位置的静态 Practice Phrase、目标状态和 Cursor 反馈
 -   Practice Settings：白键 Lower / Upper Bound、Note Pool、Note Name（Hide、C、C4）
 -   88 键钢琴在 Piano 区域内横向滚动，保持现有琴键尺寸
 -   电脑键盘基准音控制和当前映射范围状态显示

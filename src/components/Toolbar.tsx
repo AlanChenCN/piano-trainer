@@ -101,7 +101,9 @@ function Toolbar({
         <span className="button-label">Practice</span>
         <span className="button-status">
           {practiceSelection === 'note-practice'
-            ? `${practiceSettings.practiceType === 'chord' ? 'Chord' : 'Note'} Practice`
+            ? practiceSettings.practiceType === 'chord'
+              ? 'Chord Practice'
+              : 'Practice'
             : 'Free Play'}
         </span>
       </button>
