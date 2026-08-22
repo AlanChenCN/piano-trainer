@@ -2,7 +2,7 @@ import type { NoteEvent } from '../music/noteEvent'
 import { pianoNoteToMidiNumber } from '../data/piano'
 import { PracticeEvaluator } from './practiceEvaluator'
 import {
-  createNotePracticeTask,
+  createPracticeTask,
   createPracticeSession,
   createPracticeSettings,
   type PracticePhrase,
@@ -12,7 +12,8 @@ import {
   type PracticeSettings,
   type PracticeTask,
 } from './practiceTypes'
-import { createPracticePhrase, hasPracticeNotes } from './timeline'
+import { createPracticePhrase, hasPracticeTargets } from './timeline'
+import { hasPracticeNotes } from './practiceGenerator'
 
 export interface PracticeControllerSnapshot {
   selection: PracticeSelection
@@ -74,12 +75,19 @@ export class PracticeController {
     }
 
     const shouldRegeneratePhrase =
+      updates.practiceType !== undefined ||
       updates.rangeStart !== undefined ||
       updates.rangeEnd !== undefined ||
       updates.notePool !== undefined
 
     if (shouldRegeneratePhrase && !hasPracticeNotes(settings)) {
-      settings.notePool = 'all'
+      if (settings.practiceType === 'note') {
+        settings.notePool = 'all'
+      }
+    }
+
+    if (shouldRegeneratePhrase && !hasPracticeTargets(settings)) {
+      return
     }
 
     if (
@@ -196,10 +204,10 @@ export class PracticeController {
     const taskAfterRelease: PracticeTask = {
       ...task,
       ownedEvents: remainingOwnedEvents,
-      matchedNotes:
-        task.lifecycleState === 'waiting-release'
-          ? task.matchedNotes
-          : this.matchedNotesFor(task.targetNotes, remainingOwnedEvents),
+      matchedNotes: this.matchedNotesFor(
+        task.targetNotes,
+        remainingOwnedEvents,
+      ),
     }
 
     if (
@@ -239,7 +247,11 @@ export class PracticeController {
     history: PracticeResult[],
   ): PracticeSession {
     const phraseNote = phrase.notes[0]
-    const task = createNotePracticeTask(phraseNote.note, phraseNote.id)
+    const task = createPracticeTask(
+      this.snapshot.settings.practiceType,
+      phraseNote.targetNotes,
+      phraseNote.id,
+    )
 
     return {
       ...createPracticeSession(task, phrase),
@@ -326,8 +338,9 @@ export class PracticeController {
     }
 
     const nextPhraseNote = phrase.notes[nextNoteIndex]
-    const nextTask = createNotePracticeTask(
-      nextPhraseNote.note,
+    const nextTask = createPracticeTask(
+      this.snapshot.settings.practiceType,
+      nextPhraseNote.targetNotes,
       nextPhraseNote.id,
     )
 

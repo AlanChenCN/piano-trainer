@@ -4,6 +4,15 @@
 
 ## [未发布]
 
+### P6-006：Chord Practice 基础练习
+
+- 将 Practice 时间轴目标统一为 `targetNotes[]`，Note / Chord 共用同一 Target Lifecycle。
+- 增加 Note / Chord Practice Type 选择。
+- 基于 Note Bound 生成白键 Root Position Major / Minor Triad。
+- 要求和弦目标的所有 Required Notes 同时满足，并在全部释放后推进 Cursor。
+- Grand Staff 在同一时间位置显示和弦音符与 Chord Symbol。
+- Chord Practice 暂不使用单音 Note Pool，Chord Pool 留待后续设计。
+
 ### P6-005：Chord Model 与基础和弦识别
 
 - 增加独立的 `Chord` 数据模型和 `formatChordName()` 显示格式化函数。

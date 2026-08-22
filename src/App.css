@@ -364,6 +364,24 @@
 
 }
 
+.practice-chord-name {
+
+  fill: var(--theme-text-color);
+
+  font-size: 22px;
+
+  font-weight: 700;
+
+  text-anchor: middle;
+
+}
+
+.practice-chord-name--current {
+
+  fill: var(--theme-accent-color);
+
+}
+
 .practice-measure-line {
 
   stroke: var(--theme-border-color);
@@ -1053,6 +1071,12 @@
 .practice-setting-options .modal-option-list {
 
   grid-template-columns: repeat(3, minmax(0, 1fr));
+
+}
+
+.practice-type-options .modal-option-list {
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 
 }
 

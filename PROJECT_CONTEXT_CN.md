@@ -39,6 +39,7 @@ P6-002（Note Practice Timeline 基础练习模式）开发中，待 Product 验
 P6-003（Practice Canvas 与 Note Timeline 优化）开发中，待 Product 验收。
 P6-004（Practice Target Lifecycle 状态模型优化）开发中，待 Product 验收。
 P6-005（Chord Model 与基础和弦识别）开发中，待 Product 验收。
+P6-006（Chord Practice 基础练习）开发中，待 Product 验收。
 
 v0.1.0 已完成：
 
@@ -1003,6 +1004,40 @@ Note Display 通过 Grand Staff 下方独立的 Note Info 区域展示当前音�
 -   不将 Chord 接入 Practice Target、NoteEvent 或 PracticeController。
 -   不实现 Chord Practice、Slash Chord、七和弦、调性 / 罗马数字、左右手分析、缺音推断或模糊匹配。
 -   不修改 Input Layer、Keyboard、Mouse、USB MIDI、Bluetooth MIDI、Piano、Browser Sound 或 Grand Staff 几何。
+
+------------------------------------------------------------------------
+
+## P6-006 Chord Practice 基础练习
+
+状态：开发中，待 Product 验收
+
+Chord Practice 复用现有 Practice Target、Target Lifecycle 和 Grand Staff
+Practice Canvas，不新增独立 Practice Engine。
+
+当前时间轴目标模型：
+
+    Note Practice:
+    targetNotes = [C4]
+
+    Chord Practice:
+    targetNotes = [C4, E4, G4]
+
+已完成：
+
+-   `PracticeTimelineNote` 使用 `targetNotes[]` 作为唯一目标音来源。
+-   `PracticeSettings` 增加 `practiceType`，支持 `note` 和 `chord`。
+-   Chord Practice 基于当前 Note Bound 生成白键 Root Position Major / Minor Triad。
+-   Chord Target 的所有 Required Notes 同时 active / matched 后才进入 `completed`。
+-   Chord Target 完成后等待所有 Required Notes Release，再推进 Cursor。
+-   Target 状态属于整个时间位置，和弦内的目标音不会分别显示不同的 Practice 状态。
+-   Grand Staff 在同一 X 时间位置显示和弦音符，并复用 Chord Analyzer / Formatter 显示 Chord Symbol。
+
+设计边界：
+
+-   Chord Practice 不使用 Note Practice 的 All、White Only、Black Only Note Pool；Chord Pool 后续单独设计。
+-   当前不生成黑键和弦、Chord Inversion、Seventh Chord、Slash Chord 或其他和弦质量。
+-   Note Bound 对所有 Required Notes 继续生效；越界 Target 不自动转位、换八度或替换音符。
+-   不修改 Input Layer、NoteEvent、Keyboard、Mouse、USB MIDI、Bluetooth MIDI、Piano、Browser Sound 或 Grand Staff 音乐几何。
 
 ------------------------------------------------------------------------
 

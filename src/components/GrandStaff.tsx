@@ -15,7 +15,8 @@ import {
   type NoteDisplayMode,
   type PracticeNoteNameMode,
 } from '../music/noteDisplay'
-import type { Chord } from '../music/chord'
+import { formatChordName, type Chord } from '../music/chord'
+import { analyzeChord } from '../music/chordAnalyzer'
 import type { PracticePhrase } from '../practice/practiceTypes'
 import ChordInfo from './ChordInfo'
 
@@ -240,19 +241,22 @@ function renderPhraseNotes(
       return []
     }
 
-    const positionedNote = positionNotes([phraseNote.note])[0]
+    const targetX = timelineNoteX(phraseNote.index, phrase.notes.length)
+    const status =
+      phraseNote.index < currentTargetIndex ? 'completed' : 'future'
 
-    return positionedNote
-      ? [
-          {
-            ...positionedNote,
-            x: timelineNoteX(phraseNote.index, phrase.notes.length),
-            index: phraseNote.index,
-            status:
-              phraseNote.index < currentTargetIndex ? 'completed' : 'future',
-          },
-        ]
-      : []
+    return (['treble', 'bass'] as StaffName[]).flatMap(staff =>
+      layoutStaffNotes(
+        positionNotes(phraseNote.targetNotes).filter(
+          note => note.staff === staff,
+        ),
+        targetX,
+      ).map(positionedNote => ({
+        ...positionedNote,
+        index: phraseNote.index,
+        status,
+      })),
+    )
   })
 }
 
@@ -325,14 +329,27 @@ function GrandStaff({
   const currentTargetAccidentalPositions = collectAccidentalPositions(
     renderedCurrentTargetNotes,
   )
-  const practiceNoteNames = practicePhrase && practiceNoteNameMode !== 'hidden'
-    ? practicePhrase.notes.map(phraseNote => ({
-        phraseNote,
-        label: practiceNoteNameFor(phraseNote.note, practiceNoteNameMode),
-      }))
+  const practiceNoteNames =
+    practicePhrase && practiceNoteNameMode !== 'hidden'
+      ? practicePhrase.notes.map(phraseNote => ({
+          phraseNote,
+          label: phraseNote.targetNotes
+            .map(note => practiceNoteNameFor(note, practiceNoteNameMode))
+            .join(' · '),
+        }))
+      : []
+  const practiceChordNames = practicePhrase
+    ? practicePhrase.notes.flatMap(phraseNote => {
+        const chord = analyzeChord(phraseNote.targetNotes)
+
+        return chord
+          ? [{ phraseNote, label: formatChordName(chord) }]
+          : []
+      })
     : []
   const measureLines = measureLineXs(practicePhrase)
   const practiceNoteNameY = noteY('treble', 8) - 32
+  const practiceChordNameY = practiceNoteNameY - 28
 
   return (
     <section className="grand-staff" aria-label="Grand Staff">
@@ -383,6 +400,21 @@ function GrandStaff({
         >
           𝄢
         </text>
+
+        {practiceChordNames.map(({ phraseNote, label }) => (
+          <text
+            key={`practice-chord-name-${phraseNote.id}`}
+            className={`practice-chord-name${
+              phraseNote.index === currentTargetIndex
+                ? ' practice-chord-name--current'
+                : ''
+            }`}
+            x={timelineNoteX(phraseNote.index, practicePhrase?.notes.length ?? 1)}
+            y={practiceChordNameY}
+          >
+            {label}
+          </text>
+        ))}
 
         {practiceNoteNames.map(({ phraseNote, label }) => (
           <text

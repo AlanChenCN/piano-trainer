@@ -1,5 +1,6 @@
 import type { RefObject } from 'react'
 import {
+  type PracticeMode,
   type PracticeNotePool,
   type PracticeSelection,
   type PracticeSettings,
@@ -33,6 +34,11 @@ const notePools: Array<{ value: PracticeNotePool; label: string }> = [
   { value: 'all', label: 'All' },
   { value: 'white-only', label: 'White Only' },
   { value: 'black-only', label: 'Black Only' },
+]
+
+const practiceTypes: Array<{ value: PracticeMode; label: string }> = [
+  { value: 'note', label: 'Note' },
+  { value: 'chord', label: 'Chord' },
 ]
 
 const noteNameModes: Array<{
@@ -126,11 +132,21 @@ function PracticePopover({
         </div>
 
         <PracticeSettingOptions
-          label="Note Pool"
-          value={settings.notePool}
-          options={notePools}
-          onChange={value => onSettingsChange({ notePool: value })}
+          className="practice-type-options"
+          label="Practice Type"
+          value={settings.practiceType}
+          options={practiceTypes}
+          onChange={value => onSettingsChange({ practiceType: value })}
         />
+
+        {settings.practiceType === 'note' && (
+          <PracticeSettingOptions
+            label="Note Pool"
+            value={settings.notePool}
+            options={notePools}
+            onChange={value => onSettingsChange({ notePool: value })}
+          />
+        )}
 
         <PracticeSettingOptions
           label="Note Names"
@@ -144,6 +160,7 @@ function PracticePopover({
 }
 
 interface PracticeSettingOptionsProps<Value extends string> {
+  className?: string
   label: string
   value: Value
   options: Array<{ value: Value; label: string }>
@@ -151,13 +168,16 @@ interface PracticeSettingOptionsProps<Value extends string> {
 }
 
 function PracticeSettingOptions<Value extends string>({
+  className,
   label,
   value,
   options,
   onChange,
 }: PracticeSettingOptionsProps<Value>) {
   return (
-    <div className="practice-setting-options">
+    <div
+      className={`practice-setting-options${className ? ` ${className}` : ''}`}
+    >
       <span>{label}</span>
       <div className="modal-option-list" role="radiogroup" aria-label={label}>
         {options.map(option => (

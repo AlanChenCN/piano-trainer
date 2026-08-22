@@ -2,7 +2,7 @@ import type { NoteEvent, NoteEventSource } from '../music/noteEvent'
 import type { PracticeNoteNameMode } from '../music/noteDisplay'
 import type { PianoNote } from '../data/piano'
 
-export type PracticeMode = 'note'
+export type PracticeMode = 'note' | 'chord'
 export type PracticeSelection = 'free-play' | 'note-practice'
 export type PracticeSessionStatus = 'idle' | 'active' | 'completed'
 export type PracticeTaskStatus = 'pending' | 'active' | 'completed' | 'failed'
@@ -14,6 +14,7 @@ export type PracticeTargetLifecycleState =
   | 'waiting-release'
 
 export interface PracticeSettings {
+  practiceType: PracticeMode
   rangeStart: string
   rangeEnd: string
   notePool: PracticeNotePool
@@ -21,6 +22,7 @@ export interface PracticeSettings {
 }
 
 export const defaultPracticeSettings: PracticeSettings = {
+  practiceType: 'note',
   rangeStart: 'C3',
   rangeEnd: 'C5',
   notePool: 'all',
@@ -34,8 +36,7 @@ export function createPracticeSettings(): PracticeSettings {
 export interface PracticeTimelineNote {
   id: string
   index: number
-  note: PianoNote
-  midiNumber: number
+  targetNotes: PianoNote[]
   measureIndex: number
   beatPosition: number
   duration?: number
@@ -96,9 +97,17 @@ export function createNotePracticeTask(
   note: PianoNote,
   timelineNoteId?: string,
 ): PracticeTask {
+  return createPracticeTask('note', [note], timelineNoteId)
+}
+
+export function createPracticeTask(
+  type: PracticeMode,
+  targetNotes: PianoNote[],
+  timelineNoteId?: string,
+): PracticeTask {
   return {
-    type: 'note',
-    targetNotes: [note],
+    type,
+    targetNotes,
     matchedNotes: [],
     ownedEvents: [],
     lifecycleState: 'pending',
@@ -112,7 +121,7 @@ export function createPracticeSession(
   phrase: PracticePhrase | null = null,
 ): PracticeSession {
   return {
-    mode: 'note',
+    mode: task?.type ?? 'note',
     status: task && phrase ? 'active' : 'idle',
     phrase,
     cursor: {

@@ -118,6 +118,25 @@ Release: v0.4.0-alpha
 - 仅支持 Major Triad 和 Minor Triad；不实现 Slash Chord、七和弦、调性分析、左右手分析或缺音推断。
 - 不修改 Input Layer、NoteEvent、PracticeController、Piano、Audio、MIDI / Bluetooth 数据流或 Grand Staff 几何。
 
+## P6-006：Chord Practice 基础练习
+
+状态：开发中，待 Product 验收
+
+已完成：
+
+- [x] 将 Practice 时间轴统一为 `targetNotes[]`，Note 和 Chord 共用同一时间位置与 Target Lifecycle。
+- [x] 增加 Practice Type：`Note` / `Chord`。
+- [x] 基于当前 Note Bound 生成白键 Root Position Major / Minor Triad。
+- [x] 要求 Chord Target 的所有 Required Notes 同时 active / matched 后才进入 Completed。
+- [x] Chord Target 完成后等待全部 Required Notes Release，再推进 Cursor。
+- [x] 在 Grand Staff 同一时间位置显示多个目标音符和现有 Chord Symbol。
+
+设计边界：
+
+- Chord Practice 不使用 Note Practice 的 All、White Only、Black Only Note Pool；Chord Pool 后续单独设计。
+- 当前仅生成白键 Root Position Major / Minor Triad，不生成黑键和弦、转位或其他和弦质量。
+- 不修改 Input Layer、NoteEvent、MIDI / Bluetooth、Audio、Piano 或 Grand Staff 音乐几何。
+
 ## Technical Debt
 
 ### 五线谱 Note Label 显示布局优化
