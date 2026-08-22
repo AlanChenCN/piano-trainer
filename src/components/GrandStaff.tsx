@@ -17,7 +17,10 @@ import {
 } from '../music/noteDisplay'
 import { formatChordName, type Chord } from '../music/chord'
 import { analyzeChord } from '../music/chordAnalyzer'
-import type { PracticePhrase } from '../practice/practiceTypes'
+import type {
+  PracticeMode,
+  PracticePhrase,
+} from '../practice/practiceTypes'
 import ChordInfo from './ChordInfo'
 
 interface GrandStaffProps {
@@ -25,6 +28,7 @@ interface GrandStaffProps {
   targetNotes: PianoNote[]
   practicePhrase: PracticePhrase | null
   currentTargetIndex: number
+  practiceType: PracticeMode
   noteDisplayMode: NoteDisplayMode
   practiceNoteNameMode: PracticeNoteNameMode
   chord: Chord | null
@@ -285,6 +289,7 @@ function GrandStaff({
   targetNotes,
   practicePhrase,
   currentTargetIndex,
+  practiceType,
   noteDisplayMode,
   practiceNoteNameMode,
   chord,
@@ -330,7 +335,9 @@ function GrandStaff({
     renderedCurrentTargetNotes,
   )
   const practiceNoteNames =
-    practicePhrase && practiceNoteNameMode !== 'hidden'
+    practiceType === 'note' &&
+    practicePhrase &&
+    practiceNoteNameMode !== 'hidden'
       ? practicePhrase.notes.map(phraseNote => ({
           phraseNote,
           label: phraseNote.targetNotes

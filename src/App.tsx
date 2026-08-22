@@ -331,6 +331,7 @@ function App() {
           currentTargetIndex={
             practiceSnapshot.session?.cursor.noteIndex ?? -1
           }
+          practiceType={practiceSnapshot.settings.practiceType}
           noteDisplayMode={noteDisplayMode}
           practiceNoteNameMode={practiceSnapshot.settings.noteNameMode}
           chord={currentChord}
