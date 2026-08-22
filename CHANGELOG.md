@@ -4,6 +4,14 @@
 
 ## [未发布]
 
+### P6-005：Chord Model 与基础和弦识别
+
+- 增加独立的 `Chord` 数据模型和 `formatChordName()` 显示格式化函数。
+- 增加纯 `analyzeChord(notes)`，支持 Major Triad 与 Minor Triad。
+- 基于 MIDI Number 归一化 Pitch Class，支持重复八度音去重和转位识别。
+- 在 Grand Staff 内部辅助信息区域显示当前有效和弦名称，无有效和弦时立即隐藏。
+- Chord 保持为 Note Collection 的分析结果，不接入 Practice Target 或输入架构。
+
 ### P6-004：Practice Target Lifecycle 状态模型优化
 
 - 增加 Pending、Matching、Completed、Waiting Release 的 Practice Target 生命周期模型。

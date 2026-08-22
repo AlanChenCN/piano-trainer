@@ -101,6 +101,23 @@ Release: v0.4.0-alpha
 - 不修改 Input Layer、Keyboard、Mouse、USB MIDI、Bluetooth MIDI、Piano、Grand Staff 或 MIDI Parser。
 - 多输入源在 Input Layer 层面的 ownership / reference counting 继续作为既有 Technical Debt 保留。
 
+## P6-005：Chord Model 与基础和弦识别
+
+状态：开发中，待 Product 验收
+
+已完成：
+
+- [x] 建立独立的 `Chord` 数据模型，支持 Major Triad 和 Minor Triad。
+- [x] 建立纯 `analyzeChord(notes)` 分析函数，基于 MIDI Number 归一化 Pitch Class。
+- [x] 支持重复八度音去重、和弦转位识别和固定升号命名。
+- [x] 将有效和弦结果接入 Grand Staff 内部辅助信息区域，显示 `C`、`Am` 等基础名称。
+
+设计边界：
+
+- Chord 是 Note Collection 的分析输出，不作为新的输入类型，也不接入 Practice Target。
+- 仅支持 Major Triad 和 Minor Triad；不实现 Slash Chord、七和弦、调性分析、左右手分析或缺音推断。
+- 不修改 Input Layer、NoteEvent、PracticeController、Piano、Audio、MIDI / Bluetooth 数据流或 Grand Staff 几何。
+
 ## Technical Debt
 
 ### 五线谱 Note Label 显示布局优化

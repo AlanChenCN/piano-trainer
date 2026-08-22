@@ -15,7 +15,9 @@ import {
   type NoteDisplayMode,
   type PracticeNoteNameMode,
 } from '../music/noteDisplay'
+import type { Chord } from '../music/chord'
 import type { PracticePhrase } from '../practice/practiceTypes'
+import ChordInfo from './ChordInfo'
 
 interface GrandStaffProps {
   pressedNotes: string[]
@@ -24,6 +26,7 @@ interface GrandStaffProps {
   currentTargetIndex: number
   noteDisplayMode: NoteDisplayMode
   practiceNoteNameMode: PracticeNoteNameMode
+  chord: Chord | null
 }
 
 interface PositionedNote {
@@ -280,6 +283,7 @@ function GrandStaff({
   currentTargetIndex,
   noteDisplayMode,
   practiceNoteNameMode,
+  chord,
 }: GrandStaffProps) {
   const positionedNotes = positionNotes(
     pressedNotes
@@ -508,7 +512,10 @@ function GrandStaff({
         ))}
       </svg>
 
-      <NoteInfo pressedNotes={pressedNotes} mode={noteDisplayMode} />
+      <div className="grand-staff-info">
+        <NoteInfo pressedNotes={pressedNotes} mode={noteDisplayMode} />
+        <ChordInfo chord={chord} />
+      </div>
     </section>
   )
 }

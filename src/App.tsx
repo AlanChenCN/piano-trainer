@@ -45,6 +45,7 @@ import {
   type ThemeMode,
 } from './theme/theme'
 import { NoteEventFactory } from './music/noteEvent'
+import { analyzeChord } from './music/chordAnalyzer'
 import { PracticeController } from './practice/practiceController'
 import './App.css'
 
@@ -90,6 +91,15 @@ function App() {
     practiceController.subscribe,
     practiceController.getSnapshot,
     practiceController.getSnapshot,
+  )
+  const currentChord = useMemo(
+    () =>
+      analyzeChord(
+        pressedNotes
+          .map(noteName => pianoNotes.find(note => note.name === noteName))
+          .filter((note): note is (typeof pianoNotes)[number] => note !== undefined),
+      ),
+    [pressedNotes],
   )
 
   const pressNote = useCallback((
@@ -323,6 +333,7 @@ function App() {
           }
           noteDisplayMode={noteDisplayMode}
           practiceNoteNameMode={practiceSnapshot.settings.noteNameMode}
+          chord={currentChord}
         />
 
         <StatusBar

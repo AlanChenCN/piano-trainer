@@ -38,6 +38,7 @@ P6-001（Note Event 与基础练习框架）开发中。
 P6-002（Note Practice Timeline 基础练习模式）开发中，待 Product 验收。
 P6-003（Practice Canvas 与 Note Timeline 优化）开发中，待 Product 验收。
 P6-004（Practice Target Lifecycle 状态模型优化）开发中，待 Product 验收。
+P6-005（Chord Model 与基础和弦识别）开发中，待 Product 验收。
 
 v0.1.0 已完成：
 
@@ -966,6 +967,42 @@ Note Display 通过 Grand Staff 下方独立的 Note Info 区域展示当前音�
 -   当前仍只生成单音 Target；`targetNotes`、`matchedNotes` 和 `ownedEvents` 为未来和弦扩展预留。
 -   不修改 Input Layer、Piano、Grand Staff、Browser Sound、MIDI / Bluetooth 数据流或 Parser。
 -   多输入源在 Input Layer 层面的 ownership / reference counting 继续作为既有 Technical Debt 保留。
+
+------------------------------------------------------------------------
+
+## P6-005 Chord Model 与基础和弦识别
+
+状态：开发中，待 Product 验收
+
+当前和弦分析数据流：
+
+    Note Collection
+            ↓
+       Pitch Class
+            ↓
+      Chord Analyzer
+            ↓
+          Chord
+            ↓
+         Display
+
+已完成：
+
+-   新增 `Chord` 模型，包含 `root`、`quality` 和 `intervals`。
+-   当前支持 `major` 和 `minor` 两种三和弦质量。
+-   `analyzeChord(notes: PianoNote[]): Chord | null` 为纯音乐逻辑，不依赖 `pressedNotes`、输入源或 PracticeController。
+-   使用 MIDI Number 的 `% 12` 归一化 Pitch Class，并对重复八度音去重。
+-   仅当存在三个不同 Pitch Class 且完整匹配 Major / Minor Triad 时返回结果。
+-   每个 Pitch Class 都可作为 Root，支持和弦转位，不依赖最低音判断。
+-   使用 `formatChordName()` 独立生成显示名称，例如 `C`、`Am`。
+-   当前 UI 从实时 `pressedNotes` 生成 Note Collection，在 Grand Staff 内部辅助区域显示有效和弦名称。
+
+设计边界：
+
+-   Chord 是 Note Collection 的分析输出，不是新的输入类型。
+-   不将 Chord 接入 Practice Target、NoteEvent 或 PracticeController。
+-   不实现 Chord Practice、Slash Chord、七和弦、调性 / 罗马数字、左右手分析、缺音推断或模糊匹配。
+-   不修改 Input Layer、Keyboard、Mouse、USB MIDI、Bluetooth MIDI、Piano、Browser Sound 或 Grand Staff 几何。
 
 ------------------------------------------------------------------------
 
