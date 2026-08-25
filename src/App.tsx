@@ -12,7 +12,6 @@ import BluetoothMidiPanel from './components/BluetoothMidiPanel'
 import InputPianoDock from './components/InputPianoDock'
 import type { InputConnectionState } from './components/InputDeviceButton'
 import MidiMonitor from './components/MidiMonitor'
-import type { NoteDisplayMode } from './music/noteDisplay'
 import StatusBar from './components/StatusBar'
 import Toolbar from './components/Toolbar'
 import type { ConfigurableThemeToken } from './components/ThemePopover'
@@ -47,14 +46,22 @@ import {
 import { NoteEventFactory } from './music/noteEvent'
 import { analyzeChord } from './music/chordAnalyzer'
 import { PracticeController } from './practice/practiceController'
+import {
+  createPracticeSettings,
+  type PracticeSettings,
+} from './practice/practiceTypes'
+import { useSettings } from './settings/useSettings'
 import './App.css'
 
 function App() {
+  const {
+    settings,
+    updateSettings,
+    saveCurrentSettings,
+    resetSettings,
+  } = useSettings()
   const [pressedNotes, setPressedNotes] = useState<string[]>([])
   const [soundEnabled, setSoundEnabled] = useState(true)
-  const [labelMode, setLabelMode] = useState<PianoLabelMode>("white")
-  const [noteDisplayMode, setNoteDisplayMode] =
-    useState<NoteDisplayMode>('letter')
   const [midiPanelOpen, setMidiPanelOpen] = useState(false)
   const [midiDeviceName, setMidiDeviceName] = useState<string | null>(null)
   const [midiConnectionState, setMidiConnectionState] =
@@ -70,9 +77,9 @@ function App() {
   const [systemThemePreset, setSystemThemePreset] = useState<ThemePreset>(
     getSystemThemePreset,
   )
-  const [themeSettings, setThemeSettings] = useState(() =>
-    createThemeSettings(getSystemThemePreset()),
-  )
+  const themeSettings = settings.theme
+  const labelMode = settings.piano.labelMode
+  const noteDisplayMode = settings.grandStaff.noteDisplayMode
   const themeTokens = useMemo(
     () => resolveThemeTokens(themeSettings, systemThemePreset),
     [systemThemePreset, themeSettings],
@@ -92,6 +99,16 @@ function App() {
     practiceController.getSnapshot,
     practiceController.getSnapshot,
   )
+  const practiceSettingsSynced = useRef(false)
+
+  useEffect(() => {
+    if (practiceSettingsSynced.current) {
+      return
+    }
+
+    practiceSettingsSynced.current = true
+    practiceController.updateSettings(settings.practice)
+  }, [practiceController, settings.practice])
   const currentChord = useMemo(
     () =>
       analyzeChord(
@@ -183,9 +200,15 @@ function App() {
     setAudioEnabled(enabled)
   }
 
-  function handleLabelModeChange(mode: PianoLabelMode) {
-    setLabelMode(mode)
-  }
+  const handleLabelModeChange = useCallback((mode: PianoLabelMode) => {
+    updateSettings(current => ({
+      ...current,
+      piano: {
+        ...current.piano,
+        labelMode: mode,
+      },
+    }))
+  }, [updateSettings])
 
   const pressMouseNote = useCallback(
     (noteName: string) => inputLayer.pressNote(noteName, { source: 'mouse' }),
@@ -199,32 +222,79 @@ function App() {
 
   const handleThemeModeChange = useCallback(
     (mode: ThemeMode) => {
-      setThemeSettings(settings =>
-        selectThemeMode(settings, mode, systemThemePreset),
-      )
+      updateSettings(current => ({
+        ...current,
+        theme: selectThemeMode(current.theme, mode, systemThemePreset),
+      }))
     },
-    [systemThemePreset],
+    [systemThemePreset, updateSettings],
   )
 
   const handleThemeTokenChange = useCallback(
     (token: ConfigurableThemeToken, value: string) => {
-      setThemeSettings(settings =>
-        updateThemeToken(settings, token, value, systemThemePreset),
-      )
+      updateSettings(current => ({
+        ...current,
+        theme: updateThemeToken(current.theme, token, value, systemThemePreset),
+      }))
     },
-    [systemThemePreset],
+    [systemThemePreset, updateSettings],
   )
 
   const handleNoteColorModeChange = useCallback(
     (mode: 'single' | 'left-right') => {
-      setThemeSettings(settings => ({ ...settings, noteColorMode: mode }))
+      updateSettings(current => ({
+        ...current,
+        theme: {
+          ...current.theme,
+          noteColorMode: mode,
+        },
+      }))
     },
-    [],
+    [updateSettings],
   )
 
   const handleThemeReset = useCallback(() => {
-    setThemeSettings(createThemeSettings(systemThemePreset))
-  }, [systemThemePreset])
+    updateSettings(current => ({
+      ...current,
+      theme: createThemeSettings(systemThemePreset),
+    }))
+  }, [systemThemePreset, updateSettings])
+
+  const handleNoteDisplayModeChange = useCallback((mode: typeof noteDisplayMode) => {
+    updateSettings(current => ({
+      ...current,
+      grandStaff: {
+        ...current.grandStaff,
+        noteDisplayMode: mode,
+      },
+    }))
+  }, [updateSettings])
+
+  const handlePracticeSettingsChange = useCallback(
+    (updates: Partial<PracticeSettings>) => {
+      updateSettings(current => ({
+        ...current,
+        practice: {
+          ...current.practice,
+          ...updates,
+        },
+      }))
+      practiceController.updateSettings(updates)
+    },
+    [practiceController, updateSettings],
+  )
+
+  const handleAutoSaveChange = useCallback(
+    (enabled: boolean) => {
+      updateSettings(current => ({ ...current, autoSave: enabled }))
+    },
+    [updateSettings],
+  )
+
+  const handleResetSettings = useCallback(() => {
+    resetSettings()
+    practiceController.updateSettings(createPracticeSettings())
+  }, [practiceController, resetSettings])
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
@@ -314,11 +384,16 @@ function App() {
         onNoteColorModeChange={handleNoteColorModeChange}
         onThemeReset={handleThemeReset}
         noteDisplayMode={noteDisplayMode}
-        onNoteDisplayModeChange={setNoteDisplayMode}
+        onNoteDisplayModeChange={handleNoteDisplayModeChange}
         practiceSelection={practiceSnapshot.selection}
-        practiceSettings={practiceSnapshot.settings}
+        practiceSettings={settings.practice}
         onPracticeSelectionChange={practiceController.selectMode}
-        onPracticeSettingsChange={practiceController.updateSettings}
+        onPracticeSettingsChange={handlePracticeSettingsChange}
+        settings={settings}
+        onAutoSaveChange={handleAutoSaveChange}
+        onLabelModeChange={handleLabelModeChange}
+        onSaveSettings={saveCurrentSettings}
+        onResetSettings={handleResetSettings}
       />
 
       <main className="main-content">
@@ -331,9 +406,9 @@ function App() {
           currentTargetIndex={
             practiceSnapshot.session?.cursor.noteIndex ?? -1
           }
-          practiceType={practiceSnapshot.settings.practiceType}
+          practiceType={settings.practice.practiceType}
           noteDisplayMode={noteDisplayMode}
-          practiceNoteNameMode={practiceSnapshot.settings.noteNameMode}
+          practiceNoteNameMode={settings.practice.noteNameMode}
           chord={currentChord}
         />
 

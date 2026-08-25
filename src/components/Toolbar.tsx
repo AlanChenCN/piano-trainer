@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import type { PianoLabelMode } from '../data/piano'
 import NoteDisplaySettings from './NoteDisplaySettings'
 import ThemePopover, {
   type ConfigurableThemeToken,
@@ -15,6 +16,8 @@ import type {
   PracticeSettings,
 } from '../practice/practiceTypes'
 import PracticePopover from './PracticePopover'
+import SettingsPopover from './SettingsPopover'
+import type { AppSettings } from '../settings/settings'
 
 interface ToolbarProps {
   themeMode: ThemeMode
@@ -31,6 +34,11 @@ interface ToolbarProps {
   practiceSettings: PracticeSettings
   onPracticeSelectionChange: (selection: PracticeSelection) => void
   onPracticeSettingsChange: (updates: Partial<PracticeSettings>) => void
+  settings: AppSettings
+  onAutoSaveChange: (enabled: boolean) => void
+  onLabelModeChange: (mode: PianoLabelMode) => void
+  onSaveSettings: () => void
+  onResetSettings: () => void
 }
 
 function Toolbar({
@@ -48,13 +56,20 @@ function Toolbar({
   practiceSettings,
   onPracticeSelectionChange,
   onPracticeSettingsChange,
+  settings,
+  onAutoSaveChange,
+  onLabelModeChange,
+  onSaveSettings,
+  onResetSettings,
 }: ToolbarProps) {
   const [themePopoverOpen, setThemePopoverOpen] = useState(false)
   const [noteDisplayPopoverOpen, setNoteDisplayPopoverOpen] = useState(false)
   const [practicePopoverOpen, setPracticePopoverOpen] = useState(false)
+  const [settingsPopoverOpen, setSettingsPopoverOpen] = useState(false)
   const themeButtonRef = useRef<HTMLButtonElement>(null)
   const noteDisplayButtonRef = useRef<HTMLButtonElement>(null)
   const practiceButtonRef = useRef<HTMLButtonElement>(null)
+  const settingsButtonRef = useRef<HTMLButtonElement>(null)
 
   return (
     <section className="toolbar" aria-label="Toolbar">
@@ -113,6 +128,20 @@ function Toolbar({
         <span className="button-status">Disabled</span>
       </button>
 
+      <button
+        ref={settingsButtonRef}
+        className="app-button"
+        type="button"
+        aria-haspopup="dialog"
+        aria-expanded={settingsPopoverOpen}
+        onClick={() => setSettingsPopoverOpen(true)}
+      >
+        <span className="button-label">Settings</span>
+        <span className="button-status">
+          {settings.autoSave ? 'Auto Save' : 'Manual Save'}
+        </span>
+      </button>
+
       <ThemePopover
         isOpen={themePopoverOpen}
         anchorRef={themeButtonRef}
@@ -143,6 +172,23 @@ function Toolbar({
         onClose={() => setPracticePopoverOpen(false)}
         onSelectionChange={onPracticeSelectionChange}
         onSettingsChange={onPracticeSettingsChange}
+      />
+
+      <SettingsPopover
+        isOpen={settingsPopoverOpen}
+        anchorRef={settingsButtonRef}
+        settings={settings}
+        themeTokens={themeTokens}
+        onClose={() => setSettingsPopoverOpen(false)}
+        onAutoSaveChange={onAutoSaveChange}
+        onThemeModeChange={onThemeModeChange}
+        onThemeTokenChange={onThemeTokenChange}
+        onNoteColorModeChange={onNoteColorModeChange}
+        onLabelModeChange={onLabelModeChange}
+        onNoteDisplayModeChange={onNoteDisplayModeChange}
+        onPracticeSettingsChange={onPracticeSettingsChange}
+        onSaveSettings={onSaveSettings}
+        onResetSettings={onResetSettings}
       />
     </section>
   )
