@@ -17,6 +17,13 @@ v0.4.0-alpha Piano Trainer（P5 阶段完成）
 - P5-002：完整 Grand Staff，已完成
 - P5-003：主界面交互布局重构，已完成（含第二轮 UI 整改）
 - P5-004：主题系统与乐谱视觉重设计，已完成
+- P6-001：Note Event 与基础练习框架，已完成
+- P6-002：Note Practice Timeline 基础练习模式，已完成
+- P6-003：Practice Canvas 与 Note Timeline 优化，已完成
+- P6-004：Practice Target Lifecycle 状态模型优化，已完成
+- P6-005：Chord Model 与基础和弦识别，已完成
+- P6-006：Chord Practice 基础练习，已完成
+- P6-007：Application Settings 持久化，已完成
 - 键盘音名显示模式，已完成
 - 当前电脑键盘白键使用 `A` 到 `'`，默认 A=`E3`、H=`C4`
 - 完整 88 键键盘已支持基础 USB MIDI 和 Bluetooth LE MIDI Input 接入
@@ -28,7 +35,7 @@ Release: v0.4.0-alpha
 
 ## P6-001：Note Event 与基础练习框架
 
-状态：开发中
+状态：已完成
 
 已完成：
 
@@ -46,7 +53,7 @@ Release: v0.4.0-alpha
 
 ## P6-002：Note Practice Timeline 基础练习模式
 
-状态：开发中，待 Product 验收
+状态：已完成
 
 已完成：
 
@@ -65,7 +72,7 @@ Release: v0.4.0-alpha
 
 ## P6-003：Practice Canvas 与 Note Timeline 优化
 
-状态：开发中，待 Product 验收
+状态：已完成
 
 已完成：
 
@@ -85,7 +92,7 @@ Release: v0.4.0-alpha
 
 ## P6-004：Practice Target Lifecycle 状态模型优化
 
-状态：开发中，待 Product 验收
+状态：已完成
 
 已完成：
 
@@ -103,7 +110,7 @@ Release: v0.4.0-alpha
 
 ## P6-005：Chord Model 与基础和弦识别
 
-状态：开发中，待 Product 验收
+状态：已完成
 
 已完成：
 
@@ -120,7 +127,7 @@ Release: v0.4.0-alpha
 
 ## P6-006：Chord Practice 基础练习
 
-状态：开发中，待 Product 验收
+状态：已完成
 
 已完成：
 
@@ -136,6 +143,23 @@ Release: v0.4.0-alpha
 - Chord Practice 不使用 Note Practice 的 All、White Only、Black Only Note Pool；Chord Pool 后续单独设计。
 - 当前仅生成白键 Root Position Major / Minor Triad，不生成黑键和弦、转位或其他和弦质量。
 - 不修改 Input Layer、NoteEvent、MIDI / Bluetooth、Audio、Piano 或 Grand Staff 音乐几何。
+
+## P6-007：Application Settings 持久化
+
+状态：已完成
+
+已完成：
+
+- [x] 新增版本化 `AppSettings` 模型，集中管理 Theme、Key Labels、Web Sound、Note Display 和 Practice Settings 偏好。
+- [x] 新增 Settings Context 与 localStorage 存储层；加载时可合并默认值、校验枚举和容错损坏数据。
+- [x] 支持默认开启的 Auto Save、手动 Save 和 Reset Settings；设置修改始终立即作用于当前 UI。
+- [x] 新增 Settings Anchored Popover，并统一 Theme、Piano、Grand Staff、Practice 与 Web Sound 的设置入口。
+- [x] Settings 标题栏提供固定宽度的 Auto Save On/Off 状态按钮、Save 和 Reset 操作。
+
+设计边界：
+
+- 不持久化 Keyboard Base、pressedNotes、MIDI / Bluetooth 连接状态、Practice Cursor / Phrase / Result、NoteEvent、Recording 或 History。
+- 不修改 Input Layer、Keyboard / Mouse、USB MIDI、Bluetooth MIDI、Practice Lifecycle、Chord Analyzer 或底层音频架构。
 
 ## Technical Debt
 

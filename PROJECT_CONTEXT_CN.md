@@ -34,12 +34,13 @@ P5-001（主页面布局重构）已完成。
 P5-002（完整 Grand Staff）已完成。
 P5-003（主界面交互布局重构）已完成。
 P5-004（主题系统与乐谱视觉重设计）已完成。
-P6-001（Note Event 与基础练习框架）开发中。
-P6-002（Note Practice Timeline 基础练习模式）开发中，待 Product 验收。
-P6-003（Practice Canvas 与 Note Timeline 优化）开发中，待 Product 验收。
-P6-004（Practice Target Lifecycle 状态模型优化）开发中，待 Product 验收。
-P6-005（Chord Model 与基础和弦识别）开发中，待 Product 验收。
-P6-006（Chord Practice 基础练习）开发中，待 Product 验收。
+P6-001（Note Event 与基础练习框架）已完成。
+P6-002（Note Practice Timeline 基础练习模式）已完成。
+P6-003（Practice Canvas 与 Note Timeline 优化）已完成。
+P6-004（Practice Target Lifecycle 状态模型优化）已完成。
+P6-005（Chord Model 与基础和弦识别）已完成。
+P6-006（Chord Practice 基础练习）已完成。
+P6-007（Application Settings 持久化）已完成。
 
 v0.1.0 已完成：
 
@@ -130,7 +131,7 @@ USB MIDI 和 Bluetooth MIDI 均通过 Input Layer 统一驱动 Piano、Grand Sta
 -   多音同时播放
 -   按下持续发声
 -   松开停止
--   浏览器声音开关，默认开启
+-   浏览器声音开关，默认开启并作为用户偏好持久化
 -   关闭声音时保持琴键动画与输入功能
 
 ------------------------------------------------------------------------
@@ -154,6 +155,8 @@ USB MIDI 和 Bluetooth MIDI 均通过 Input Layer 统一驱动 Piano、Grand Sta
     │   │   Grand Staff 下方的当前音符辅助信息区域
     │   ├── PracticePopover.tsx
     │   │   Free Play / Practice 模式选择
+    │   ├── SettingsPopover.tsx
+    │   │   用户偏好、保存与重置设置 Popover
     │   ├── Modal.tsx
     │   │   通用锚定 Popover、Escape、外部点击和背景滚动锁定
     │   ├── KeyLabelsModal.tsx
@@ -232,6 +235,14 @@ USB MIDI 和 Bluetooth MIDI 均通过 Input Layer 统一驱动 Piano、Grand Sta
     │   │   Practice Session、Task 和 Result 基础类型
     │   └── practiceEvaluator.ts
     │       基于 MIDI Number 的 Practice Note 比较
+
+    ├── settings/
+    │   ├── settings.ts、defaultSettings.ts
+    │   │   AppSettings 模型、版本校验和默认值
+    │   ├── settingsStorage.ts
+    │   │   localStorage 读取、保存和容错处理
+    │   └── SettingsContext.tsx、useSettings.ts
+    │       用户偏好运行时状态与持久化策略
 
     ├── App.tsx
     │   主应用逻辑
@@ -349,6 +360,8 @@ USB MIDI 和 Bluetooth MIDI 均通过 Input Layer 统一驱动 Piano、Grand Sta
 -   桌面端全宽布局、固定底部 88 键 Piano 和响应式黑键位置
 -   System / Dark / Light / Custom 主题模式和自定义视觉颜色
 -   Grand Staff 的统一视觉放大和 A0-C8 安全显示区域
+-   Settings Popover：Auto Save、Save、Reset，以及 Theme、Key Labels、Web Sound、Note Display、Practice Settings
+-   Theme、Key Labels、Web Sound、Note Display 和 Practice Settings 会在刷新后恢复；Keyboard Base 和输入 / 练习运行时状态不持久化
 
 当前主界面结构：
 
@@ -839,7 +852,7 @@ Sustain Pedal 或完整 Velocity 处理。
 
 ## P6-001 Note Event 与基础练习框架
 
-状态：开发中
+状态：已完成
 
 当前数据流：
 
@@ -874,7 +887,7 @@ Note Display 通过 Grand Staff 下方独立的 Note Info 区域展示当前音�
 
 ## P6-002 Note Practice Timeline 基础练习模式
 
-状态：开发中，待 Product 验收
+状态：已完成
 
 当前流程：
 
@@ -908,7 +921,7 @@ Note Display 通过 Grand Staff 下方独立的 Note Info 区域展示当前音�
 
 ## P6-003 Practice Canvas 与 Note Timeline 优化
 
-状态：开发中，待 Product 验收
+状态：已完成
 
 当前模型：
 
@@ -939,7 +952,7 @@ Note Display 通过 Grand Staff 下方独立的 Note Info 区域展示当前音�
 
 ## P6-004 Practice Target Lifecycle 状态模型优化
 
-状态：开发中，待 Product 验收
+状态：已完成
 
 当前流程：
 
@@ -974,7 +987,7 @@ Note Display 通过 Grand Staff 下方独立的 Note Info 区域展示当前音�
 
 ## P6-005 Chord Model 与基础和弦识别
 
-状态：开发中，待 Product 验收
+状态：已完成
 
 当前和弦分析数据流：
 
@@ -1010,7 +1023,7 @@ Note Display 通过 Grand Staff 下方独立的 Note Info 区域展示当前音�
 
 ## P6-006 Chord Practice 基础练习
 
-状态：开发中，待 Product 验收
+状态：已完成
 
 Chord Practice 复用现有 Practice Target、Target Lifecycle 和 Grand Staff
 Practice Canvas，不新增独立 Practice Engine。
@@ -1039,6 +1052,35 @@ Practice Canvas，不新增独立 Practice Engine。
 -   当前不生成黑键和弦、Chord Inversion、Seventh Chord、Slash Chord 或其他和弦质量。
 -   Note Bound 对所有 Required Notes 继续生效；越界 Target 不自动转位、换八度或替换音符。
 -   不修改 Input Layer、NoteEvent、Keyboard、Mouse、USB MIDI、Bluetooth MIDI、Piano、Browser Sound 或 Grand Staff 音乐几何。
+
+------------------------------------------------------------------------
+
+## P6-007 Application Settings 持久化
+
+状态：已完成
+
+当前数据流：
+
+    Settings UI
+            ↓
+      Settings Context
+            ↓
+    Runtime Preferences
+            ↓
+       localStorage
+
+已完成：
+
+-   新增版本化 `AppSettings`，持久化 Theme、Piano Key Labels、Web Sound、Grand Staff Note Display 和 Practice Settings。
+-   默认 Auto Save 开启；关闭时设置仍立即作用于当前 UI，仅等待手动 Save 写入 localStorage。
+-   Reset Settings 会立即应用默认值；Auto Save 关闭时不会自动覆盖已有持久化数据。
+-   存储加载支持 JSON 异常处理、缺失字段默认值合并、非法枚举回退和后续版本迁移接口。
+-   Settings Popover 标题栏提供 Auto Save On/Off 指示灯、Save 和 Reset；现有 Theme、Key Labels、Note Display、Practice 入口统一使用 Settings Context。
+
+设计边界：
+
+-   不持久化 Browser Audio Context / Unlock State、Keyboard Base、pressedNotes、MIDI / Bluetooth Connection、Practice Cursor / Phrase / Result、NoteEvent、Recording 或 History。
+-   不修改 Input Layer、Keyboard Controller、Mouse Input、USB MIDI、Bluetooth MIDI、Practice Lifecycle、Chord Analyzer、Piano Model 或底层 Browser Sound 架构。
 
 ------------------------------------------------------------------------
 
@@ -1097,9 +1139,9 @@ Practice Canvas，不新增独立 Practice Engine。
 当前开发版本：
 
     v0.4.0-alpha 钢琴训练工具
-    第 3.1 阶段、第 3.2 阶段、P3-003、P4-001、P4-002、P4-003、P4-004、P4-005、P5-001、P5-002、P5-003、P5-004 已完成
+    第 3.1 阶段、第 3.2 阶段、P3-003、P3-004、P4-001、P4-002、P4-003、P4-004、P4-005、P5-001、P5-002、P5-003、P5-004、P6-001 至 P6-007 已完成
     Release: v0.4.0-alpha
-    当前开发：P6-001 Note Event 与基础练习框架
+    当前开发：等待下一项 P6 Issue
 
 最新稳定版本：
 

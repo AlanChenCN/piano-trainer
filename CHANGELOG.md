@@ -4,6 +4,14 @@
 
 ## [未发布]
 
+### P6-007：Application Settings 持久化
+
+- 新增版本化 AppSettings、默认值、校验与 localStorage 容错存储。
+- Theme、Key Labels、Web Sound、Note Display 和 Practice Settings 可在刷新后恢复。
+- 增加 Auto Save、手动 Save 和 Reset Settings；设置修改始终立即作用于当前 UI。
+- 新增 Settings Anchored Popover，并将 Auto Save、Save、Reset 放入标题栏操作区。
+- 不持久化输入状态、设备连接、Keyboard Base 或 Practice 运行时进度。
+
 ### P6-006：Chord Practice 基础练习
 
 - 将 Practice 时间轴目标统一为 `targetNotes[]`，Note / Chord 共用同一 Target Lifecycle。
