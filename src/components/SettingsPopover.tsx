@@ -117,23 +117,35 @@ function SettingsPopover({
       onClose={onClose}
     >
       <div className="settings-popover-content">
-        <section className="settings-section settings-auto-save">
-          <div>
-            <h3>Auto Save</h3>
-            <p className="settings-hint">
-              Save preference changes to this browser immediately.
-            </p>
+        <div className="settings-top-row">
+          <section className="settings-auto-save" aria-label="Auto Save">
+            <div>
+              <h3>Auto Save</h3>
+              <p className="settings-hint">
+                Save changes immediately.
+              </p>
+            </div>
+            <button
+              className="app-button app-button--compact settings-toggle-button"
+              type="button"
+              aria-pressed={settings.autoSave}
+              data-active={settings.autoSave}
+              onClick={() => onAutoSaveChange(!settings.autoSave)}
+            >
+              <span className="settings-toggle-indicator" aria-hidden="true" />
+              <span>{settings.autoSave ? 'On' : 'Off'}</span>
+            </button>
+          </section>
+
+          <div className="settings-actions settings-actions--top">
+            <button className="app-button app-button--compact" type="button" onClick={onSaveSettings}>
+              Save Settings
+            </button>
+            <button className="app-button app-button--compact" type="button" onClick={onResetSettings}>
+              Reset Settings
+            </button>
           </div>
-          <button
-            className="app-button app-button--compact settings-toggle-button"
-            type="button"
-            aria-pressed={settings.autoSave}
-            data-active={settings.autoSave}
-            onClick={() => onAutoSaveChange(!settings.autoSave)}
-          >
-            {settings.autoSave ? 'On' : 'Off'}
-          </button>
-        </section>
+        </div>
 
         <section className="settings-section settings-auto-save" aria-label="Web Sound">
           <div>
@@ -278,14 +290,6 @@ function SettingsPopover({
           />
         </SettingsSection>
 
-        <div className="settings-actions">
-          <button className="app-button app-button--compact" type="button" onClick={onSaveSettings}>
-            Save Settings
-          </button>
-          <button className="app-button app-button--compact" type="button" onClick={onResetSettings}>
-            Reset Settings
-          </button>
-        </div>
       </div>
     </Modal>
   )
