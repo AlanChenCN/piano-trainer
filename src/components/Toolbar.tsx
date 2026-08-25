@@ -36,6 +36,7 @@ interface ToolbarProps {
   onPracticeSettingsChange: (updates: Partial<PracticeSettings>) => void
   settings: AppSettings
   onAutoSaveChange: (enabled: boolean) => void
+  onSoundChange: (enabled: boolean) => void
   onLabelModeChange: (mode: PianoLabelMode) => void
   onSaveSettings: () => void
   onResetSettings: () => void
@@ -58,6 +59,7 @@ function Toolbar({
   onPracticeSettingsChange,
   settings,
   onAutoSaveChange,
+  onSoundChange,
   onLabelModeChange,
   onSaveSettings,
   onResetSettings,
@@ -181,6 +183,7 @@ function Toolbar({
         themeTokens={themeTokens}
         onClose={() => setSettingsPopoverOpen(false)}
         onAutoSaveChange={onAutoSaveChange}
+        onSoundChange={onSoundChange}
         onThemeModeChange={onThemeModeChange}
         onThemeTokenChange={onThemeTokenChange}
         onNoteColorModeChange={onNoteColorModeChange}

@@ -26,6 +26,7 @@ interface SettingsPopoverProps {
   themeTokens: ThemeTokens
   onClose: () => void
   onAutoSaveChange: (enabled: boolean) => void
+  onSoundChange: (enabled: boolean) => void
   onThemeModeChange: (mode: ThemeMode) => void
   onThemeTokenChange: (token: ConfigurableThemeToken, value: string) => void
   onNoteColorModeChange: (mode: NoteColorMode) => void
@@ -94,6 +95,7 @@ function SettingsPopover({
   themeTokens,
   onClose,
   onAutoSaveChange,
+  onSoundChange,
   onThemeModeChange,
   onThemeTokenChange,
   onNoteColorModeChange,
@@ -130,6 +132,24 @@ function SettingsPopover({
             onClick={() => onAutoSaveChange(!settings.autoSave)}
           >
             {settings.autoSave ? 'On' : 'Off'}
+          </button>
+        </section>
+
+        <section className="settings-section settings-auto-save" aria-label="Web Sound">
+          <div>
+            <h3>Web Sound</h3>
+            <p className="settings-hint">
+              Enable browser audio for piano input.
+            </p>
+          </div>
+          <button
+            className="app-button app-button--compact settings-toggle-button"
+            type="button"
+            aria-pressed={settings.audio.soundEnabled}
+            data-active={settings.audio.soundEnabled}
+            onClick={() => onSoundChange(!settings.audio.soundEnabled)}
+          >
+            {settings.audio.soundEnabled ? 'On' : 'Off'}
           </button>
         </section>
 

@@ -12,6 +12,9 @@ export interface AppSettings {
   piano: {
     labelMode: PianoLabelMode
   }
+  audio: {
+    soundEnabled: boolean
+  }
   grandStaff: {
     noteDisplayMode: NoteDisplayMode
   }
@@ -155,6 +158,7 @@ export function normalizeSettings(
   }
 
   const piano = isRecord(migrated.piano) ? migrated.piano : {}
+  const audio = isRecord(migrated.audio) ? migrated.audio : {}
   const grandStaff = isRecord(migrated.grandStaff) ? migrated.grandStaff : {}
 
   return {
@@ -165,6 +169,11 @@ export function normalizeSettings(
     theme: normalizeThemeSettings(migrated.theme, fallback.theme),
     piano: {
       labelMode: normalizeLabelMode(piano.labelMode, fallback.piano.labelMode),
+    },
+    audio: {
+      soundEnabled: typeof audio.soundEnabled === 'boolean'
+        ? audio.soundEnabled
+        : fallback.audio.soundEnabled,
     },
     grandStaff: {
       noteDisplayMode: isNoteDisplayMode(grandStaff.noteDisplayMode)

@@ -14,6 +14,9 @@ export function createDefaultSettings(): AppSettings {
     piano: {
       labelMode: 'white',
     },
+    audio: {
+      soundEnabled: true,
+    },
     grandStaff: {
       noteDisplayMode: 'letter',
     },

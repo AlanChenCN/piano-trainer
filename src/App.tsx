@@ -61,7 +61,6 @@ function App() {
     resetSettings,
   } = useSettings()
   const [pressedNotes, setPressedNotes] = useState<string[]>([])
-  const [soundEnabled, setSoundEnabled] = useState(true)
   const [midiPanelOpen, setMidiPanelOpen] = useState(false)
   const [midiDeviceName, setMidiDeviceName] = useState<string | null>(null)
   const [midiConnectionState, setMidiConnectionState] =
@@ -79,6 +78,7 @@ function App() {
   )
   const themeSettings = settings.theme
   const labelMode = settings.piano.labelMode
+  const soundEnabled = settings.audio.soundEnabled
   const noteDisplayMode = settings.grandStaff.noteDisplayMode
   const themeTokens = useMemo(
     () => resolveThemeTokens(themeSettings, systemThemePreset),
@@ -196,7 +196,13 @@ function App() {
   )
 
   function handleSoundChange(enabled: boolean) {
-    setSoundEnabled(enabled)
+    updateSettings(current => ({
+      ...current,
+      audio: {
+        ...current.audio,
+        soundEnabled: enabled,
+      },
+    }))
     setAudioEnabled(enabled)
   }
 
@@ -290,6 +296,10 @@ function App() {
     },
     [updateSettings],
   )
+
+  useEffect(() => {
+    setAudioEnabled(settings.audio.soundEnabled)
+  }, [settings.audio.soundEnabled])
 
   const handleResetSettings = useCallback(() => {
     resetSettings()
@@ -391,6 +401,7 @@ function App() {
         onPracticeSettingsChange={handlePracticeSettingsChange}
         settings={settings}
         onAutoSaveChange={handleAutoSaveChange}
+        onSoundChange={handleSoundChange}
         onLabelModeChange={handleLabelModeChange}
         onSaveSettings={saveCurrentSettings}
         onResetSettings={handleResetSettings}
