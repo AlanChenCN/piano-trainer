@@ -1240,17 +1240,29 @@
 
   padding: 5px 8px;
 
+  border-radius: 999px;
+
   font-size: 11px;
+
+  font-weight: 600;
 
 }
 
 .settings-header-auto-save {
 
+  width: 112px;
+
+  min-width: 112px;
+
+  justify-content: space-between;
+
   gap: 6px;
 
-  border-radius: 999px;
+}
 
-  font-weight: 600;
+.settings-header-button {
+
+  min-width: 58px;
 
 }
 
