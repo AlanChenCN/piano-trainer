@@ -19,6 +19,7 @@ interface ModalProps {
   anchorRef: RefObject<HTMLElement | null>
   placement: PopoverPlacement
   size?: PopoverSize
+  headerActions?: ReactNode
   children: ReactNode
 }
 
@@ -29,6 +30,7 @@ function Modal({
   anchorRef,
   placement,
   size = 'compact',
+  headerActions,
   children,
 }: ModalProps) {
   const titleId = useId()
@@ -155,14 +157,17 @@ function Modal({
       >
         <div className="popover-header">
           <h2 id={titleId}>{title}</h2>
-          <button
-            className="app-button app-button--compact popover-close-button"
-            type="button"
-            aria-label={`Close ${title}`}
-            onClick={onClose}
-          >
-            ×
-          </button>
+          <div className="popover-header-actions">
+            {headerActions}
+            <button
+              className="app-button app-button--compact popover-close-button"
+              type="button"
+              aria-label={`Close ${title}`}
+              onClick={onClose}
+            >
+              ×
+            </button>
+          </div>
         </div>
 
         <div className="popover-content">{children}</div>

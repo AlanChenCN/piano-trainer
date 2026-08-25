@@ -115,38 +115,38 @@ function SettingsPopover({
       placement="bottom"
       size="wide"
       onClose={onClose}
+      headerActions={
+        <div className="settings-header-actions">
+          <button
+            className="app-button app-button--compact settings-header-auto-save"
+            type="button"
+            aria-pressed={settings.autoSave}
+            data-active={settings.autoSave}
+            onClick={() => onAutoSaveChange(!settings.autoSave)}
+          >
+            <span>Auto Save {settings.autoSave ? 'On' : 'Off'}</span>
+            <span className="settings-toggle-indicator" aria-hidden="true" />
+          </button>
+          <button
+            className="app-button app-button--compact settings-header-button"
+            type="button"
+            aria-label="Save Settings"
+            onClick={onSaveSettings}
+          >
+            Save
+          </button>
+          <button
+            className="app-button app-button--compact settings-header-button"
+            type="button"
+            aria-label="Reset Settings"
+            onClick={onResetSettings}
+          >
+            Reset
+          </button>
+        </div>
+      }
     >
       <div className="settings-popover-content">
-        <div className="settings-top-row">
-          <section className="settings-auto-save" aria-label="Auto Save">
-            <div>
-              <h3>Auto Save</h3>
-              <p className="settings-hint">
-                Save changes immediately.
-              </p>
-            </div>
-            <button
-              className="app-button app-button--compact settings-toggle-button"
-              type="button"
-              aria-pressed={settings.autoSave}
-              data-active={settings.autoSave}
-              onClick={() => onAutoSaveChange(!settings.autoSave)}
-            >
-              <span className="settings-toggle-indicator" aria-hidden="true" />
-              <span>{settings.autoSave ? 'On' : 'Off'}</span>
-            </button>
-          </section>
-
-          <div className="settings-actions settings-actions--top">
-            <button className="app-button app-button--compact" type="button" onClick={onSaveSettings}>
-              Save Settings
-            </button>
-            <button className="app-button app-button--compact" type="button" onClick={onResetSettings}>
-              Reset Settings
-            </button>
-          </div>
-        </div>
-
         <section className="settings-section settings-auto-save" aria-label="Web Sound">
           <div>
             <h3>Web Sound</h3>
