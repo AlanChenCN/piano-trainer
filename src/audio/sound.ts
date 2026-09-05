@@ -26,7 +26,7 @@ export function startNote(
   frequency: number
 ) {
 
-  if (!audioEnabled) {
+  if (!audioEnabled || activeNotes[name]) {
     return
   }
 

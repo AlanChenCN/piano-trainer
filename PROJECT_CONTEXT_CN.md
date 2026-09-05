@@ -4,7 +4,7 @@
 
 Piano Trainer 是一个基于 React + TypeScript 开发的 Web 钢琴练习工具。
 
-项目目标不是单纯模拟钢琴，而是逐步构建一个可扩展的钢琴学习平台：
+项目目前向辅助扒谱、记录和回放的音乐工具发展；Trainer 保留为独立练习工作区。既有钢琴学习功能包括：
 
 -   虚拟钢琴键盘
 -   电脑键盘输入
@@ -17,6 +17,32 @@ Piano Trainer 是一个基于 React + TypeScript 开发的 Web 钢琴练习工�
 ------------------------------------------------------------------------
 
 # 2. 当前版本
+
+## 未发布：乐谱编辑第一版（2026-09-05，实现完成，待用户验收）
+
+新增 Trainer / 乐谱编辑选项卡，底部共用 Keyboard、Web Sound、USB MIDI 和 Bluetooth MIDI。
+编辑区支持试音后确认写入单音 / 和弦、时值和休止符、选择修改与删除、撤销重做、本地保存与 JSON 导入导出。
+回放支持播放、暂停、停止、速度和进度条拖动；编辑光标与播放位置独立。
+Trainer / Editor 切换位于应用标题栏，标题随工作区变化；Editor 采用宽幅居中乐谱和紧凑控制栏，时值由左右箭头步进选择。
+
+新增 src/score/：
+
+- scoreModel.ts：版本化 ScoreDocument / ScoreEvent、连续拍位编辑、文件校验。
+- notation.ts、ScoreStaff.tsx：音乐数据到显示片段，跨小节延音和可选择的双谱表。
+- scoreTransport.ts：回放时钟、暂停、定位和声音生命周期。
+- ScoreEditor.tsx、score.css：编辑界面、本地保存、文件操作与历史记录。
+
+数据流：乐谱 → ScoreTransport → Input Layer（playback）→ 独立回放声音及底部键盘高亮。
+实奏输入在编辑区仅试音并更新待写入音高，不推进 Trainer。回放不进入 NoteEventFactory 或 PracticeController。
+切换前需松开实奏琴键；离开编辑区暂停回放，两个工作区的内容及 Trainer 状态保留。
+输入层仍只转发 pressNote / releaseNote，不加入乐谱业务逻辑。
+
+乐谱 v1 固定 4/4、单声部；记录 MIDI 音高、拍位与时值，不保存像素坐标。
+未来简谱和吉他谱作为音乐数据的展示 / 乐器适配扩展，目前未实施。
+完整使用方式、数据约束、验证和 Technical Debt 见 [SCORE_EDITOR.md](SCORE_EDITOR.md)。
+
+以下各阶段保留原有发布历史；其中功能边界以对应阶段为准。
+
 
 ## v0.4.0-alpha 钢琴训练工具（P5 阶段完成）
 
@@ -1141,7 +1167,7 @@ Practice Canvas，不新增独立 Practice Engine。
     v0.4.0-alpha 钢琴训练工具
     第 3.1 阶段、第 3.2 阶段、P3-003、P3-004、P4-001、P4-002、P4-003、P4-004、P4-005、P5-001、P5-002、P5-003、P5-004、P6-001 至 P6-007 已完成
     Release: v0.4.0-alpha
-    当前开发：等待下一项 P6 Issue
+    当前开发：乐谱编辑第一版，feat/score-editor 分支，待用户验收；仅本地提交，push 需用户确认
 
 最新稳定版本：
 
@@ -1158,3 +1184,4 @@ Practice Canvas，不新增独立 Practice Engine。
 | `PROJECT_CONTEXT_CN.md` | 当前项目状态、架构、设计原则 | 每个大版本更新 |
 | `ROADMAP.md` | 下一步计划、任务完成情况 | 每个开发阶段更新 |
 | `CHANGELOG.md` | 记录每个版本新增和变更内容 | 每次发布更新 |
+| `SCORE_EDITOR.md` | 乐谱编辑使用、数据格式、验证与技术债 | 编辑区功能变化时更新 |

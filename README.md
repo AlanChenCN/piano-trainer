@@ -1,8 +1,19 @@
 # Piano Trainer 🎹
 
-A browser-based piano practice tool built with React and TypeScript.
+A browser-based piano practice and manual score-writing tool built with React and TypeScript.
 
-一个基于 React 和 TypeScript 构建的浏览器钢琴练习工具。
+一个基于 React 和 TypeScript 构建的浏览器钢琴练习与手动录谱工具。
+
+## Score Editor / 乐谱编辑（未发布）
+
+新增独立的「乐谱编辑」选项卡，与 Trainer 共用底部 Keyboard / MIDI 输入。
+先自由试音，松键后保留最近音符或和弦，再选择时值并写入；支持休止符、音高和时值修改、删除、撤销与重做。
+支持乐谱本地手动保存、刷新恢复及 JSON 导入导出，以及播放、暂停、停止、30–240 BPM 和可拖动的播放进度条。
+
+第一版为固定 4/4、单声部（支持同时起止的和弦），适合分开记录旋律和和弦。
+乐谱以 MIDI 音高和拍位保存，为后续简谱、吉他谱展示留出扩展空间；这些转换尚未实现。
+
+使用方法、数据格式和限制见 [SCORE_EDITOR.md](SCORE_EDITOR.md)。Trainer 的练习流程继续保留。
 
 ## Features / 功能
 
@@ -74,6 +85,8 @@ Input & Piano Dock 中的 Keyboard Mapping 可以选择基准音，并通过方�
 
 ## Current Status / 当前状态
 
+当前开发分支增加了乐谱编辑第一版；P6-001 至 P6-007 已完成。以下 `v0.4.0-alpha` 描述的是已发布的 P5 范围。
+
 Version `v0.4.0-alpha` contains the completed P5 product scope: responsive 88-key
 piano, Keyboard / Mouse / USB MIDI / Bluetooth LE MIDI input, the Unified Input
 Layer, Complete Grand Staff, Input & Piano Dock, anchored Popover interaction,
@@ -104,4 +117,7 @@ Build and lint the project / 构建并检查项目：
 ```bash
 npm run build
 npm run lint
+npm test
 ```
+
+自动化测试使用 Node.js 24 的内置测试运行器及已有 TypeScript 编译器，无新增依赖。

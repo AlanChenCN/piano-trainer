@@ -28,6 +28,18 @@
 
 .app-header {
 
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
   width: min(100%, var(--content-max-width));
 
   margin-inline: auto;
@@ -37,6 +49,14 @@
 .app-header h1 {
 
   margin: 0;
+
+  font-size: clamp(24px, 2.5vw, 36px);
+
+  line-height: 1.15;
+
+  font-size: clamp(24px, 2.5vw, 36px);
+
+  line-height: 1.15;
 
 }
 

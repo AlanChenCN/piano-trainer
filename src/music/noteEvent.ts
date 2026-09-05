@@ -4,6 +4,7 @@ import {
 } from '../data/piano'
 
 export type NoteEventSource =
+  | 'playback'
   | 'keyboard'
   | 'mouse'
   | 'usb-midi'
