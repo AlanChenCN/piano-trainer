@@ -275,11 +275,23 @@
   border-radius: 0 0 10px 10px;
 }
 
-.score-play-toggle {
+.score-play-toggle,
+.score-locate-toggle {
   width: 38px;
   min-width: 38px;
   padding-inline: 0 !important;
   font-size: 15px !important;
+}
+
+.score-locate-toggle svg {
+  display: block;
+  width: 17px;
+  height: 17px;
+  margin: auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-width: 1.8;
 }
 
 .score-tempo {
