@@ -36,8 +36,13 @@ export default function ScoreStaff({ score, selected, beat, playing, previewPitc
     if (!paper || playing) return
     const svg = paper.querySelector('svg')
     if (!svg) return
-    const target = editCursorX * (svg.clientWidth / width) - paper.clientWidth / 2
-    paper.scrollTo({ left: Math.max(0, target), behavior: 'smooth' })
+    const position = editCursorX * (svg.clientWidth / width)
+    const safeLeft = paper.scrollLeft + paper.clientWidth * .2
+    const safeRight = paper.scrollLeft + paper.clientWidth * .8
+    if (position < safeLeft || position > safeRight) {
+      const edge = position < safeLeft ? paper.clientWidth * .2 : paper.clientWidth * .8
+      paper.scrollTo({ left: Math.max(0, position - edge), behavior: 'smooth' })
+    }
   }, [editCursorX, playing, width])
   useEffect(() => {
     const paper = paperRef.current

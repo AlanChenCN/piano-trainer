@@ -100,6 +100,13 @@ export default function ScoreEditor({ active, audition, onPlayNote, onStopNote }
     }))
   }
 
+  function deleteSelected() {
+    if (!selectedEvent) return
+    const nextEvent = score.events[insertionIndex + 1]
+    change(deleteEvent(score, selectedEvent.id))
+    setSelected(nextEvent?.id ?? null)
+  }
+
   function durationText(value: number) {
     const index = durations.indexOf(value as (typeof durations)[number])
     return `${durationLabels[index]} · ${value} 拍`
@@ -149,7 +156,7 @@ export default function ScoreEditor({ active, audition, onPlayNote, onStopNote }
         </div>
         <div className="score-side-actions" aria-label="当前音符其他操作">
           <button disabled={!selectedEvent} onClick={clearSelection}>回到末尾</button>
-          <button disabled={!selectedEvent} onClick={() => { if (selectedEvent) { change(deleteEvent(score, selectedEvent.id)); setSelected(null) } }}>删除当前</button>
+          <button disabled={!selectedEvent} onClick={deleteSelected}>删除当前</button>
         </div>
       </div>
     </div>
