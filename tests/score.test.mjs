@@ -3,6 +3,9 @@ import assert from 'node:assert/strict'
 import { createScore, insertEvent, replaceEvent, deleteEvent, parseScore, scoreLength, soundingPitches } from '../src/score/scoreModel.ts'
 import { notationSegments } from '../src/score/notation.ts'
 import { ScoreTransport } from '../src/score/scoreTransport.ts'
+import { midiNumberToPianoNote } from '../src/data/piano.ts'
+import { getStaffNotePosition } from '../src/data/staff.ts'
+import { createGrandStaffGeometry } from '../src/data/staffGeometry.ts'
 
 function phrase(entries = [[[60], 1], [[60], 1], [[], 1], [[64, 67], 2]]) {
   return entries.reduce((score, [pitches, duration]) => insertEvent(score, score.events.length, pitches, duration), createScore())
@@ -13,6 +16,15 @@ function player(score = phrase()) {
   const transport = new ScoreTransport({ ...score, tempo: 60 }, pitch => events.push(['on', pitch]), pitch => events.push(['off', pitch]), () => time)
   return { transport, events, advance(ms) { time += ms; transport.tick() } }
 }
+test('shared grand-staff geometry places middle C between the inner staff lines', () => {
+  const geometry = createGrandStaffGeometry(164, 6)
+  const middleC = getStaffNotePosition(midiNumberToPianoNote(60))
+  const middleCY = geometry.noteY(middleC.staff, middleC.staffStep)
+  const innerLinesMidpoint = (geometry.noteY('treble', 0) + geometry.noteY('bass', 8)) / 2
+
+  assert.equal(middleCY, innerLinesMidpoint)
+  assert.equal(geometry.staffBottomY.bass - geometry.staffBottomY.treble, 72)
+})
 test('insert, resize, delete preserve a contiguous timeline and stable identities', () => {
   const original = phrase()
   const inserted = insertEvent(original, 1, [72], .5)

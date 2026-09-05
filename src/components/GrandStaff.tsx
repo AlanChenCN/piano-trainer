@@ -22,6 +22,10 @@ import type {
   PracticePhrase,
 } from '../practice/practiceTypes'
 import ChordInfo from './ChordInfo'
+import {
+  createGrandStaffGeometry,
+  staffLineSteps,
+} from '../data/staffGeometry'
 
 interface GrandStaffProps {
   pressedNotes: string[]
@@ -52,7 +56,6 @@ interface LedgerLine {
   x2: number
 }
 
-const staffLineSteps = [0, 2, 4, 6, 8]
 const staffScale = 1.2
 const baseViewBoxCenterY = 240
 const viewBoxCenterY = 320
@@ -70,10 +73,10 @@ function scaleY(value: number) {
   return viewBoxCenterY + (value - baseViewBoxCenterY) * staffScale
 }
 
-const staffBottomY: Record<StaffName, number> = {
-  treble: scaleY(baseStaffBottomY.treble),
-  bass: scaleY(baseStaffBottomY.bass),
-}
+  const { noteY } = createGrandStaffGeometry(
+  scaleY(baseStaffBottomY.treble),
+  baseStepHeight * staffScale,
+)
 const staffLeft = scaleX(220)
 const staffRight = scaleX(1380)
 const staffConnectorX = scaleX(185)
@@ -82,11 +85,6 @@ const noteCollisionOffset = 26 * staffScale
 const noteHeadRadiusX = 10 * staffScale
 const noteHeadRadiusY = 8 * staffScale
 const ledgerLinePadding = 18 * staffScale
-const stepHeight = baseStepHeight * staffScale
-
-function noteY(staff: StaffName, step: number) {
-  return staffBottomY[staff] - step * stepHeight
-}
 
 function layoutStaffNotes(
   notes: PositionedNote[],

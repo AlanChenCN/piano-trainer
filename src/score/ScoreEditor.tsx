@@ -130,7 +130,7 @@ export default function ScoreEditor({ active, audition, onPlayNote, onStopNote }
       <button onClick={() => add([])}>插入休止符</button>
       <span className="score-hint">{selectedEvent ? `插入第 ${insertionIndex + 1} 项前` : '在末尾写入'}</span>
     </div>
-    <ScoreStaff score={score} selected={selected} beat={playback.beat} playing={playback.playing} onSelect={setSelected} onEnd={clearSelection} />
+    <ScoreStaff score={score} selected={selected} beat={playback.beat} playing={playback.playing} previewPitches={audition} previewDuration={duration} insertionIndex={insertionIndex} onSelect={setSelected} onEnd={clearSelection} />
     <div className="score-inspector">
       {selectedEvent ? <>
         <strong>第 {insertionIndex + 1} 项 · {selectedEvent.startBeat + 1} 拍</strong>

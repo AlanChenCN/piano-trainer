@@ -24,11 +24,13 @@ Piano Trainer 是一个基于 React + TypeScript 开发的 Web 钢琴练习工�
 编辑区支持试音后确认写入单音 / 和弦、时值和休止符、选择修改与删除、撤销重做、本地保存与 JSON 导入导出。
 回放支持播放、暂停、停止、速度和进度条拖动；编辑光标与播放位置独立。
 Trainer / Editor 切换位于应用标题栏，标题随工作区变化；Editor 采用宽幅居中乐谱和紧凑控制栏，时值由左右箭头步进选择。
+Trainer 与 Editor 共用大谱表的纵向几何关系，中央 C 位于高低音谱正中。最近试音按当前时值在实际插入位置显示为待写入预览，确认后才进入 ScoreDocument。
 
 新增 src/score/：
 
 - scoreModel.ts：版本化 ScoreDocument / ScoreEvent、连续拍位编辑、文件校验。
 - notation.ts、ScoreStaff.tsx：音乐数据到显示片段，跨小节延音和可选择的双谱表。
+- ../data/staffGeometry.ts：Trainer / Editor 共用的大谱表纵向几何。
 - scoreTransport.ts：回放时钟、暂停、定位和声音生命周期。
 - ScoreEditor.tsx、score.css：编辑界面、本地保存、文件操作与历史记录。
 
