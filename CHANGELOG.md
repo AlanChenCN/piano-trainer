@@ -12,6 +12,8 @@
 - 页面主滚动条改为隐藏但保持可滚动；打开设置浮层不再锁定背景滚动或改变页面宽度。
 - Settings 移除重复的 Theme、Note Display 和 Practice Settings；Theme 面板补充 Follow System 选项。
 - Trainer 调整为与 Editor 对应的上方练习控制区、中部大谱表和下方状态区，练习控件移入谱表卡片顶部。
+- Trainer 在 Practice 模式新增练习短句回放，可播放当前 4 小节目标并拖动播放进度；自由弹奏模式下控件禁用。
+- Trainer 回放区改为复用 Editor 的完整播放控件，并在谱面显示连续播放光标；状态栏移回谱表卡片外。
 
 ### 乐谱编辑布局调整
 

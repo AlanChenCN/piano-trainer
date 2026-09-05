@@ -16,6 +16,7 @@ import type { InputConnectionState } from './components/InputDeviceButton'
 import MidiMonitor from './components/MidiMonitor'
 import StatusBar from './components/StatusBar'
 import Toolbar from './components/Toolbar'
+import PracticeTransport from './practice/PracticeTransport'
 import type { ConfigurableThemeToken } from './components/ThemePopover'
 import { setAudioEnabled, startNote, stopNote } from './audio/sound'
 import {
@@ -68,6 +69,7 @@ function App() {
   const heldAudition = useRef(new Set<string>())
   const [audition, setAudition] = useState<number[]>([])
   const [playbackNotes, setPlaybackNotes] = useState<string[]>([])
+  const [practicePlayback, setPracticePlayback] = useState({ beat: 0, playing: false })
   const [pressedNotes, setPressedNotes] = useState<string[]>([])
   const [midiPanelOpen, setMidiPanelOpen] = useState(false)
   const [midiDeviceName, setMidiDeviceName] = useState<string | null>(null)
@@ -214,6 +216,9 @@ function App() {
     const note = midiNumberToPianoNote(pitch)
     if (note) inputLayer.releaseNote(note.name, { source: 'playback' })
   }, [inputLayer])
+  const handlePracticePlaybackChange = useCallback((beat: number, playing: boolean) => {
+    setPracticePlayback(current => current.beat === beat && current.playing === playing ? current : { beat, playing })
+  }, [])
 
   const keyboardController = useMemo(
     () => new KeyboardController(inputLayer, defaultKeyboardBaseNote),
@@ -448,18 +453,24 @@ function App() {
           currentTargetIndex={
             practiceSnapshot.session?.cursor.noteIndex ?? -1
           }
+          playbackBeat={practicePlayback.beat}
+          playbackActive={practicePlayback.playing}
           practiceType={settings.practice.practiceType}
           noteDisplayMode={noteDisplayMode}
           practiceNoteNameMode={settings.practice.noteNameMode}
           chord={currentChord}
         />
-        <StatusBar
-          keyboardBaseNote={keyboardBaseNote}
-          midiDeviceName={midiDeviceName}
-          bluetoothMidiDeviceName={bluetoothMidiDeviceName}
+        <PracticeTransport
+          phrase={practiceSnapshot.session?.phrase ?? null}
+          enabled={practiceSnapshot.selection === 'note-practice'}
+          currentTargetIndex={practiceSnapshot.session?.cursor.noteIndex ?? -1}
+          onPlayNote={playScoreNote}
+          onStopNote={stopScoreNote}
+          onPlaybackChange={handlePracticePlaybackChange}
         />
         </div>
         <ScoreEditor active={workspace === 'score'} audition={audition} onPlayNote={playScoreNote} onStopNote={stopScoreNote} />
+        <div className="trainer-status" hidden={workspace !== 'trainer'}><StatusBar keyboardBaseNote={keyboardBaseNote} midiDeviceName={midiDeviceName} bluetoothMidiDeviceName={bluetoothMidiDeviceName} /></div>
         <div className="score-status" hidden={workspace !== 'score'}><StatusBar keyboardBaseNote={keyboardBaseNote} midiDeviceName={midiDeviceName} bluetoothMidiDeviceName={bluetoothMidiDeviceName} /></div>
       </main>
 

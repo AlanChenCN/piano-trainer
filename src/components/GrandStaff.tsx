@@ -32,6 +32,8 @@ interface GrandStaffProps {
   targetNotes: PianoNote[]
   practicePhrase: PracticePhrase | null
   currentTargetIndex: number
+  playbackBeat: number
+  playbackActive: boolean
   practiceType: PracticeMode
   noteDisplayMode: NoteDisplayMode
   practiceNoteNameMode: PracticeNoteNameMode
@@ -287,6 +289,8 @@ function GrandStaff({
   targetNotes,
   practicePhrase,
   currentTargetIndex,
+  playbackBeat,
+  playbackActive,
   practiceType,
   noteDisplayMode,
   practiceNoteNameMode,
@@ -446,6 +450,8 @@ function GrandStaff({
             y2={noteY('bass', 0) + 16}
           />
         ))}
+
+        {playbackActive && practicePhrase && <line className="practice-playback-cursor" x1={timelineNoteX(Math.min(practicePhrase.notes.length - 1, playbackBeat), practicePhrase.notes.length)} x2={timelineNoteX(Math.min(practicePhrase.notes.length - 1, playbackBeat), practicePhrase.notes.length)} y1={noteY('treble', 8) - 22} y2={noteY('bass', 0) + 22} />}
 
         {ledgerLines.map(line => (
           <line

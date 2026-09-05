@@ -890,6 +890,12 @@
 
 }
 
+.practice-playback-cursor {
+  stroke: var(--theme-note-color);
+  stroke-width: 3;
+  stroke-dasharray: 7 5;
+}
+
 .theme-preset-list {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }

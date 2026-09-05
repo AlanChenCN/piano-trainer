@@ -9,6 +9,7 @@ export class ScoreTransport {
   private sounding = new Map<string, number>()
   private anchorTime = 0
   private anchorBeat = 0
+  private frameId: number | null = null
   private on: (pitch: number) => void
   private off: (pitch: number) => void
   private now: () => number
@@ -22,6 +23,8 @@ export class ScoreTransport {
     this.listeners.forEach(listener => listener())
   }
   private silence() { this.sounding.forEach(pitch => this.off(pitch)); this.sounding.clear() }
+  private cancelTick() { if (this.frameId !== null && typeof cancelAnimationFrame === 'function') cancelAnimationFrame(this.frameId); this.frameId = null }
+  private scheduleTick() { if (typeof requestAnimationFrame === 'function') this.frameId = requestAnimationFrame(this.tick) }
   setScore(score: ScoreDocument) { this.pause(); this.score = score; this.seek(Math.min(this.snapshot.beat, scoreLength(score))) }
   play = () => {
     if (!scoreLength(this.score) || this.snapshot.playing) return
@@ -29,8 +32,8 @@ export class ScoreTransport {
     this.anchorTime = this.now()
     this.publish(this.anchorBeat, true); this.tick()
   }
-  pause = () => { if (this.snapshot.playing) this.tick(); this.silence(); this.publish(this.snapshot.beat, false) }
-  stop = () => { this.silence(); this.publish(0, false) }
+  pause = () => { if (this.snapshot.playing) this.tick(); this.cancelTick(); this.silence(); this.publish(this.snapshot.beat, false) }
+  stop = () => { this.cancelTick(); this.silence(); this.publish(0, false) }
   seek = (beat: number) => {
     this.silence()
     this.anchorBeat = Math.max(0, Math.min(beat, scoreLength(this.score)))
@@ -39,6 +42,7 @@ export class ScoreTransport {
     if (this.snapshot.playing) this.tick()
   }
   tick = () => {
+    this.frameId = null
     if (!this.snapshot.playing) return
     const beat = Math.min(scoreLength(this.score), this.anchorBeat + (this.now() - this.anchorTime) * this.score.tempo / 60000)
     if (beat >= scoreLength(this.score)) { this.silence(); this.publish(beat, false); return }
@@ -48,5 +52,6 @@ export class ScoreTransport {
     next.forEach((pitch, key) => { if (!this.sounding.has(key)) this.on(pitch) })
     this.sounding = next
     this.publish(beat, true)
+    this.scheduleTick()
   }
 }
