@@ -1,4 +1,7 @@
 :root {
+  /* Keep viewport width stable while retaining mouse, keyboard, and touch scrolling. */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   --theme-page-background: #f4f5f8;
   --theme-surface-background: #ffffff;
   --theme-score-background: #fbfaf7;
@@ -53,6 +56,11 @@
   @media (max-width: 1024px) {
     font-size: 16px;
   }
+}
+
+:root::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }
 
 @media (prefers-color-scheme: dark) {

@@ -107,10 +107,6 @@ function Modal({
       return
     }
 
-    const previousBodyOverflow = document.body.style.overflow
-
-    document.body.style.overflow = 'hidden'
-
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {
         onClose()
@@ -134,7 +130,6 @@ function Modal({
     document.addEventListener('pointerdown', handlePointerDown, true)
 
     return () => {
-      document.body.style.overflow = previousBodyOverflow
       document.removeEventListener('keydown', handleKeyDown)
       document.removeEventListener('pointerdown', handlePointerDown, true)
     }
