@@ -7,7 +7,7 @@ A browser-based piano practice and manual score-writing tool built with React an
 ## Score Editor / 乐谱编辑（未发布）
 
 新增独立的「乐谱编辑」选项卡，与 Trainer 共用底部 Keyboard / MIDI 输入。
-先自由试音，松键后会在实际插入位置预览音高与时值，再确认写入；支持休止符、音高和时值修改、删除、撤销与重做。
+先自由试音，松键后会在实际插入锚点高亮预览音高与待写入时值，再确认写入；预览不推移已有谱面。支持休止符、音高和时值修改、删除、撤销与重做。
 Editor 与 Trainer 共用大谱表纵向几何，中央 C 位于高低音谱之间的正中。
 支持乐谱本地手动保存、刷新恢复及 JSON 导入导出，以及播放、暂停、停止、30–240 BPM 和可拖动的播放进度条。
 

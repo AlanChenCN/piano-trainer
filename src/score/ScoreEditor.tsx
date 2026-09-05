@@ -122,8 +122,8 @@ export default function ScoreEditor({ active, audition, onPlayNote, onStopNote }
     </div>
     <div className="score-entry">
       <div className="score-audition"><span>最近试音</span><strong>{audition.length ? names(audition) : '在底部琴键上试弹'}</strong><small>松键后保留 · 不会自动写入</small></div>
-      <div className="score-stepper" aria-label="写入时值">
-        <span>写入时值</span>
+      <div className="score-stepper score-stepper--entry" aria-label="待写入音符时值">
+        <span>待写入时值</span>
         <div><button aria-label="缩短写入时值" disabled={duration === durations[0]} onClick={() => changeEntryDuration(-1)}>◀</button><output>{durationText(duration)}</output><button aria-label="延长写入时值" disabled={duration === durations.at(-1)} onClick={() => changeEntryDuration(1)}>▶</button></div>
       </div>
       <button className="score-primary" disabled={!audition.length} onClick={() => add(audition)}>写入音符</button>

@@ -12,22 +12,19 @@ const staffTopY = noteY('treble', 8)
 const staffBottomEdgeY = noteY('bass', 0)
 
 export default function ScoreStaff({ score, selected, beat, playing, previewPitches, previewDuration, insertionIndex, onSelect, onEnd }: Props) {
-  const { segments, widths, xs, offset, width, eventById, previewX, previewWidth } = useMemo(() => {
+  const { segments, widths, xs, offset, width, eventById, previewAnchorX } = useMemo(() => {
     const segments = notationSegments(score)
     const widths = segments.map(segment => Math.max(88, segment.pitches.length * 18 + 36, segment.duration * 54))
+    const xs = [100]
+    for (const itemWidth of widths) xs.push(xs[xs.length - 1] + itemWidth)
+    const offset = xs[xs.length - 1]
     const nextEvent = score.events[insertionIndex]
-    const previewIndex = previewPitches.length
-      ? nextEvent ? Math.max(0, segments.findIndex(segment => segment.eventId === nextEvent.id)) : segments.length
+    const nextSegmentIndex = nextEvent
+      ? segments.findIndex(segment => segment.eventId === nextEvent.id)
       : -1
-    const previewWidth = Math.max(88, previewPitches.length * 18 + 36, previewDuration * 54)
-    const displayWidths = [...widths]
-    if (previewIndex >= 0) displayWidths.splice(previewIndex, 0, previewWidth)
-    const displayXs = [100]
-    for (const itemWidth of displayWidths) displayXs.push(displayXs[displayXs.length - 1] + itemWidth)
-    const xs = segments.map((_, index) => displayXs[index + (previewIndex >= 0 && index >= previewIndex ? 1 : 0)])
-    const offset = displayXs[displayXs.length - 1]
-    return { segments, widths, xs, offset, width: Math.max(800, offset + 80), eventById: new Map(score.events.map(event => [event.id, event])), previewX: previewIndex >= 0 ? displayXs[previewIndex] : null, previewWidth }
-  }, [score, previewPitches.length, previewDuration, insertionIndex])
+    const previewAnchorX = nextSegmentIndex >= 0 ? xs[nextSegmentIndex] - 8 : offset
+    return { segments, widths, xs, offset, width: Math.max(800, offset + 88), eventById: new Map(score.events.map(event => [event.id, event])), previewAnchorX }
+  }, [score, insertionIndex])
   const activeIndex = segments.findIndex(segment => beat >= segment.beat && beat < segment.beat + segment.duration)
   const playX = activeIndex < 0 ? offset : xs[activeIndex] + (beat - segments[activeIndex].beat) / segments[activeIndex].duration * widths[activeIndex]
   const notation = useMemo(() => <g>
@@ -39,7 +36,7 @@ export default function ScoreStaff({ score, selected, beat, playing, previewPitc
         <text x="70" y="135" fontSize="24">4</text><text x="70" y="159" fontSize="24">4</text>
         <text x="70" y="207" fontSize="24">4</text><text x="70" y="231" fontSize="24">4</text>
       </g>
-      {!segments.length && <text x="180" y="205" fill="var(--theme-text-color)" fontSize="18">在底部琴键试音，然后点击「写入音符」</text>}
+      {!segments.length && !previewPitches.length && <text x="180" y="181" fill="var(--theme-text-color)" fontSize="18">在底部琴键试音，然后点击「写入音符」</text>}
       {segments.map((segment, index) => {
         const x = xs[index] + Math.max(30, segment.pitches.length * 10 + 12)
         const chosen = selected === segment.eventId
@@ -52,7 +49,8 @@ export default function ScoreStaff({ score, selected, beat, playing, previewPitc
           </g>}
           <g role="button" tabIndex={0} aria-label={label} aria-pressed={chosen} onClick={() => onSelect(segment.eventId)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(segment.eventId) } }} className="score-note-target">
             <title>{label}</title>
-            <rect x={xs[index] - 4} y="4" width={widths[index] - 4} height="360" rx="8" fill={chosen ? 'var(--theme-accent-background)' : 'transparent'} stroke={chosen ? 'var(--theme-accent-color)' : 'transparent'} />
+            <rect x={xs[index] - 4} y="4" width={widths[index] - 4} height="360" rx="8" fill="transparent" stroke="transparent" />
+            {chosen && <line x1={xs[index] + 6} x2={xs[index] + widths[index] - 14} y1="54" y2="54" stroke="var(--theme-accent-color)" strokeWidth="3" strokeLinecap="round" />}
             <g pointerEvents="none" fill={chosen ? 'var(--theme-accent-color)' : 'var(--theme-heading-color)'} stroke={chosen ? 'var(--theme-accent-color)' : 'var(--theme-heading-color)'}>
               {!segment.pitches.length && <text x={x - 8} y="155" stroke="none" fontSize="30" fontFamily="Segoe UI Symbol, serif">{segment.duration === 4 ? '𝄻' : segment.duration === 2 ? '𝄼' : segment.duration === 1 ? '𝄽' : segment.duration === .5 ? '𝄾' : '𝄿'}</text>}
               {segment.pitches.map((pitch, noteIndex) => {
@@ -88,14 +86,17 @@ export default function ScoreStaff({ score, selected, beat, playing, previewPitc
           </g>
         </g>
       })}
-      {previewX !== null && <g className="score-note-preview" aria-label={`待写入：${previewPitches.map(pitch => midiNumberToPianoNote(pitch)?.name).join('、')}，${previewDuration} 拍`}>
-        <rect x={previewX + 2} y="52" width={previewWidth - 8} height="248" rx="10" fill="var(--theme-accent-background)" stroke="var(--theme-accent-color)" strokeDasharray="5 5" />
-        <text x={previewX + 10} y="72" fill="var(--theme-accent-color)" fontSize="12">待写入</text>
-        <g fill="var(--theme-accent-color)" stroke="var(--theme-accent-color)" opacity="0.72" pointerEvents="none">
+      {!!previewPitches.length && <g className="score-note-preview" aria-label={`待写入：${previewPitches.map(pitch => midiNumberToPianoNote(pitch)?.name).join('、')}，${previewDuration} 拍`}>
+        <line x1={previewAnchorX} x2={previewAnchorX} y1={staffTopY - 14} y2={staffBottomEdgeY + 14} stroke="var(--theme-accent-color)" strokeWidth="2" opacity="0.7" />
+        <path d={`M ${previewAnchorX - 5} ${staffTopY - 18} L ${previewAnchorX + 5} ${staffTopY - 18} L ${previewAnchorX} ${staffTopY - 11} Z`} fill="var(--theme-accent-color)" />
+        <text x={previewAnchorX + 8} y={staffTopY - 16} fill="var(--theme-accent-color)" fontSize="12">待写入 · {previewDuration} 拍</text>
+        <g fill="var(--theme-accent-color)" stroke="var(--theme-accent-color)" opacity="0.88" pointerEvents="none">
           {previewPitches.map((pitch, index) => {
             const note = midiNumberToPianoNote(pitch)!
             const position = getStaffNotePosition(note)
-            const x = previewX + previewWidth / 2 + (index % 2 ? 6 : -6)
+            const previous = midiNumberToPianoNote(previewPitches[index - 1])
+            const nearPrevious = previous && getStaffNotePosition(previous).staff === position.staff && Math.abs(getStaffNotePosition(previous).staffStep - position.staffStep) <= 1
+            const x = previewAnchorX + 22 + (nearPrevious && index % 2 ? 12 : 0)
             const y = noteY(position.staff, position.staffStep)
             return <g key={pitch}>
               {getLedgerLineSteps(position.staffStep).map(step => <line key={step} x1={x - 13} x2={x + 13} y1={noteY(position.staff, step)} y2={noteY(position.staff, step)} />)}
@@ -107,13 +108,12 @@ export default function ScoreStaff({ score, selected, beat, playing, previewPitc
             </g>
           })}
         </g>
-        <text x={previewX + 10} y="322" fill="var(--theme-accent-color)" fontSize="12">{previewDuration} 拍</text>
       </g>}
       <g role="button" tabIndex={0} aria-label="在末尾继续写入" onClick={onEnd} onKeyDown={e => { if (e.key === 'Enter') onEnd() }} className="score-note-target">
-        <rect x={offset} y="110" width="52" height="174" rx="8" fill={selected === null ? 'var(--theme-accent-background)' : 'transparent'} />
-        <text x={offset + 17} y="207" fill="var(--theme-accent-color)" fontSize="24">+</text>
+        <rect x={offset} y={(staffTopY + staffBottomEdgeY) / 2 - 68} width="52" height="136" rx="8" fill={selected === null ? 'var(--theme-accent-background)' : 'transparent'} />
+        <text x={offset + 17} y={(staffTopY + staffBottomEdgeY) / 2 + 8} fill="var(--theme-accent-color)" fontSize="24">+</text>
       </g>
-    </g>, [segments, widths, xs, offset, width, eventById, selected, previewX, previewWidth, previewPitches, previewDuration, onSelect, onEnd])
+    </g>, [segments, widths, xs, offset, width, eventById, selected, previewAnchorX, previewPitches, previewDuration, onSelect, onEnd])
   return <div className="score-paper" aria-label="乐谱五线谱，可横向滚动">
     <svg width={width} height="410" viewBox={`0 0 ${width} 410`} role="group" aria-label="4/4 乐谱">
       {notation}
