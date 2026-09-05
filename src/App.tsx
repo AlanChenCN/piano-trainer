@@ -9,6 +9,7 @@ import {
 import ScoreEditor from './score/ScoreEditor'
 import GrandStaff from './components/GrandStaff'
 import Header from './components/Header'
+import GlobalControls from './components/GlobalControls'
 import BluetoothMidiPanel from './components/BluetoothMidiPanel'
 import InputPianoDock from './components/InputPianoDock'
 import type { InputConnectionState } from './components/InputDeviceButton'
@@ -426,29 +427,16 @@ function App() {
         workspace={workspace}
         disabled={pressedNotes.length > 0}
         onWorkspaceChange={handleWorkspaceChange}
+        controls={<GlobalControls themeMode={themeSettings.mode} activePreset={activeThemePreset} themeTokens={themeTokens} noteColorMode={themeSettings.noteColorMode} settings={settings} onThemeModeChange={handleThemeModeChange} onThemeTokenChange={handleThemeTokenChange} onNoteColorModeChange={handleNoteColorModeChange} onThemeReset={handleThemeReset} onAutoSaveChange={handleAutoSaveChange} onSoundChange={handleSoundChange} onLabelModeChange={handleLabelModeChange} onNoteDisplayModeChange={handleNoteDisplayModeChange} onPracticeSettingsChange={handlePracticeSettingsChange} onSaveSettings={saveCurrentSettings} onResetSettings={handleResetSettings} />}
       />
       <div hidden={workspace !== 'trainer'}>
       <Toolbar
-        themeMode={themeSettings.mode}
-        activePreset={activeThemePreset}
-        themeTokens={themeTokens}
-        noteColorMode={themeSettings.noteColorMode}
-        onThemeModeChange={handleThemeModeChange}
-        onThemeTokenChange={handleThemeTokenChange}
-        onNoteColorModeChange={handleNoteColorModeChange}
-        onThemeReset={handleThemeReset}
         noteDisplayMode={noteDisplayMode}
         onNoteDisplayModeChange={handleNoteDisplayModeChange}
         practiceSelection={practiceSnapshot.selection}
         practiceSettings={settings.practice}
         onPracticeSelectionChange={practiceController.selectMode}
         onPracticeSettingsChange={handlePracticeSettingsChange}
-        settings={settings}
-        onAutoSaveChange={handleAutoSaveChange}
-        onSoundChange={handleSoundChange}
-        onLabelModeChange={handleLabelModeChange}
-        onSaveSettings={saveCurrentSettings}
-        onResetSettings={handleResetSettings}
       />
 
       </div>

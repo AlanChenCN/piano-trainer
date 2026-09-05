@@ -4,6 +4,12 @@
 
 ## [未发布]
 
+### 顶部控制与乐谱边界调整
+
+- Theme 与 Settings 移至标题栏，紧贴 Trainer / Editor 选项卡左侧并在两个工作区可用。
+- 统一 Trainer 与 Editor 的应用标题字号与行高。
+- 重新平衡 Editor 乐谱纵向边界，为最高音 C8 及其符干保留顶部可见空间，并缩减最低音与时值标签之间的留白。
+
 ### 乐谱编辑布局调整
 
 - 将 Trainer / Editor 工作区切换合并到应用标题栏，并随工作区显示 `Piano Trainer` 或 `Piano Editor`。

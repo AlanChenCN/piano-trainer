@@ -7,7 +7,7 @@ import { scoreLength, type ScoreDocument } from './scoreModel'
 
 interface Props { score: ScoreDocument; selected: string | null; beat: number; playing: boolean; previewPitches: number[]; previewDuration: number; insertionIndex: number; onSelect: (id: string) => void; onEnd: () => void }
 
-const { staffBottomY, noteY } = createGrandStaffGeometry(164, 6)
+const { staffBottomY, noteY } = createGrandStaffGeometry(199, 6)
 const staffTopY = noteY('treble', 8)
 const staffBottomEdgeY = noteY('bass', 0)
 
@@ -49,7 +49,7 @@ export default function ScoreStaff({ score, selected, beat, playing, previewPitc
           </g>}
           <g role="button" tabIndex={0} aria-label={label} aria-pressed={chosen} onClick={() => onSelect(segment.eventId)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(segment.eventId) } }} className="score-note-target">
             <title>{label}</title>
-            <rect x={xs[index] - 4} y="4" width={widths[index] - 4} height="360" rx="8" fill="transparent" stroke="transparent" />
+            <rect x={xs[index] - 4} y="12" width={widths[index] - 4} height="354" rx="8" fill="transparent" stroke="transparent" />
             {chosen && <line x1={xs[index] + 6} x2={xs[index] + widths[index] - 14} y1="54" y2="54" stroke="var(--theme-left-hand-color)" strokeWidth="3" strokeLinecap="round" />}
             <g pointerEvents="none" fill={chosen ? 'var(--theme-left-hand-color)' : 'var(--theme-heading-color)'} stroke={chosen ? 'var(--theme-left-hand-color)' : 'var(--theme-heading-color)'}>
               {!segment.pitches.length && <text x={x - 8} y="155" stroke="none" fontSize="30" fontFamily="Segoe UI Symbol, serif">{segment.duration === 4 ? '𝄻' : segment.duration === 2 ? '𝄼' : segment.duration === 1 ? '𝄽' : segment.duration === .5 ? '𝄾' : '𝄿'}</text>}
@@ -82,7 +82,7 @@ export default function ScoreStaff({ score, selected, beat, playing, previewPitc
                 </g>
               })}
             </g>
-            <text x={xs[index] + 6} y="382" fill="var(--theme-text-color)" fontSize="12">{segment.duration} 拍{segment.tiedFrom && segment.pitches.length ? ' · 延音' : ''}</text>
+            <text x={xs[index] + 6} y="374" fill="var(--theme-text-color)" fontSize="12">{segment.duration} 拍{segment.tiedFrom && segment.pitches.length ? ' · 延音' : ''}</text>
           </g>
         </g>
       })}
@@ -115,9 +115,9 @@ export default function ScoreStaff({ score, selected, beat, playing, previewPitc
       </g>
     </g>, [segments, widths, xs, offset, width, eventById, selected, previewAnchorX, previewPitches, previewDuration, onSelect, onEnd])
   return <div className="score-paper" aria-label="乐谱五线谱，可横向滚动">
-    <svg width={width} height="410" viewBox={`0 0 ${width} 410`} role="group" aria-label="4/4 乐谱">
+    <svg width={width} height="400" viewBox={`0 0 ${width} 400`} role="group" aria-label="4/4 乐谱">
       {notation}
-      {scoreLength(score) > 0 && <line x1={playX} x2={playX} y1="48" y2="357" stroke="var(--theme-note-color)" strokeWidth="2" strokeDasharray={playing ? undefined : '5 5'} pointerEvents="none" />}
+      {scoreLength(score) > 0 && <line x1={playX} x2={playX} y1="48" y2="365" stroke="var(--theme-note-color)" strokeWidth="2" strokeDasharray={playing ? undefined : '5 5'} pointerEvents="none" />}
     </svg>
   </div>
 }
