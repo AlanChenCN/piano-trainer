@@ -145,15 +145,15 @@ export default function ScoreEditor({ active, audition, onPlayNote, onStopNote }
     <div className="score-document-bar">
       <label className="score-title-field"><span>乐谱名称</span><input aria-label="乐谱名称" maxLength={120} value={score.title} onChange={event => change({ ...score, title: event.target.value })} /></label>
       <div className="score-summary"><span>4/4 · 单声部</span><span>{score.events.length} 项 · {length} 拍</span></div>
-      <div className="score-actions">
-        <button onClick={() => { if (dirty && !window.confirm('新建乐谱？未保存内容可通过撤销恢复。')) return; change(createScore()); setSelected(null); transport.stop() }}>新建</button>
-        <button onClick={save}>保存{dirty ? ' *' : ''}</button>
-        <button onClick={exportScore}>导出</button>
-        <button onClick={() => fileInput.current?.click()}>打开文件</button>
+      <div className="score-actions score-document-actions">
+        <button className="score-file-action" onClick={() => { if (dirty && !window.confirm('新建乐谱？未保存内容可通过撤销恢复。')) return; change(createScore()); setSelected(null); transport.stop() }}>新建</button>
+        <button className={`score-file-action${dirty ? ' score-primary' : ''}`} onClick={save}>保存</button>
+        <button className="score-file-action" onClick={exportScore}>导出</button>
+        <button className="score-file-action" onClick={() => fileInput.current?.click()}>打开文件</button>
         <input ref={fileInput} type="file" accept=".json,application/json" hidden aria-label="导入乐谱文件" onChange={event => { const file = event.target.files?.[0]; if (file) void importScore(file); event.target.value = '' }} />
         <span className="score-action-divider" aria-hidden="true" />
-        <button disabled={!undo.length} onClick={() => restore('undo')} aria-label="撤销">↶</button>
-        <button disabled={!redo.length} onClick={() => restore('redo')} aria-label="重做">↷</button>
+        <button className="score-history-action" disabled={!undo.length} onClick={() => restore('undo')} aria-label="撤销">↶</button>
+        <button className="score-history-action" disabled={!redo.length} onClick={() => restore('redo')} aria-label="重做">↷</button>
       </div>
     </div>
     <div className="score-entry" aria-label="乐谱编辑操作">

@@ -103,8 +103,12 @@
 
 .score-document-bar .score-actions {
   margin-left: auto;
-  gap: 5px;
+  gap: 6px;
+  flex-wrap: nowrap;
 }
+
+.score-document-actions .score-file-action { width: 78px; }
+.score-document-actions .score-history-action { width: 34px; min-width: 34px; padding-inline: 0; }
 
 .score-document-bar button,
 .score-entry button,
@@ -137,7 +141,7 @@
 
 .score-edit-matrix {
   display: grid;
-  grid-template-columns: 230px 260px 104px 112px;
+  grid-template-columns: 230px 234px 104px 112px;
   align-items: center;
   gap: 3px 10px;
 }
@@ -209,21 +213,19 @@
 
 .score-side-actions {
   display: grid;
-  grid-template-columns: repeat(2, 92px);
-  grid-template-rows: repeat(2, 30px);
+  grid-template-columns: 104px 112px;
+  grid-template-rows: repeat(2, 34px);
   align-items: center;
   justify-content: center;
-  gap: 4px 6px;
-  min-height: 64px;
+  gap: 3px 10px;
+  min-height: 71px;
   padding-left: 12px;
   border-left: 1px solid var(--theme-border-color);
   white-space: nowrap;
 }
 
 .score-side-actions button {
-  width: 92px;
-  min-height: 30px;
-  padding: 4px 8px;
+  width: 100%;
 }
 
 .score-danger-confirm { background: #b42318 !important; border-color: #b42318 !important; color: #fff !important; }
@@ -259,7 +261,7 @@
 }
 
 .score-stepper output {
-  min-width: 132px;
+  min-width: 110px;
   padding: 5px 6px;
   color: var(--theme-heading-color);
   font-size: 11px;
