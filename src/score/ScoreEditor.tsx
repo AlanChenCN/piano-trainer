@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 import { midiNumberToPianoNote } from '../data/piano'
-import { createScore, deleteEvent, durationLabels, durations, insertEvent, parseScore, replaceEvent, scoreLength, type ScoreDocument } from './scoreModel'
+import { createScore, deleteEvent, durations, insertEvent, parseScore, replaceEvent, scoreLength, type ScoreDocument } from './scoreModel'
 import { ScoreTransport } from './scoreTransport'
 import ScoreStaff from './ScoreStaff'
 import './score.css'
@@ -13,6 +13,8 @@ function loadDraft() {
   } catch { return { score: createScore(), message: '本地乐谱无法读取。原数据未覆盖，可导入备份或手动保存新谱。' } }
 }
 const names = (pitches: number[]) => pitches.map(pitch => midiNumberToPianoNote(pitch)?.name).join(' · ')
+const noteFractions: Record<number, string> = { .25: '1/16', .5: '1/8', 1: '1/4', 2: '1/2', 4: '1' }
+const beatFractions: Record<number, string> = { .25: '1/4', .5: '1/2', 1: '1', 2: '2', 4: '4' }
 interface Props { active: boolean; audition: number[]; onPlayNote: (pitch: number) => void; onStopNote: (pitch: number) => void }
 export default function ScoreEditor({ active, audition, onPlayNote, onStopNote }: Props) {
   const [initial] = useState(loadDraft)
@@ -23,7 +25,9 @@ export default function ScoreEditor({ active, audition, onPlayNote, onStopNote }
   const [duration, setDuration] = useState(1)
   const [undo, setUndo] = useState<ScoreDocument[]>([])
   const [redo, setRedo] = useState<ScoreDocument[]>([])
+  const [confirmClearAll, setConfirmClearAll] = useState(false)
   const fileInput = useRef<HTMLInputElement>(null)
+  const clearAllButton = useRef<HTMLButtonElement>(null)
   const transport = useMemo(() => new ScoreTransport(initial.score, onPlayNote, onStopNote), [initial, onPlayNote, onStopNote])
   const playback = useSyncExternalStore(transport.subscribe, transport.getSnapshot, transport.getSnapshot)
   const length = scoreLength(score)
@@ -45,6 +49,15 @@ export default function ScoreEditor({ active, audition, onPlayNote, onStopNote }
     window.addEventListener('beforeunload', warn)
     return () => window.removeEventListener('beforeunload', warn)
   }, [dirty])
+  useEffect(() => {
+    if (!confirmClearAll) return
+    const cancel = (event: Event) => {
+      if (!clearAllButton.current?.contains(event.target as Node)) setConfirmClearAll(false)
+    }
+    document.addEventListener('pointerdown', cancel)
+    document.addEventListener('focusin', cancel)
+    return () => { document.removeEventListener('pointerdown', cancel); document.removeEventListener('focusin', cancel) }
+  }, [confirmClearAll])
 
   function change(next: ScoreDocument) {
     transport.setScore(next)
@@ -108,8 +121,19 @@ export default function ScoreEditor({ active, audition, onPlayNote, onStopNote }
   }
 
   function durationText(value: number) {
-    const index = durations.indexOf(value as (typeof durations)[number])
-    return `${durationLabels[index]} · ${value} 拍`
+    return `${noteFractions[value]} 音符 | ${beatFractions[value]} 拍`
+  }
+
+  function goToStart() {
+    setSelected(score.events[0]?.id ?? null)
+  }
+
+  function clearAll() {
+    if (!confirmClearAll) { setConfirmClearAll(true); return }
+    change({ ...score, events: [] })
+    setSelected(null)
+    setConfirmClearAll(false)
+    setMessage('已删除全部事件，可通过撤销恢复。')
   }
 
   function updateTempo(nextTempo: number) {
@@ -155,7 +179,9 @@ export default function ScoreEditor({ active, audition, onPlayNote, onStopNote }
           </div>
         </div>
         <div className="score-side-actions" aria-label="当前音符其他操作">
+          <button disabled={!score.events.length} onClick={goToStart}>回到开头</button>
           <button disabled={!selectedEvent} onClick={clearSelection}>回到末尾</button>
+          <button ref={clearAllButton} className={confirmClearAll ? 'score-danger-confirm' : undefined} disabled={!score.events.length} onClick={clearAll}>{confirmClearAll ? '确认删除' : '删除全部'}</button>
           <button disabled={!selectedEvent} onClick={deleteSelected}>删除当前</button>
         </div>
       </div>

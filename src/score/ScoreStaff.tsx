@@ -10,6 +10,7 @@ interface Props { score: ScoreDocument; selected: string | null; beat: number; p
 const { staffBottomY, noteY } = createGrandStaffGeometry(199, 6)
 const staffTopY = noteY('treble', 8)
 const staffBottomEdgeY = noteY('bass', 0)
+const beatFraction = (value: number) => ({ .25: ['1', '4'], .5: ['1', '2'] } as Record<number, [string, string] | undefined>)[value]
 
 export default function ScoreStaff({ score, selected, beat, playing, previewPitches, previewDuration, insertionIndex, onSelect, onEnd }: Props) {
   const paperRef = useRef<HTMLDivElement>(null)
@@ -70,7 +71,7 @@ export default function ScoreStaff({ score, selected, beat, playing, previewPitc
       </g>
       {!segments.length && !previewPitches.length && <text x="180" y="181" fill="var(--theme-text-color)" fontSize="18">在底部琴键试音，然后点击「写入音符」</text>}
       {segments.map((segment, index) => {
-        const x = xs[index] + Math.max(30, segment.pitches.length * 10 + 12)
+        const x = xs[index] + (widths[index] <= 66 ? widths[index] / 2 : Math.max(30, segment.pitches.length * 10 + 12))
         const chosen = selected === segment.eventId
         const event = eventById.get(segment.eventId)!
         const label = `${segment.beat + 1} 拍：${segment.pitches.map(pitch => midiNumberToPianoNote(pitch)?.name).join('、') || '休止符'}，${event.duration} 拍`
@@ -114,7 +115,9 @@ export default function ScoreStaff({ score, selected, beat, playing, previewPitc
                 </g>
               })}
             </g>
-            <text x={xs[index] + 6} y="374" fill="var(--theme-text-color)" fontSize="12">{segment.duration} 拍{segment.tiedFrom && segment.pitches.length ? ' · 延音' : ''}</text>
+            {beatFraction(segment.duration)
+              ? <g fill="var(--theme-text-color)" fontSize="10" textAnchor="middle"><text x={xs[index] + 12} y="365">{beatFraction(segment.duration)?.[0]}</text><line x1={xs[index] + 7} x2={xs[index] + 17} y1="369" y2="369" /><text x={xs[index] + 12} y="380">{beatFraction(segment.duration)?.[1]}</text><text x={xs[index] + 25} y="376" textAnchor="start">b</text></g>
+              : <text x={xs[index] + 6} y="374" fill="var(--theme-text-color)" fontSize="12">{segment.duration} b{segment.tiedFrom && segment.pitches.length ? ' · 延音' : ''}</text>}
           </g>
         </g>
       })}
@@ -128,7 +131,8 @@ export default function ScoreStaff({ score, selected, beat, playing, previewPitc
             const position = getStaffNotePosition(note)
             const previous = midiNumberToPianoNote(previewPitches[index - 1])
             const nearPrevious = previous && getStaffNotePosition(previous).staff === position.staff && Math.abs(getStaffNotePosition(previous).staffStep - position.staffStep) <= 1
-            const x = previewAnchorX + 22 + (nearPrevious && index % 2 ? 12 : 0)
+            const previewWidth = Math.max(44, previewPitches.length * 18 + 28, previewDuration * 66)
+            const x = previewAnchorX + previewWidth / 2 + (nearPrevious && index % 2 ? 12 : 0)
             const y = noteY(position.staff, position.staffStep)
             return <g key={pitch}>
               {getLedgerLineSteps(position.staffStep).map(step => <line key={step} x1={x - 13} x2={x + 13} y1={noteY(position.staff, step)} y2={noteY(position.staff, step)} />)}
