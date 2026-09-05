@@ -137,7 +137,7 @@
 
 .score-edit-matrix {
   display: grid;
-  grid-template-columns: 230px 236px 104px 112px;
+  grid-template-columns: 230px 260px 104px 112px;
   align-items: center;
   gap: 3px 10px;
 }
@@ -197,8 +197,9 @@
 }
 
 .score-edit-matrix .score-stepper > span {
-  width: 58px;
+  flex: 0 0 58px;
   margin: 0;
+  white-space: nowrap;
 }
 
 .score-grid-action {
@@ -247,6 +248,8 @@
 .score-stepper--inline {
   display: flex;
   align-items: center;
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
 
 .score-stepper button {
@@ -256,7 +259,7 @@
 }
 
 .score-stepper output {
-  min-width: 144px;
+  min-width: 132px;
   padding: 5px 6px;
   color: var(--theme-heading-color);
   font-size: 11px;
