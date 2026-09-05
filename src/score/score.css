@@ -32,7 +32,15 @@
 .score-transport input[type=number] { width: 75px; }
 .score-transport output { font-size: 13px; font-variant-numeric: tabular-nums; min-width: 95px; }
 .score-message { font-size: 12px; min-height: 20px; margin: 12px 0; }
-.trainer-panel { display: flex; flex-direction: column; width: 100%; }
+.trainer-panel,
+.score-editor,
+.trainer-status,
+.score-status {
+  width: min(100%, 1760px);
+  margin-inline: auto;
+}
+
+.trainer-panel { display: flex; flex-direction: column; }
 .trainer-panel .toolbar { width: 100%; min-height: 74px; margin: 0; padding: 10px 14px; box-sizing: border-box; border: 1px solid var(--theme-border-color); border-bottom: 0; border-radius: 10px 10px 0 0; background: var(--theme-surface-background); }
 .trainer-panel .grand-staff { border-radius: 0; }
 .trainer-transport { border-top: 0; border-radius: 0 0 10px 10px; }
@@ -61,10 +69,6 @@
   border-color: transparent;
 }
 
-.score-editor {
-  width: min(100%, 1760px);
-  margin-inline: auto;
-}
 
 .score-document-bar {
   display: flex;
