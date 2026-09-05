@@ -73,7 +73,7 @@ export default function ScoreStaff({ score, selected, beat, playing, previewPitc
                 })
                 return <g key={pitch}>
                   {getLedgerLineSteps(position.staffStep).map(step => <line key={step} x1={nx - 13} x2={nx + 13} y1={noteY(position.staff, step)} y2={noteY(position.staff, step)} />)}
-                  {!segment.tiedFrom && <text x={x - 17 - noteIndex * 10} y={y + 5} fontSize="17" stroke="none">{note.type === 'black' ? '♯' : '♮'}</text>}
+                  {!segment.tiedFrom && note.type === 'black' && <text x={x - 17 - noteIndex * 10} y={y + 5} fontSize="17" stroke="none">♯</text>}
                   <ellipse cx={nx} cy={y} rx={segment.duration === 4 ? 10 : 8} ry="5.5" transform={`rotate(-15 ${nx} ${y})`} fill={segment.duration >= 2 ? 'var(--theme-score-background)' : undefined} strokeWidth="1.8" />
                   {segment.duration < 4 && topNote && <line x1={stemX} x2={stemX} y1={stemDown ? y + 2 : bottom - bottomStep * 6 - 2} y2={stemEnd} strokeWidth="1.5" />}
                   {segment.duration < 1 && topNote && <path d={`M ${stemX} ${stemEnd} q 17 ${stemDown ? -9 : 9} 8 ${stemDown ? -21 : 21}`} fill="none" strokeWidth="2.5" />}
@@ -100,7 +100,7 @@ export default function ScoreStaff({ score, selected, beat, playing, previewPitc
             const y = noteY(position.staff, position.staffStep)
             return <g key={pitch}>
               {getLedgerLineSteps(position.staffStep).map(step => <line key={step} x1={x - 13} x2={x + 13} y1={noteY(position.staff, step)} y2={noteY(position.staff, step)} />)}
-              <text x={x - 21} y={y + 5} fontSize="17" stroke="none">{note.type === 'black' ? '♯' : '♮'}</text>
+              {note.type === 'black' && <text x={x - 21} y={y + 5} fontSize="17" stroke="none">♯</text>}
               <ellipse cx={x} cy={y} rx={previewDuration === 4 ? 10 : 8} ry="5.5" transform={`rotate(-15 ${x} ${y})`} fill={previewDuration >= 2 ? 'var(--theme-score-background)' : undefined} strokeWidth="1.8" />
               {previewDuration < 4 && <line x1={x + 7} x2={x + 7} y1={y} y2={y - 33} strokeWidth="1.5" />}
               {previewDuration < 1 && <path d={`M ${x + 7} ${y - 33} q 17 9 8 21`} fill="none" strokeWidth="2.5" />}
