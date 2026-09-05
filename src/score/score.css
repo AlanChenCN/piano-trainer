@@ -112,10 +112,16 @@
 
 .score-time-signature {
   display: flex;
+  flex: 0 0 82px;
+  flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
+  padding-right: 10px;
+  border-right: 1px solid var(--theme-border-color);
   white-space: nowrap;
 }
+
+.score-time-signature-controls { display: flex; align-items: center; gap: 3px; }
 
 .score-time-signature span {
   color: var(--theme-text-color);

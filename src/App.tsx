@@ -64,8 +64,8 @@ function App() {
     saveCurrentSettings,
     resetSettings,
   } = useSettings()
-  const [workspace, setWorkspace] = useState<'trainer' | 'score'>('trainer')
-  const workspaceRef = useRef<'trainer' | 'score'>('trainer')
+  const [workspace, setWorkspace] = useState<'trainer' | 'score'>('score')
+  const workspaceRef = useRef<'trainer' | 'score'>('score')
   const heldAudition = useRef(new Set<string>())
   const [audition, setAudition] = useState<number[]>([])
   const [playbackNotes, setPlaybackNotes] = useState<string[]>([])

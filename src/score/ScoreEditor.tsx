@@ -150,12 +150,6 @@ export default function ScoreEditor({ active, audition, onPlayNote, onStopNote }
 
   return <section hidden={!active} id="score-panel" role="tabpanel" aria-labelledby="score-tab" className="score-editor">
     <div className="score-document-bar">
-      <div className="score-time-signature" aria-label="拍号">
-        <span>拍号</span>
-        <button aria-label="上一个拍号" onClick={() => stepTimeSignature(-1)}>◀</button>
-        <output>{score.timeSignature[0]}/{score.timeSignature[1]}</output>
-        <button aria-label="下一个拍号" onClick={() => stepTimeSignature(1)}>▶</button>
-      </div>
       <label className="score-title-field"><span>乐谱名称</span><input aria-label="乐谱名称" maxLength={120} value={score.title} onChange={event => change({ ...score, title: event.target.value })} /></label>
       <div className="score-summary"><span>{score.timeSignature[0]}/{score.timeSignature[1]} · 单声部</span><span>{score.events.length} 项 · {length} 拍</span></div>
       <div className="score-actions score-document-actions">
@@ -171,6 +165,10 @@ export default function ScoreEditor({ active, audition, onPlayNote, onStopNote }
     </div>
     <div className="score-entry" aria-label="乐谱编辑操作">
       <div className="score-entry-inner">
+        <div className="score-time-signature" aria-label="拍号">
+          <span>拍号</span>
+          <div className="score-time-signature-controls"><button aria-label="上一个拍号" onClick={() => stepTimeSignature(-1)}>◀</button><output>{score.timeSignature[0]}/{score.timeSignature[1]}</output><button aria-label="下一个拍号" onClick={() => stepTimeSignature(1)}>▶</button></div>
+        </div>
         <div className="score-edit-matrix">
           <div className="score-edit-row score-edit-row--insert">
             <div className="score-note-value score-note-value--input"><span>输入音</span><strong>{audition.length ? names(audition) : '在底部琴键上试弹'}</strong><small>{selectedEvent ? `插入第 ${insertionIndex + 1} 项前` : '在末尾写入'}</small></div>

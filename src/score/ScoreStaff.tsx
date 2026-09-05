@@ -69,8 +69,8 @@ export default function ScoreStaff({ score, selected, beat, playing, previewPitc
         {staffLineSteps.map(step => <line key={step} x1="20" x2={width - 20} y1={noteY(staff, step)} y2={noteY(staff, step)} />)}
       </g>)}
       <g fill="var(--theme-staff-color)" fontFamily="Noto Music, Segoe UI Symbol, Bravura, serif">
-        <text x="45" y={noteY('treble', 4) + 30} fontSize="108" textAnchor="middle">𝄞</text>
-        <text x="45" y={noteY('bass', 4) + 24} fontSize="108" textAnchor="middle">𝄢</text>
+        <text x="45" y={noteY('treble', 4) + 17} fontSize="62" textAnchor="middle">𝄞</text>
+        <text x="45" y={noteY('bass', 4) + 12} fontSize="54" textAnchor="middle">𝄢</text>
         {(['treble', 'bass'] as StaffName[]).map(staff => <g key={`time-${staff}`} fontSize="24" textAnchor="middle">
           <text x="78" y={noteY(staff, 4) - 8}>{score.timeSignature[0]}</text>
           <text x="78" y={noteY(staff, 4) + 16}>{score.timeSignature[1]}</text>
