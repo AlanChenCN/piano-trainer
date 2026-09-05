@@ -1,0 +1,369 @@
+.workspace-tabs { display: flex; justify-content: center; gap: 8px; }
+.workspace-tabs button, .score-editor button, .score-editor select, .score-editor input:not([type=range]) { font: inherit; font-size: 14px; border: 1px solid var(--theme-border-color); background: var(--theme-surface-background); color: var(--theme-heading-color); border-radius: 7px; padding: 9px 12px; }
+.workspace-tabs button { min-width: 150px; cursor: pointer; }
+.workspace-tabs [aria-selected=true], .score-editor .score-primary { background: var(--theme-accent-color); color: var(--theme-page-background); border-color: var(--theme-accent-color); }
+.score-editor[hidden], .trainer-panel[hidden] { display: none; }
+.score-editor { text-align: left; width: 100%; min-width: 0; }
+.score-editor button { cursor: pointer; }
+.score-editor button:disabled, .workspace-tabs button:disabled { opacity: .45; cursor: not-allowed; }
+.score-editor button:hover:not(:disabled) { border-color: var(--theme-accent-color); }
+.score-editor :focus-visible, .workspace-tabs :focus-visible { outline: 2px solid var(--theme-accent-color); outline-offset: 3px; }
+.score-heading, .score-meta, .score-transport { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.score-heading { justify-content: space-between; margin-bottom: 18px; }
+.score-heading h2 { margin: 4px 0; font-size: 25px; color: var(--theme-heading-color); }
+.score-eyebrow { font-size: 11px; letter-spacing: 2px; margin: 0; color: var(--theme-accent-color); }
+.score-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.score-meta { margin-bottom: 16px; font-size: 13px; }
+.score-meta .score-actions { margin-left: auto; }
+.score-editor label { display: flex; gap: 6px; flex-direction: column; font-size: 12px; }
+.score-meta input { width: 240px; }
+.score-entry { overflow-x: auto; overflow-y: hidden; background: var(--theme-surface-background); padding: 16px; border: 1px solid var(--theme-border-color); border-radius: 10px 10px 0 0; }
+.score-audition { display: flex; flex-direction: column; min-width: 190px; max-width: 420px; gap: 3px; }
+.score-audition span, .score-audition small, .score-hint { font-size: 12px; }
+.score-audition strong { color: var(--theme-heading-color); font-size: 16px; overflow-wrap: anywhere; }
+.score-paper { width: 100%; overflow-x: auto; background: var(--theme-score-background); border: 1px solid var(--theme-border-color); border-top: 0; box-sizing: border-box; }
+.score-paper svg { display: block; }
+.score-note-target { cursor: pointer; }
+.score-note-target:hover rect { stroke: var(--theme-accent-color); }
+.score-inspector { min-height: 48px; padding: 14px 16px; font-size: 13px; background: var(--theme-surface-background); border: 1px solid var(--theme-border-color); border-top: 0; border-radius: 0 0 10px 10px; }
+.score-transport { padding: 18px 0 0; }
+.score-progress { flex: 1; min-width: 180px; }
+.score-progress input { width: 100%; accent-color: var(--theme-accent-color); }
+.score-transport input[type=number] { width: 75px; }
+.score-transport output { font-size: 13px; font-variant-numeric: tabular-nums; min-width: 95px; }
+.score-message { font-size: 12px; min-height: 20px; margin: 12px 0; }
+.trainer-panel { width: 100%; }
+@media (max-width: 700px) { .score-heading h2 { font-size: 21px; } .score-entry { gap: 10px; } .score-meta input { width: 190px; } }
+/* Keep the shared keyboard intact while giving the editor more vertical room. */
+.piano-trainer--score { gap: 10px; padding-top: 12px; }
+.piano-trainer--score .app-header h1 { font-size: 26px; line-height: 1.2; }
+.piano-trainer--score .score-heading { margin-bottom: 10px; }
+.piano-trainer--score .score-heading h2 { font-size: 20px; }
+.piano-trainer--score .score-meta { margin-bottom: 10px; }
+.piano-trainer--score .score-entry { padding: 10px 14px; }
+
+/* Compact, score-first editor layout. */
+.workspace-tabs {
+  display: inline-flex;
+  justify-content: initial;
+  gap: 3px;
+  padding: 3px;
+  border: 1px solid var(--theme-border-color);
+  border-radius: 8px;
+  background: var(--theme-surface-background);
+}
+
+.workspace-tabs button {
+  min-width: 92px;
+  padding: 7px 16px;
+  border-color: transparent;
+}
+
+.score-editor {
+  width: min(100%, 1760px);
+  margin-inline: auto;
+}
+
+.score-document-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  margin-bottom: 8px;
+}
+
+.score-title-field {
+  display: flex;
+  gap: 3px;
+  flex-direction: column;
+  font-size: 11px;
+}
+
+.score-title-field input {
+  width: clamp(190px, 22vw, 340px);
+  padding: 7px 10px;
+}
+
+.score-summary {
+  display: flex;
+  gap: 12px;
+  color: var(--theme-text-color);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.score-document-bar .score-actions {
+  margin-left: auto;
+  gap: 5px;
+}
+
+.score-document-bar button,
+.score-entry button,
+.score-inspector button,
+.score-transport button {
+  min-height: 34px;
+  padding: 6px 10px;
+}
+
+.score-action-divider {
+  width: 1px;
+  margin: 3px;
+  background: var(--theme-border-color);
+}
+
+.score-entry {
+  min-height: 92px;
+  padding: 8px 12px;
+}
+
+.score-entry-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: max-content;
+  min-width: 100%;
+  margin-inline: auto;
+}
+
+.score-edit-matrix {
+  display: grid;
+  grid-template-columns: 230px 248px 104px 112px;
+  align-items: center;
+  gap: 5px 10px;
+}
+
+.score-edit-row {
+  display: contents;
+}
+
+.score-edit-row--current > * {
+  position: relative;
+  padding-top: 5px;
+}
+
+.score-note-value {
+  display: grid;
+  grid-template-columns: 52px 168px;
+  grid-template-rows: 20px 15px;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.score-note-value span {
+  color: var(--theme-text-color);
+  font-size: 11px;
+}
+
+.score-note-value strong {
+  overflow: hidden;
+  color: var(--theme-heading-color);
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.score-note-value small {
+  grid-column: 2;
+  color: var(--theme-text-color);
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.score-note-value--input strong {
+  color: var(--theme-accent-color);
+}
+
+.score-note-value--current strong {
+  color: var(--theme-left-hand-color);
+}
+
+.score-edit-matrix .score-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.score-edit-matrix .score-stepper > span {
+  width: 52px;
+  margin: 0;
+}
+
+.score-grid-action {
+  width: 100%;
+  white-space: nowrap;
+}
+
+.score-side-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 76px;
+  padding-left: 12px;
+  border-left: 1px solid var(--theme-border-color);
+  white-space: nowrap;
+}
+
+.score-side-actions button {
+  width: 92px;
+}
+
+.score-audition {
+  min-width: 180px;
+  max-width: 360px;
+  gap: 1px;
+}
+
+.score-audition strong {
+  font-size: 14px;
+}
+
+.score-stepper > span {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--theme-text-color);
+  font-size: 11px;
+}
+
+.score-stepper > div,
+.score-stepper--inline {
+  display: flex;
+  align-items: center;
+}
+
+.score-stepper button {
+  width: 32px;
+  min-height: 32px;
+  padding: 0;
+}
+
+.score-stepper output {
+  min-width: 128px;
+  padding: 6px 8px;
+  color: var(--theme-heading-color);
+  font-size: 12px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.score-paper svg {
+  min-width: 100%;
+  margin-inline: auto;
+}
+
+.score-inspector {
+  justify-content: center;
+  min-height: 42px;
+  padding: 7px 12px;
+  gap: 8px;
+}
+
+.score-inspector label {
+  flex-direction: row;
+  align-items: center;
+}
+
+.score-inspector select {
+  padding: 6px;
+}
+
+.score-transport {
+  min-height: 42px;
+  padding: 7px 12px;
+  gap: 10px;
+  background: var(--theme-surface-background);
+  border: 1px solid var(--theme-border-color);
+  border-top: 0;
+  border-radius: 0 0 10px 10px;
+}
+
+.score-play-toggle,
+.score-locate-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 34px;
+  min-width: 34px;
+  height: 34px;
+  min-height: 34px !important;
+  padding: 0 !important;
+}
+
+.score-play-toggle svg,
+.score-locate-toggle svg {
+  display: block;
+  width: 17px;
+  height: 17px;
+}
+
+.score-play-toggle svg {
+  fill: currentColor;
+}
+
+.score-locate-toggle svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-width: 1.8;
+}
+
+.score-tempo {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: 4px;
+}
+
+.score-tempo span {
+  color: var(--theme-text-color);
+  font-size: 11px;
+}
+
+.score-tempo button {
+  width: 30px;
+  min-height: 30px;
+  padding: 0;
+}
+
+.score-tempo input[type=number] {
+  width: 58px;
+  padding: 6px;
+  text-align: center;
+}
+
+.score-message {
+  min-height: 16px;
+  margin: 4px 0 0;
+}
+
+.piano-trainer--score {
+  gap: 8px;
+}
+
+@media (max-width: 760px) {
+  .app-header,
+  .score-document-bar,
+  .score-transport {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .workspace-tabs button {
+    min-width: 72px;
+    padding-inline: 10px;
+  }
+
+  .score-summary {
+    order: 3;
+    width: 100%;
+  }
+
+  .score-entry-inner {
+    justify-content: flex-start;
+  }
+}

@@ -59,6 +59,11 @@ export class KeyboardController {
   }
 
   private readonly handleKeyDown = (event: KeyboardEvent) => {
+    const target = event.target
+    if (event.repeat || event.ctrlKey || event.metaKey || event.altKey ||
+        (target instanceof HTMLElement && (target.isContentEditable || target.closest('input, textarea, select')))) {
+      return
+    }
     const key = event.key.toLowerCase()
 
     if (this.activeKeys.has(key)) {

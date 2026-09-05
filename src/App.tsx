@@ -6,6 +6,7 @@ import {
   useState,
   useSyncExternalStore,
 } from 'react'
+import ScoreEditor from './score/ScoreEditor'
 import GrandStaff from './components/GrandStaff'
 import Header from './components/Header'
 import BluetoothMidiPanel from './components/BluetoothMidiPanel'
@@ -17,6 +18,7 @@ import Toolbar from './components/Toolbar'
 import type { ConfigurableThemeToken } from './components/ThemePopover'
 import { setAudioEnabled, startNote, stopNote } from './audio/sound'
 import {
+  midiNumberToPianoNote,
   pianoNoteToMidiNumber,
   pianoNotes,
   type PianoLabelMode,
@@ -60,6 +62,11 @@ function App() {
     saveCurrentSettings,
     resetSettings,
   } = useSettings()
+  const [workspace, setWorkspace] = useState<'trainer' | 'score'>('trainer')
+  const workspaceRef = useRef<'trainer' | 'score'>('trainer')
+  const heldAudition = useRef(new Set<string>())
+  const [audition, setAudition] = useState<number[]>([])
+  const [playbackNotes, setPlaybackNotes] = useState<string[]>([])
   const [pressedNotes, setPressedNotes] = useState<string[]>([])
   const [midiPanelOpen, setMidiPanelOpen] = useState(false)
   const [midiDeviceName, setMidiDeviceName] = useState<string | null>(null)
@@ -129,13 +136,23 @@ function App() {
       return
     }
 
+    if (context.source === 'playback') {
+      startNote(`score:${note.name}`, note.frequency)
+      setPlaybackNotes(prev => prev.includes(noteName) ? prev : [...prev, noteName])
+      return
+    }
+    if (workspaceRef.current === 'score') {
+      heldAudition.current.add(`${context.source}:${noteName}`)
+      const pitches = [...heldAudition.current].map(key => pianoNoteToMidiNumber(key.slice(key.indexOf(':') + 1))!)
+      setAudition([...new Set(pitches)].sort((a, b) => a - b))
+    }
     const event = noteEventFactory.create({
       note,
       source: context.source,
       velocity: context.velocity,
     })
 
-    if (event) {
+    if (event && workspaceRef.current === 'trainer') {
       practiceController.handleNoteEvent(event)
     }
 
@@ -154,6 +171,12 @@ function App() {
     noteName: string,
     context: InputNoteContext = { source: 'mouse' },
   ) => {
+    if (context.source === 'playback') {
+      stopNote(`score:${noteName}`)
+      setPlaybackNotes(prev => prev.filter(name => name !== noteName))
+      return
+    }
+    heldAudition.current.delete(`${context.source}:${noteName}`)
     const note = pianoNotes.find(item => item.name === noteName)
 
     if (note) {
@@ -165,7 +188,7 @@ function App() {
           source: context.source,
         })
 
-        if (event) {
+        if (event && workspaceRef.current === 'trainer') {
           practiceController.handleNoteRelease(event)
         }
       }
@@ -176,9 +199,20 @@ function App() {
   }, [noteEventFactory, practiceController])
 
   const inputLayer = useMemo(
+    // InputLayer only stores callbacks; it never invokes them during construction.
+    // eslint-disable-next-line react-hooks/refs
     () => new InputLayer({ pressNote, releaseNote }),
     [pressNote, releaseNote],
   )
+
+  const playScoreNote = useCallback((pitch: number) => {
+    const note = midiNumberToPianoNote(pitch)
+    if (note) inputLayer.pressNote(note.name, { source: 'playback' })
+  }, [inputLayer])
+  const stopScoreNote = useCallback((pitch: number) => {
+    const note = midiNumberToPianoNote(pitch)
+    if (note) inputLayer.releaseNote(note.name, { source: 'playback' })
+  }, [inputLayer])
 
   const keyboardController = useMemo(
     () => new KeyboardController(inputLayer, defaultKeyboardBaseNote),
@@ -380,10 +414,20 @@ function App() {
     [bluetoothMidiController],
   )
 
-  return (
-    <div className="piano-trainer">
-      <Header />
+  const handleWorkspaceChange = useCallback((nextWorkspace: 'trainer' | 'score') => {
+    workspaceRef.current = nextWorkspace
+    heldAudition.current.clear()
+    setWorkspace(nextWorkspace)
+  }, [])
 
+  return (
+    <div className={`piano-trainer${workspace === 'score' ? ' piano-trainer--score' : ''}`}>
+      <Header
+        workspace={workspace}
+        disabled={pressedNotes.length > 0}
+        onWorkspaceChange={handleWorkspaceChange}
+      />
+      <div hidden={workspace !== 'trainer'}>
       <Toolbar
         themeMode={themeSettings.mode}
         activePreset={activeThemePreset}
@@ -407,7 +451,9 @@ function App() {
         onResetSettings={handleResetSettings}
       />
 
+      </div>
       <main className="main-content">
+        <div className="trainer-panel" id="trainer-panel" role="tabpanel" aria-labelledby="trainer-tab" hidden={workspace !== 'trainer'}>
         <GrandStaff
           pressedNotes={pressedNotes}
           targetNotes={
@@ -423,6 +469,8 @@ function App() {
           chord={currentChord}
         />
 
+        </div>
+        <ScoreEditor active={workspace === 'score'} audition={audition} onPlayNote={playScoreNote} onStopNote={stopScoreNote} />
         <StatusBar
           keyboardBaseNote={keyboardBaseNote}
           midiDeviceName={midiDeviceName}
@@ -431,7 +479,7 @@ function App() {
       </main>
 
       <InputPianoDock
-        pressedNotes={pressedNotes}
+        pressedNotes={[...new Set([...pressedNotes, ...playbackNotes])]}
         labelMode={labelMode}
         onLabelModeChange={handleLabelModeChange}
         soundEnabled={soundEnabled}
