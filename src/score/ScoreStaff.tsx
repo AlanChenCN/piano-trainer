@@ -10,10 +10,10 @@ interface Props { score: ScoreDocument; selected: string | null; beat: number; p
 const { staffBottomY, noteY } = createGrandStaffGeometry(199, 6)
 const staffTopY = noteY('treble', 8)
 const staffBottomEdgeY = noteY('bass', 0)
-// Keep event interaction inside the notation area. Measure numbers and beat labels
-// are annotations, so they must remain outside hover and selection outlines.
-const eventFrameTopY = 48
-const eventFrameBottomY = 344
+// Fit the complete grand-staff area, while keeping measure numbers and beat labels
+// outside hover and selection outlines.
+const eventFrameTopY = staffTopY - 28
+const eventFrameBottomY = staffBottomEdgeY + 28
 const beatFraction = (value: number) => ({ .25: ['1', '4'], .5: ['1', '2'] } as Record<number, [string, string] | undefined>)[value]
 const isMeasureStart = (beat: number, beatsPerMeasure: number) => Math.abs(beat / beatsPerMeasure - Math.round(beat / beatsPerMeasure)) < .00001
 
