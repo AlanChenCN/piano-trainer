@@ -429,19 +429,16 @@ function App() {
         onWorkspaceChange={handleWorkspaceChange}
         controls={<GlobalControls themeMode={themeSettings.mode} activePreset={activeThemePreset} themeTokens={themeTokens} noteColorMode={themeSettings.noteColorMode} settings={settings} onThemeModeChange={handleThemeModeChange} onThemeTokenChange={handleThemeTokenChange} onNoteColorModeChange={handleNoteColorModeChange} onThemeReset={handleThemeReset} onAutoSaveChange={handleAutoSaveChange} onSoundChange={handleSoundChange} onLabelModeChange={handleLabelModeChange} onSaveSettings={saveCurrentSettings} onResetSettings={handleResetSettings} />}
       />
-      <div hidden={workspace !== 'trainer'}>
-      <Toolbar
-        noteDisplayMode={noteDisplayMode}
-        onNoteDisplayModeChange={handleNoteDisplayModeChange}
-        practiceSelection={practiceSnapshot.selection}
-        practiceSettings={settings.practice}
-        onPracticeSelectionChange={practiceController.selectMode}
-        onPracticeSettingsChange={handlePracticeSettingsChange}
-      />
-
-      </div>
       <main className="main-content">
         <div className="trainer-panel" id="trainer-panel" role="tabpanel" aria-labelledby="trainer-tab" hidden={workspace !== 'trainer'}>
+        <Toolbar
+          noteDisplayMode={noteDisplayMode}
+          onNoteDisplayModeChange={handleNoteDisplayModeChange}
+          practiceSelection={practiceSnapshot.selection}
+          practiceSettings={settings.practice}
+          onPracticeSelectionChange={practiceController.selectMode}
+          onPracticeSettingsChange={handlePracticeSettingsChange}
+        />
         <GrandStaff
           pressedNotes={pressedNotes}
           targetNotes={
@@ -456,14 +453,14 @@ function App() {
           practiceNoteNameMode={settings.practice.noteNameMode}
           chord={currentChord}
         />
-
-        </div>
-        <ScoreEditor active={workspace === 'score'} audition={audition} onPlayNote={playScoreNote} onStopNote={stopScoreNote} />
         <StatusBar
           keyboardBaseNote={keyboardBaseNote}
           midiDeviceName={midiDeviceName}
           bluetoothMidiDeviceName={bluetoothMidiDeviceName}
         />
+        </div>
+        <ScoreEditor active={workspace === 'score'} audition={audition} onPlayNote={playScoreNote} onStopNote={stopScoreNote} />
+        <div className="score-status" hidden={workspace !== 'score'}><StatusBar keyboardBaseNote={keyboardBaseNote} midiDeviceName={midiDeviceName} bluetoothMidiDeviceName={bluetoothMidiDeviceName} /></div>
       </main>
 
       <InputPianoDock

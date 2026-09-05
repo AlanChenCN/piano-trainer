@@ -2,7 +2,7 @@
 
 状态：2026-09-05 实现完成，待用户验收。开发分支：`feat/score-editor`。本次仅本地 commit，push 需用户最终确认。
 
-界面使用标题栏最右侧的 `Trainer / Editor` 切换工作区，标题同步显示 `Piano Trainer / Piano Editor`；其左侧固定提供 Theme 与 Settings，两页均可使用。Theme 面板提供 Follow System、颜色与音符着色设置；Settings 仅保留自动保存、Web Sound、Key Labels 与保存／重置设置，练习和五线谱显示则通过 Trainer 的独立控件配置。Editor 将名称、文件操作和撤销 / 重做集中在紧凑文档栏，乐谱在主区域内加宽并居中。谱面上方固定显示“输入 / 当前”两行，两行共用音高、时值、音符操作和休止符操作四列，输入时值和当前时值均通过左右箭头在五档时值间步进。乐谱纵向边界会完整容纳 C8 的上行符干与 A0，并保留紧凑的时值标签区。页面主滚动条在视觉上隐藏，但鼠标、触控板、触摸与键盘滚动保持可用；打开设置浮层不会改变页面宽度。
+界面使用标题栏最右侧的 `Trainer / Editor` 切换工作区，标题同步显示 `Piano Trainer / Piano Editor`；其左侧固定提供 Theme 与 Settings，两页均可使用。Theme 面板提供 Follow System、颜色与音符着色设置；Settings 仅保留自动保存、Web Sound、Key Labels 与保存／重置设置，练习和五线谱显示则通过 Trainer 的独立控件配置。Trainer 与 Editor 都采用上方控制区、中部谱表和下方状态区的连续卡片布局，Trainer 的 Display Settings、Practice 和 Metronome 位于大谱表正上方。Editor 将名称、文件操作和撤销 / 重做集中在紧凑文档栏，乐谱在主区域内加宽并居中。谱面上方固定显示“输入 / 当前”两行，两行共用音高、时值、音符操作和休止符操作四列，输入时值和当前时值均通过左右箭头在五档时值间步进。乐谱纵向边界会完整容纳 C8 的上行符干与 A0，并保留紧凑的时值标签区。页面主滚动条在视觉上隐藏，但鼠标、触控板、触摸与键盘滚动保持可用；打开设置浮层不会改变页面宽度。
 
 ## 使用流程
 

@@ -32,7 +32,10 @@
 .score-transport input[type=number] { width: 75px; }
 .score-transport output { font-size: 13px; font-variant-numeric: tabular-nums; min-width: 95px; }
 .score-message { font-size: 12px; min-height: 20px; margin: 12px 0; }
-.trainer-panel { width: 100%; }
+.trainer-panel { display: flex; flex-direction: column; width: 100%; }
+.trainer-panel .toolbar { width: 100%; min-height: 74px; margin: 0; padding: 10px 14px; box-sizing: border-box; border: 1px solid var(--theme-border-color); border-bottom: 0; border-radius: 10px 10px 0 0; background: var(--theme-surface-background); }
+.trainer-panel .grand-staff { border-radius: 0; }
+.trainer-panel .status-bar { box-sizing: border-box; padding: 8px 12px; border: 1px solid var(--theme-border-color); border-top: 0; border-radius: 0 0 10px 10px; text-align: center; }
 @media (max-width: 700px) { .score-heading h2 { font-size: 21px; } .score-entry { gap: 10px; } .score-meta input { width: 190px; } }
 /* Keep the shared keyboard intact while giving the editor more vertical room. */
 .piano-trainer--score { gap: 10px; padding-top: 12px; }
