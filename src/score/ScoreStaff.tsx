@@ -27,13 +27,13 @@ export default function ScoreStaff({ score, selected, beat, playing, previewPitc
       : -1
     const previewAnchorX = nextSegmentIndex >= 0 ? xs[nextSegmentIndex] - 8 : offset
     const selectedIndex = selected ? segments.findIndex(segment => segment.eventId === selected) : -1
-    const editCursorX = selectedIndex >= 0 ? xs[selectedIndex] : previewAnchorX
+    const editCursorX = selectedIndex >= 0 ? xs[selectedIndex] - 8 : previewAnchorX
     // A preview stays anchored to the editing slot. At the end, use a quarter-note slot.
     const previewLayoutWidth = selectedIndex >= 0 ? widths[selectedIndex] : 66
     return { segments, widths, xs, offset, width: Math.max(800, offset + 64), eventById: new Map(score.events.map(event => [event.id, event])), previewAnchorX, previewLayoutWidth, editCursorX }
   }, [score, insertionIndex, selected])
   const activeIndex = segments.findIndex(segment => beat >= segment.beat && beat < segment.beat + segment.duration)
-  const playX = activeIndex < 0 ? offset : xs[activeIndex] + (beat - segments[activeIndex].beat) / segments[activeIndex].duration * widths[activeIndex]
+  const playX = activeIndex < 0 ? offset : xs[activeIndex] - 8 + (beat - segments[activeIndex].beat) / segments[activeIndex].duration * widths[activeIndex]
   useEffect(() => {
     const paper = paperRef.current
     if (!paper || playing) return
@@ -73,7 +73,8 @@ export default function ScoreStaff({ score, selected, beat, playing, previewPitc
       </g>
       {!segments.length && !previewPitches.length && <text x="180" y="181" fill="var(--theme-text-color)" fontSize="18">在底部琴键试音，然后点击「写入音符」</text>}
       {segments.map((segment, index) => {
-        const x = xs[index] + widths[index] / 2
+        const slotStartX = xs[index] - 8
+        const x = slotStartX + widths[index] / 2
         const chosen = selected === segment.eventId
         const event = eventById.get(segment.eventId)!
         const label = `${segment.beat + 1} 拍：${segment.pitches.map(pitch => midiNumberToPianoNote(pitch)?.name).join('、') || '休止符'}，${event.duration} 拍`
@@ -84,7 +85,7 @@ export default function ScoreStaff({ score, selected, beat, playing, previewPitc
           </g>}
           <g role="button" tabIndex={0} aria-label={label} aria-pressed={chosen} onClick={() => onSelect(segment.eventId)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(segment.eventId) } }} className="score-note-target">
             <title>{label}</title>
-            <rect className={`score-event-frame${chosen ? ' score-event-frame--selected' : ''}`} x={xs[index] - 4} y="12" width={widths[index] - 4} height="354" rx="8" />
+            <rect className={`score-event-frame${chosen ? ' score-event-frame--selected' : ''}`} x={slotStartX} y="12" width={widths[index]} height="354" rx="8" />
             <g pointerEvents="none" fill={chosen ? 'var(--theme-left-hand-color)' : 'var(--theme-heading-color)'} stroke={chosen ? 'var(--theme-left-hand-color)' : 'var(--theme-heading-color)'}>
               {!segment.pitches.length && <text x={x - 8} y="155" stroke="none" fontSize="30" fontFamily="Segoe UI Symbol, serif">{segment.duration === 4 ? '𝄻' : segment.duration === 2 ? '𝄼' : segment.duration === 1 ? '𝄽' : segment.duration === .5 ? '𝄾' : '𝄿'}</text>}
               {segment.pitches.map((pitch, noteIndex) => {

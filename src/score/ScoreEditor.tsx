@@ -165,8 +165,6 @@ export default function ScoreEditor({ active, audition, onPlayNote, onStopNote }
               <span>输入时值</span>
               <div><button aria-label="缩短输入时值" disabled={duration === durations[0]} onClick={() => changeEntryDuration(-1)}>◀</button><output>{durationText(duration)}</output><button aria-label="延长输入时值" disabled={duration === durations.at(-1)} onClick={() => changeEntryDuration(1)}>▶</button></div>
             </div>
-            <button className="score-grid-action score-primary" disabled={!audition.length} onClick={() => add(audition)}>写入音符</button>
-            <button className="score-grid-action" onClick={() => add([])}>写入休止符</button>
           </div>
           <div className="score-edit-row score-edit-row--current">
             <div className="score-note-value score-note-value--current"><span>当前音</span><strong>{selectedEvent ? (selectedEvent.pitches.length ? names(selectedEvent.pitches) : '休止符') : '未选择谱上内容'}</strong><small>{selectedEvent ? `第 ${insertionIndex + 1} 项 · 第 ${selectedEvent.startBeat + 1} 拍` : '选择谱上音符后可修改'}</small></div>
@@ -174,15 +172,17 @@ export default function ScoreEditor({ active, audition, onPlayNote, onStopNote }
               <span>当前时值</span>
               <div><button aria-label="缩短当前时值" disabled={!selectedEvent || selectedEvent.duration === durations[0]} onClick={() => changeSelectedDuration(-1)}>◀</button><output>{selectedEvent ? durationText(selectedEvent.duration) : '—'}</output><button aria-label="延长当前时值" disabled={!selectedEvent || selectedEvent.duration === durations.at(-1)} onClick={() => changeSelectedDuration(1)}>▶</button></div>
             </div>
-            <button className="score-grid-action" disabled={!selectedEvent || !audition.length || audition.length > 12} onClick={() => selectedEvent && change(replaceEvent(score, selectedEvent.id, { pitches: audition }))}>替换音符</button>
-            <button className="score-grid-action" disabled={!selectedEvent} onClick={() => selectedEvent && change(replaceEvent(score, selectedEvent.id, { pitches: [] }))}>替换休止符</button>
           </div>
         </div>
-        <div className="score-side-actions" aria-label="当前音符其他操作">
-          <button disabled={!score.events.length} onClick={goToStart}>回到开头</button>
-          <button disabled={!selectedEvent} onClick={clearSelection}>回到末尾</button>
-          <button ref={clearAllButton} className={confirmClearAll ? 'score-danger-confirm' : undefined} disabled={!score.events.length} onClick={clearAll}>{confirmClearAll ? '确认删除' : '删除全部'}</button>
-          <button disabled={!selectedEvent} onClick={deleteSelected}>删除当前</button>
+        <div className="score-action-matrix" aria-label="乐谱写入与辅助操作">
+          <button className="score-action-button score-primary" disabled={!audition.length} onClick={() => add(audition)}>写入音符</button>
+          <button className="score-action-button" onClick={() => add([])}>写入休止符</button>
+          <button className="score-action-button" disabled={!score.events.length} onClick={goToStart}>回到开头</button>
+          <button className="score-action-button" disabled={!selectedEvent} onClick={clearSelection}>回到末尾</button>
+          <button className="score-action-button" disabled={!selectedEvent || !audition.length || audition.length > 12} onClick={() => selectedEvent && change(replaceEvent(score, selectedEvent.id, { pitches: audition }))}>替换音符</button>
+          <button className="score-action-button" disabled={!selectedEvent} onClick={() => selectedEvent && change(replaceEvent(score, selectedEvent.id, { pitches: [] }))}>替换休止符</button>
+          <button ref={clearAllButton} className={`score-action-button${confirmClearAll ? ' score-danger-confirm' : ''}`} disabled={!score.events.length} onClick={clearAll}>{confirmClearAll ? '确认删除' : '删除全部'}</button>
+          <button className="score-action-button" disabled={!selectedEvent} onClick={deleteSelected}>删除当前</button>
         </div>
       </div>
     </div>
@@ -190,8 +190,11 @@ export default function ScoreEditor({ active, audition, onPlayNote, onStopNote }
     <div className="score-transport">
       <label className="score-progress">播放进度<input aria-label="播放进度" type="range" min="0" max={length || 1} step="0.01" disabled={!length} value={playback.beat} onChange={event => transport.seek(Number(event.target.value))} /></label>
       <output>{playback.beat.toFixed(1)} / {length} 拍</output>
+      <button className="score-start-toggle" disabled={!length} onClick={() => transport.seek(0)} aria-label="播放光标回到开头" title="播放光标回到开头">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5v14M18 6 9 12l9 6Z" /></svg>
+      </button>
       <button className="score-locate-toggle" disabled={!selectedEvent} onClick={() => selectedEvent && transport.seek(selectedEvent.startBeat)} aria-label="定位到当前音符" title="定位到当前音符">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v4M12 18v4M2 12h4M18 12h4" /></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4v16M18 5v10" /><ellipse className="score-locate-notehead" cx="15" cy="15" rx="4" ry="2.8" transform="rotate(-15 15 15)" /></svg>
       </button>
       <button className="score-play-toggle score-primary" disabled={!length} onClick={playback.playing ? transport.pause : transport.play} aria-label={playback.playing ? '暂停播放' : '开始播放'}>
         {playback.playing
