@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { createScore, insertEvent, replaceEvent, deleteEvent, parseScore, scoreLength, soundingPitches } from '../src/score/scoreModel.ts'
+import { createScore, insertEvent, replaceEvent, deleteEvent, measureBeats, parseScore, scoreLength, soundingPitches } from '../src/score/scoreModel.ts'
 import { notationSegments } from '../src/score/notation.ts'
 import { ScoreTransport } from '../src/score/scoreTransport.ts'
 import { midiNumberToPianoNote } from '../src/data/piano.ts'
@@ -47,7 +47,7 @@ test('single notes, chords, and rests survive file round-trip', () => {
 test('invalid imports are rejected, including duplicate IDs and pitches', () => {
   const mutations = [
     s => s.version = 2, s => s.tempo = 0, s => s.tempo = null,
-    s => s.timeSignature = [3, 4], s => s.events[0].startBeat = 1,
+    s => s.timeSignature = [7, 4], s => s.events[0].startBeat = 1,
     s => s.events[0].duration = -1, s => s.events[0].duration = .3,
     s => s.events[0].pitches = [20], s => s.events[0].pitches = [109],
     s => s.events[0].pitches = [60, 60], s => s.events[1].id = s.events[0].id,
@@ -65,6 +65,14 @@ test('notation splits at barlines with ties without changing musical duration', 
   assert.equal(parts[0].tiedFrom, false)
   assert.equal(parts.at(-1).tiedTo, false)
   assert.ok(parts.every(p => p.beat % 4 + p.duration <= 4))
+})
+test('common time signatures round-trip and define measure boundaries', () => {
+  const score = { ...phrase([[[], .25], [[60], 4]]), timeSignature: [3, 4] }
+  const parts = notationSegments(score).slice(1)
+  assert.deepEqual(parseScore(JSON.stringify(score)).timeSignature, [3, 4])
+  assert.equal(measureBeats(score.timeSignature), 3)
+  assert.equal(measureBeats([6, 8]), 3)
+  assert.ok(parts.every(part => part.beat % 3 + part.duration <= 3))
 })
 test('adjacent repeated notes rearticulate, then silence for a rest', () => {
   const p = player(); p.transport.play(); p.advance(1000); p.advance(1000)

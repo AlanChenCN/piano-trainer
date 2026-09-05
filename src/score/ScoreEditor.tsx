@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 import { midiNumberToPianoNote } from '../data/piano'
-import { createScore, deleteEvent, durations, insertEvent, parseScore, replaceEvent, scoreLength, type ScoreDocument } from './scoreModel'
+import { createScore, deleteEvent, durations, insertEvent, parseScore, replaceEvent, scoreLength, timeSignaturePresets, type ScoreDocument } from './scoreModel'
 import { ScoreTransport } from './scoreTransport'
 import ScoreStaff from './ScoreStaff'
 import './score.css'
@@ -141,10 +141,23 @@ export default function ScoreEditor({ active, audition, onPlayNote, onStopNote }
     if (tempo !== score.tempo) change({ ...score, tempo })
   }
 
+  function stepTimeSignature(direction: -1 | 1) {
+    const current = timeSignaturePresets.findIndex(([numerator, denominator]) => numerator === score.timeSignature[0] && denominator === score.timeSignature[1])
+    const next = (current + direction + timeSignaturePresets.length) % timeSignaturePresets.length
+    const [numerator, denominator] = timeSignaturePresets[next]
+    change({ ...score, timeSignature: [numerator, denominator] })
+  }
+
   return <section hidden={!active} id="score-panel" role="tabpanel" aria-labelledby="score-tab" className="score-editor">
     <div className="score-document-bar">
+      <div className="score-time-signature" aria-label="拍号">
+        <span>拍号</span>
+        <button aria-label="上一个拍号" onClick={() => stepTimeSignature(-1)}>◀</button>
+        <output>{score.timeSignature[0]}/{score.timeSignature[1]}</output>
+        <button aria-label="下一个拍号" onClick={() => stepTimeSignature(1)}>▶</button>
+      </div>
       <label className="score-title-field"><span>乐谱名称</span><input aria-label="乐谱名称" maxLength={120} value={score.title} onChange={event => change({ ...score, title: event.target.value })} /></label>
-      <div className="score-summary"><span>4/4 · 单声部</span><span>{score.events.length} 项 · {length} 拍</span></div>
+      <div className="score-summary"><span>{score.timeSignature[0]}/{score.timeSignature[1]} · 单声部</span><span>{score.events.length} 项 · {length} 拍</span></div>
       <div className="score-actions score-document-actions">
         <button className="score-file-action" onClick={() => { if (dirty && !window.confirm('新建乐谱？未保存内容可通过撤销恢复。')) return; change(createScore()); setSelected(null); transport.stop() }}>新建</button>
         <button className={`score-file-action${dirty ? ' score-primary' : ''}`} onClick={save}>保存</button>

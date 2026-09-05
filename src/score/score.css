@@ -110,6 +110,34 @@
   flex-wrap: nowrap;
 }
 
+.score-time-signature {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.score-time-signature span {
+  color: var(--theme-text-color);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.score-time-signature button {
+  width: 28px;
+  min-width: 28px;
+  min-height: 30px !important;
+  padding: 0 !important;
+}
+
+.score-time-signature output {
+  min-width: 34px;
+  color: var(--theme-heading-color);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
 .score-document-actions .score-file-action { width: 78px; }
 .score-document-actions .score-history-action { width: 34px; min-width: 34px; padding-inline: 0; }
 

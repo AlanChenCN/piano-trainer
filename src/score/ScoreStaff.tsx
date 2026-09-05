@@ -3,7 +3,7 @@ import { midiNumberToPianoNote } from '../data/piano'
 import { getStaffNotePosition, getLedgerLineSteps, type StaffName } from '../data/staff'
 import { createGrandStaffGeometry, staffLineSteps } from '../data/staffGeometry'
 import { notationSegments } from './notation'
-import { scoreLength, type ScoreDocument } from './scoreModel'
+import { measureBeats, scoreLength, type ScoreDocument } from './scoreModel'
 
 interface Props { score: ScoreDocument; selected: string | null; beat: number; playing: boolean; previewPitches: number[]; previewDuration: number; insertionIndex: number; onSelect: (id: string) => void; onEnd: () => void }
 
@@ -11,9 +11,11 @@ const { staffBottomY, noteY } = createGrandStaffGeometry(199, 6)
 const staffTopY = noteY('treble', 8)
 const staffBottomEdgeY = noteY('bass', 0)
 const beatFraction = (value: number) => ({ .25: ['1', '4'], .5: ['1', '2'] } as Record<number, [string, string] | undefined>)[value]
+const isMeasureStart = (beat: number, beatsPerMeasure: number) => Math.abs(beat / beatsPerMeasure - Math.round(beat / beatsPerMeasure)) < .00001
 
 export default function ScoreStaff({ score, selected, beat, playing, previewPitches, previewDuration, insertionIndex, onSelect, onEnd }: Props) {
   const paperRef = useRef<HTMLDivElement>(null)
+  const beatsPerMeasure = measureBeats(score.timeSignature)
   const { segments, widths, xs, offset, width, eventById, previewAnchorX, previewLayoutWidth, editCursorX } = useMemo(() => {
     const segments = notationSegments(score)
     // Keep a readable minimum for accidentals and chords, then let musical time drive spacing.
@@ -66,10 +68,13 @@ export default function ScoreStaff({ score, selected, beat, playing, previewPitc
       {(['treble', 'bass'] as StaffName[]).map(staff => <g key={staff} stroke="var(--theme-staff-color)" strokeWidth="1">
         {staffLineSteps.map(step => <line key={step} x1="20" x2={width - 20} y1={noteY(staff, step)} y2={noteY(staff, step)} />)}
       </g>)}
-      <g fill="var(--theme-staff-color)" fontFamily="Segoe UI Symbol, serif">
-        <text x="24" y="158" fontSize="62">𝄞</text><text x="24" y="231" fontSize="54">𝄢</text>
-        <text x="70" y="135" fontSize="24">4</text><text x="70" y="159" fontSize="24">4</text>
-        <text x="70" y="207" fontSize="24">4</text><text x="70" y="231" fontSize="24">4</text>
+      <g fill="var(--theme-staff-color)" fontFamily="Noto Music, Segoe UI Symbol, Bravura, serif">
+        <text x="45" y={noteY('treble', 4) + 30} fontSize="108" textAnchor="middle">𝄞</text>
+        <text x="45" y={noteY('bass', 4) + 24} fontSize="108" textAnchor="middle">𝄢</text>
+        {(['treble', 'bass'] as StaffName[]).map(staff => <g key={`time-${staff}`} fontSize="24" textAnchor="middle">
+          <text x="78" y={noteY(staff, 4) - 8}>{score.timeSignature[0]}</text>
+          <text x="78" y={noteY(staff, 4) + 16}>{score.timeSignature[1]}</text>
+        </g>)}
       </g>
       {!segments.length && !previewPitches.length && <text x="180" y="181" fill="var(--theme-text-color)" fontSize="18">在底部琴键试音，然后点击「写入音符」</text>}
       {segments.map((segment, index) => {
@@ -79,9 +84,9 @@ export default function ScoreStaff({ score, selected, beat, playing, previewPitc
         const event = eventById.get(segment.eventId)!
         const label = `${segment.beat + 1} 拍：${segment.pitches.map(pitch => midiNumberToPianoNote(pitch)?.name).join('、') || '休止符'}，${event.duration} 拍`
         return <g key={`${segment.eventId}-${segment.beat}`}>
-          {segment.beat % 4 === 0 && <g fill="var(--theme-text-color)" stroke="var(--theme-border-color)">
+          {isMeasureStart(segment.beat, beatsPerMeasure) && <g fill="var(--theme-text-color)" stroke="var(--theme-border-color)">
             <line x1={xs[index] - 8} x2={xs[index] - 8} y1={staffTopY - 8} y2={staffBottomEdgeY + 8} />
-            <text x={xs[index]} y="36" stroke="none" fontSize="13">{segment.beat / 4 + 1}</text>
+            <text x={xs[index]} y="36" stroke="none" fontSize="13">{Math.round(segment.beat / beatsPerMeasure) + 1}</text>
           </g>}
           <g role="button" tabIndex={0} aria-label={label} aria-pressed={chosen} onClick={() => onSelect(segment.eventId)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(segment.eventId) } }} className="score-note-target">
             <title>{label}</title>
@@ -150,9 +155,9 @@ export default function ScoreStaff({ score, selected, beat, playing, previewPitc
         <rect className="score-end-slot" x={offset} y={(staffTopY + staffBottomEdgeY) / 2 - 68} width="66" height="136" rx="8" fill={selected === null ? 'var(--theme-accent-background)' : 'transparent'} />
         <text x={offset + 25} y={(staffTopY + staffBottomEdgeY) / 2 + 8} fill="var(--theme-accent-color)" fontSize="24">+</text>
       </g>
-    </g>, [segments, widths, xs, offset, width, eventById, selected, previewAnchorX, previewLayoutWidth, previewPitches, previewDuration, onSelect, onEnd])
+    </g>, [segments, widths, xs, offset, width, eventById, selected, previewAnchorX, previewLayoutWidth, previewPitches, previewDuration, beatsPerMeasure, score.timeSignature, onSelect, onEnd])
   return <div ref={paperRef} className="score-paper" aria-label="乐谱五线谱，可横向滚动">
-    <svg width={width} height="400" viewBox={`0 0 ${width} 400`} role="group" aria-label="4/4 乐谱">
+    <svg width={width} height="400" viewBox={`0 0 ${width} 400`} role="group" aria-label={`${score.timeSignature[0]}/${score.timeSignature[1]} 乐谱`}>
       {notation}
       <line className="score-edit-cursor" x1={editCursorX} x2={editCursorX} y1="48" y2="365" pointerEvents="none" />
       {scoreLength(score) > 0 && <line className={playing ? 'score-playback-cursor score-playback-cursor--active' : 'score-playback-cursor'} x1={playX} x2={playX} y1="48" y2="365" pointerEvents="none" />}

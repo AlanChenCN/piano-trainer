@@ -9,8 +9,13 @@ export interface ScoreDocument {
   version: 1
   title: string
   tempo: number
-  timeSignature: [4, 4]
+  timeSignature: [number, number]
   events: ScoreEvent[]
+}
+export const timeSignaturePresets = [[2, 4], [3, 4], [4, 4], [5, 4], [6, 8], [9, 8], [12, 8]] as const
+export const measureBeats = ([numerator, denominator]: [number, number]) => numerator * 4 / denominator
+export function isSupportedTimeSignature(value: unknown): value is [number, number] {
+  return Array.isArray(value) && value.length === 2 && timeSignaturePresets.some(([numerator, denominator]) => value[0] === numerator && value[1] === denominator)
 }
 export const durations = [0.25, 0.5, 1, 2, 4] as const
 export const durationLabels = ['十六分', '八分', '四分', '二分', '全音符']
@@ -42,7 +47,7 @@ export function parseScore(text: string): ScoreDocument {
   const value = JSON.parse(text.replace(/^\uFEFF/, ''))
   if (!value || value.version !== 1 || typeof value.title !== 'string' || value.title.length > 120 ||
       !Number.isFinite(value.tempo) || value.tempo < 30 || value.tempo > 240 ||
-      !Array.isArray(value.timeSignature) || value.timeSignature.length !== 2 || value.timeSignature[0] !== 4 || value.timeSignature[1] !== 4 ||
+      !isSupportedTimeSignature(value.timeSignature) ||
       !Array.isArray(value.events) || value.events.length > 2000) throw new Error('乐谱格式无效或版本不支持。')
   const ids = new Set<string>()
   let end = 0
@@ -56,7 +61,7 @@ export function parseScore(text: string): ScoreDocument {
     end += event.duration
   }
   // Only retain documented fields from imported files.
-  return { version: 1, title: value.title, tempo: value.tempo, timeSignature: [4, 4],
+  return { version: 1, title: value.title, tempo: value.tempo, timeSignature: [value.timeSignature[0], value.timeSignature[1]],
     events: value.events.map((event: ScoreEvent) => ({ id: event.id, startBeat: event.startBeat, duration: event.duration, pitches: [...event.pitches].sort((a, b) => a - b) })) }
 }
 export function soundingPitches(score: ScoreDocument, beat: number): number[] {

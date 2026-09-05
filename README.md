@@ -11,7 +11,7 @@ A browser-based piano practice and manual score-writing tool built with React an
 Editor 与 Trainer 共用大谱表纵向几何，中央 C 位于高低音谱之间的正中。
 支持乐谱本地手动保存、刷新恢复及 JSON 导入导出，以及单按钮播放 / 暂停、可拖动的播放进度和可输入或每次 ±10 调整的 30–240 BPM。
 
-第一版为固定 4/4、单声部（支持同时起止的和弦），适合分开记录旋律和和弦。
+第一版支持常用拍号（2/4、3/4、4/4、5/4、6/8、9/8、12/8）与单声部（支持同时起止的和弦），适合分开记录旋律和和弦。
 乐谱以 MIDI 音高和拍位保存，为后续简谱、吉他谱展示留出扩展空间；这些转换尚未实现。
 
 使用方法、数据格式和限制见 [SCORE_EDITOR.md](SCORE_EDITOR.md)。Trainer 的练习流程继续保留。
