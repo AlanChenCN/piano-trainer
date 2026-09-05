@@ -50,8 +50,8 @@ export default function ScoreStaff({ score, selected, beat, playing, previewPitc
           <g role="button" tabIndex={0} aria-label={label} aria-pressed={chosen} onClick={() => onSelect(segment.eventId)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(segment.eventId) } }} className="score-note-target">
             <title>{label}</title>
             <rect x={xs[index] - 4} y="4" width={widths[index] - 4} height="360" rx="8" fill="transparent" stroke="transparent" />
-            {chosen && <line x1={xs[index] + 6} x2={xs[index] + widths[index] - 14} y1="54" y2="54" stroke="var(--theme-accent-color)" strokeWidth="3" strokeLinecap="round" />}
-            <g pointerEvents="none" fill={chosen ? 'var(--theme-accent-color)' : 'var(--theme-heading-color)'} stroke={chosen ? 'var(--theme-accent-color)' : 'var(--theme-heading-color)'}>
+            {chosen && <line x1={xs[index] + 6} x2={xs[index] + widths[index] - 14} y1="54" y2="54" stroke="var(--theme-left-hand-color)" strokeWidth="3" strokeLinecap="round" />}
+            <g pointerEvents="none" fill={chosen ? 'var(--theme-left-hand-color)' : 'var(--theme-heading-color)'} stroke={chosen ? 'var(--theme-left-hand-color)' : 'var(--theme-heading-color)'}>
               {!segment.pitches.length && <text x={x - 8} y="155" stroke="none" fontSize="30" fontFamily="Segoe UI Symbol, serif">{segment.duration === 4 ? '𝄻' : segment.duration === 2 ? '𝄼' : segment.duration === 1 ? '𝄽' : segment.duration === .5 ? '𝄾' : '𝄿'}</text>}
               {segment.pitches.map((pitch, noteIndex) => {
                 const note = midiNumberToPianoNote(pitch)!

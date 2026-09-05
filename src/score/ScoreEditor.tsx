@@ -138,7 +138,7 @@ export default function ScoreEditor({ active, audition, onPlayNote, onStopNote }
             <button className="score-grid-action" onClick={() => add([])}>写入休止符</button>
           </div>
           <div className="score-edit-row score-edit-row--current">
-            <div className="score-note-value"><span>当前音</span><strong>{selectedEvent ? (selectedEvent.pitches.length ? names(selectedEvent.pitches) : '休止符') : '未选择谱上内容'}</strong><small>{selectedEvent ? `第 ${insertionIndex + 1} 项 · 第 ${selectedEvent.startBeat + 1} 拍` : '选择谱上音符后可修改'}</small></div>
+            <div className="score-note-value score-note-value--current"><span>当前音</span><strong>{selectedEvent ? (selectedEvent.pitches.length ? names(selectedEvent.pitches) : '休止符') : '未选择谱上内容'}</strong><small>{selectedEvent ? `第 ${insertionIndex + 1} 项 · 第 ${selectedEvent.startBeat + 1} 拍` : '选择谱上音符后可修改'}</small></div>
             <div className="score-stepper score-stepper--entry" aria-label="当前音符时值">
               <span>当前时值</span>
               <div><button aria-label="缩短当前时值" disabled={!selectedEvent || selectedEvent.duration === durations[0]} onClick={() => changeSelectedDuration(-1)}>◀</button><output>{selectedEvent ? durationText(selectedEvent.duration) : '—'}</output><button aria-label="延长当前时值" disabled={!selectedEvent || selectedEvent.duration === durations.at(-1)} onClick={() => changeSelectedDuration(1)}>▶</button></div>

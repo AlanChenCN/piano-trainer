@@ -175,6 +175,10 @@
   color: var(--theme-accent-color);
 }
 
+.score-note-value--current strong {
+  color: var(--theme-left-hand-color);
+}
+
 .score-edit-matrix .score-stepper {
   display: flex;
   align-items: center;
