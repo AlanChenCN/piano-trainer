@@ -427,7 +427,7 @@ function App() {
         workspace={workspace}
         disabled={pressedNotes.length > 0}
         onWorkspaceChange={handleWorkspaceChange}
-        controls={<GlobalControls themeMode={themeSettings.mode} activePreset={activeThemePreset} themeTokens={themeTokens} noteColorMode={themeSettings.noteColorMode} settings={settings} onThemeModeChange={handleThemeModeChange} onThemeTokenChange={handleThemeTokenChange} onNoteColorModeChange={handleNoteColorModeChange} onThemeReset={handleThemeReset} onAutoSaveChange={handleAutoSaveChange} onSoundChange={handleSoundChange} onLabelModeChange={handleLabelModeChange} onNoteDisplayModeChange={handleNoteDisplayModeChange} onPracticeSettingsChange={handlePracticeSettingsChange} onSaveSettings={saveCurrentSettings} onResetSettings={handleResetSettings} />}
+        controls={<GlobalControls themeMode={themeSettings.mode} activePreset={activeThemePreset} themeTokens={themeTokens} noteColorMode={themeSettings.noteColorMode} settings={settings} onThemeModeChange={handleThemeModeChange} onThemeTokenChange={handleThemeTokenChange} onNoteColorModeChange={handleNoteColorModeChange} onThemeReset={handleThemeReset} onAutoSaveChange={handleAutoSaveChange} onSoundChange={handleSoundChange} onLabelModeChange={handleLabelModeChange} onSaveSettings={saveCurrentSettings} onResetSettings={handleResetSettings} />}
       />
       <div hidden={workspace !== 'trainer'}>
       <Toolbar

@@ -2,7 +2,6 @@ import type { RefObject } from 'react'
 import Modal from './Modal'
 import type {
   NoteColorMode,
-  ThemeDisplayPreset,
   ThemeMode,
   ThemeTokens,
 } from '../theme/theme'
@@ -19,7 +18,6 @@ interface ThemePopoverProps {
   isOpen: boolean
   anchorRef: RefObject<HTMLElement | null>
   mode: ThemeMode
-  activePreset: ThemeDisplayPreset
   tokens: ThemeTokens
   noteColorMode: NoteColorMode
   onClose: () => void
@@ -43,7 +41,6 @@ function ThemePopover({
   isOpen,
   anchorRef,
   mode,
-  activePreset,
   tokens,
   noteColorMode,
   onClose,
@@ -64,17 +61,17 @@ function ThemePopover({
       <div className="theme-popover-content">
         <section className="theme-section" aria-labelledby="theme-preset-title">
           <h3 id="theme-preset-title">Preset</h3>
-          <div className="theme-option-list" role="radiogroup" aria-label="Theme preset">
-            {(['dark', 'light', 'custom'] as const).map(preset => (
+          <div className="theme-option-list theme-preset-list" role="radiogroup" aria-label="Theme preset">
+            {(['system', 'dark', 'light', 'custom'] as const).map(preset => (
               <button
                 key={preset}
                 className="app-button app-button--compact theme-option-button"
                 type="button"
-                aria-pressed={activePreset === preset}
-                data-active={activePreset === preset}
+                aria-pressed={mode === preset}
+                data-active={mode === preset}
                 onClick={() => onModeChange(preset)}
               >
-                {preset[0].toUpperCase() + preset.slice(1)}
+                {preset === 'system' ? 'Follow System' : preset[0].toUpperCase() + preset.slice(1)}
               </button>
             ))}
           </div>

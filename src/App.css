@@ -890,6 +890,10 @@
 
 }
 
+.theme-preset-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .theme-option-button {
 
   width: 100%;

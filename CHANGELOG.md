@@ -10,6 +10,7 @@
 - 统一 Trainer 与 Editor 的应用标题字号与行高。
 - 重新平衡 Editor 乐谱纵向边界，为最高音 C8 及其符干保留顶部可见空间，并缩减最低音与时值标签之间的留白。
 - 页面主滚动条改为隐藏但保持可滚动；打开设置浮层不再锁定背景滚动或改变页面宽度。
+- Settings 移除重复的 Theme、Note Display 和 Practice Settings；Theme 面板补充 Follow System 选项。
 
 ### 乐谱编辑布局调整
 

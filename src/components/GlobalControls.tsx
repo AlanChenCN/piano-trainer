@@ -1,7 +1,5 @@
 import { useRef, useState } from 'react'
 import type { PianoLabelMode } from '../data/piano'
-import type { NoteDisplayMode } from '../music/noteDisplay'
-import type { PracticeSettings } from '../practice/practiceTypes'
 import type { AppSettings } from '../settings/settings'
 import SettingsPopover from './SettingsPopover'
 import ThemePopover, { type ConfigurableThemeToken } from './ThemePopover'
@@ -20,8 +18,6 @@ interface Props {
   onAutoSaveChange: (enabled: boolean) => void
   onSoundChange: (enabled: boolean) => void
   onLabelModeChange: (mode: PianoLabelMode) => void
-  onNoteDisplayModeChange: (mode: NoteDisplayMode) => void
-  onPracticeSettingsChange: (updates: Partial<PracticeSettings>) => void
   onSaveSettings: () => void
   onResetSettings: () => void
 }
@@ -41,7 +37,7 @@ export default function GlobalControls(props: Props) {
       <span className="button-label">Settings</span>
       <span className="button-status">{props.settings.autoSave ? 'Auto Save' : 'Manual Save'}</span>
     </button>
-    <ThemePopover isOpen={themeOpen} anchorRef={themeButton} mode={props.themeMode} activePreset={props.activePreset} tokens={props.themeTokens} noteColorMode={props.noteColorMode} onClose={() => setThemeOpen(false)} onModeChange={props.onThemeModeChange} onTokenChange={props.onThemeTokenChange} onNoteColorModeChange={props.onNoteColorModeChange} onReset={props.onThemeReset} />
-    <SettingsPopover isOpen={settingsOpen} anchorRef={settingsButton} settings={props.settings} themeTokens={props.themeTokens} onClose={() => setSettingsOpen(false)} onAutoSaveChange={props.onAutoSaveChange} onSoundChange={props.onSoundChange} onThemeModeChange={props.onThemeModeChange} onThemeTokenChange={props.onThemeTokenChange} onNoteColorModeChange={props.onNoteColorModeChange} onLabelModeChange={props.onLabelModeChange} onNoteDisplayModeChange={props.onNoteDisplayModeChange} onPracticeSettingsChange={props.onPracticeSettingsChange} onSaveSettings={props.onSaveSettings} onResetSettings={props.onResetSettings} />
+    <ThemePopover isOpen={themeOpen} anchorRef={themeButton} mode={props.themeMode} tokens={props.themeTokens} noteColorMode={props.noteColorMode} onClose={() => setThemeOpen(false)} onModeChange={props.onThemeModeChange} onTokenChange={props.onThemeTokenChange} onNoteColorModeChange={props.onNoteColorModeChange} onReset={props.onThemeReset} />
+    <SettingsPopover isOpen={settingsOpen} anchorRef={settingsButton} settings={props.settings} onClose={() => setSettingsOpen(false)} onAutoSaveChange={props.onAutoSaveChange} onSoundChange={props.onSoundChange} onLabelModeChange={props.onLabelModeChange} onSaveSettings={props.onSaveSettings} onResetSettings={props.onResetSettings} />
   </div>
 }
