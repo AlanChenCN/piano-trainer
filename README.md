@@ -4,17 +4,27 @@ A browser-based piano practice and manual score-writing tool built with React an
 
 一个基于 React 和 TypeScript 构建的浏览器钢琴练习与手动录谱工具。
 
-## Score Editor / 乐谱编辑（未发布）
+## Score Editor / 乐谱编辑
 
-应用默认打开独立的「乐谱编辑」选项卡，与 Trainer 共用底部 Keyboard / MIDI 输入。
-先自由试音，松键后会在实际插入锚点高亮预览音高与输入时值，再确认写入；预览不推移已有谱面。“输入 / 当前”两行使用固定四列分别处理新增内容和已选事件，当前音高通过最近试音替换。
-Editor 与 Trainer 共用大谱表纵向几何，中央 C 位于高低音谱之间的正中。
-支持乐谱本地手动保存、刷新恢复及 JSON 导入导出，以及单按钮播放 / 暂停、可拖动的播放进度和可输入或每次 ±10 调整的 30–240 BPM。
+The application opens on the dedicated **Score Editor** tab by default. It shares the bottom Keyboard / MIDI input dock with Trainer.
 
-第一版支持常用拍号（2/4、3/4、4/4、5/4、6/8、9/8、12/8）与单声部（支持同时起止的和弦），适合分开记录旋律和和弦。
-乐谱以 MIDI 音高和拍位保存，为后续简谱、吉他谱展示留出扩展空间；这些转换尚未实现。
+应用默认打开独立的 **Score Editor / 乐谱编辑** 选项卡，并与 Trainer 共用底部 Keyboard / MIDI 输入区。
 
-使用方法、数据格式和限制见 [SCORE_EDITOR.md](SCORE_EDITOR.md)。Trainer 的练习流程继续保留。
+Audition notes first. Once all keys are released, the selected pitches and input duration appear at the insertion anchor; they enter the score only after writing. The fixed two-row `Input / Current` editor separates insertion from changes to the selected event.
+
+先自由试音；全部松键后，实际插入锚点会预览音高和输入时值，确认写入后才进入乐谱。“输入 / 当前”固定两行分别处理新增内容和已选事件，当前音高通过最近试音替换。
+
+Editor and Trainer share the same grand-staff geometry, placing middle C between the two inner staff lines. Local save and refresh recovery, JSON import and export, a draggable progress bar, combined play / pause, and 30–240 BPM editing with ±10 controls are included.
+
+Editor 与 Trainer 共用大谱表纵向几何，中央 C 位于高低音谱内侧线之间。支持本地保存、刷新恢复、JSON 导入导出、可拖动进度条、单按钮播放 / 暂停，以及可输入或每次 ±10 调整的 30–240 BPM。
+
+The first release supports common time signatures (`2/4`, `3/4`, `4/4`, `5/4`, `6/8`, `9/8`, `12/8`) and one continuous voice, including simultaneous chords. Score data stores MIDI pitches and beat positions, leaving room for future numbered notation and guitar tablature views; those conversions are not yet implemented.
+
+第一版支持常用拍号（`2/4`、`3/4`、`4/4`、`5/4`、`6/8`、`9/8`、`12/8`）与一个连续声部，也支持同时起止的和弦。乐谱以 MIDI 音高和拍位保存，为后续简谱、吉他谱展示留出扩展空间；这些转换尚未实现。
+
+See [SCORE_EDITOR.md](SCORE_EDITOR.md) for workflows, data format, and limits. Trainer practice remains available as a separate workspace.
+
+使用方法、数据格式和限制见 [SCORE_EDITOR.md](SCORE_EDITOR.md)。Trainer 的练习流程作为独立工作区继续保留。
 
 ## Features / 功能
 
@@ -60,6 +70,10 @@ Editor 与 Trainer 共用大谱表纵向几何，中央 C 位于高低音谱之�
   使用 Theme Token 和 CSS Variable 统一管理语义视觉颜色
 - 🎨 Note Color drives Grand Staff notes and derived white/black Piano highlights<br>
   Note Color 同步驱动 Grand Staff 音符，并派生白键、黑键高亮颜色
+- 📝 Score Editor with manual note, chord, rest, duration, and time-signature entry<br>
+  Score Editor 支持手动录入单音、和弦、休止符、时值与拍号
+- ▶️ Score playback with seeking, cursor following, local save, and JSON import/export<br>
+  支持定位回放、播放光标跟随、本地保存及 JSON 导入导出
 
 The computer keyboard maps white keys from `A` through `'` and uses
 `WERTYUIOP[` as candidate black-key positions. Keyboard Mapping in the Input &
@@ -86,39 +100,38 @@ Input & Piano Dock 中的 Keyboard Mapping 可以选择基准音，并通过方�
 
 ## Current Status / 当前状态
 
-当前开发分支增加了乐谱编辑第一版；P6-001 至 P6-007 已完成。以下 `v0.4.0-alpha` 描述的是已发布的 P5 范围。
+Version `v0.5.0-alpha` adds the first Score Editor release to the completed Trainer scope: manual score entry, editable time signatures, score playback and seeking, local score persistence, JSON import/export, and a shared grand-staff layout. The existing 88-key piano, Keyboard / Mouse / USB MIDI / Bluetooth LE MIDI input, Unified Input Layer, practice tools, themes, and Input & Piano Dock remain included.
 
-Version `v0.4.0-alpha` contains the completed P5 product scope: responsive 88-key
-piano, Keyboard / Mouse / USB MIDI / Bluetooth LE MIDI input, the Unified Input
-Layer, Complete Grand Staff, Input & Piano Dock, anchored Popover interaction,
-and the Theme Token / CSS Variable appearance system. Bluetooth LE MIDI has been
-verified with the ES120G.
-
-版本 `v0.4.0-alpha` 已包含 P5 阶段的完整产品范围：响应式 88 键钢琴、Keyboard / Mouse /
-USB MIDI / Bluetooth LE MIDI 输入、统一 Input Layer、完整 Grand Staff、Input & Piano Dock、
-锚定 Popover 交互，以及 Theme Token / CSS Variable 外观系统。Bluetooth LE MIDI 已通过 ES120G
-完成验证。
+版本 `v0.5.0-alpha` 在既有 Trainer 范围上加入第一版 Score Editor：手动录谱、可编辑拍号、乐谱回放与定位、本地乐谱保存、JSON 导入导出，以及共享大谱表布局。原有的 88 键钢琴、Keyboard / Mouse / USB MIDI / Bluetooth LE MIDI 输入、统一 Input Layer、练习工具、主题和 Input & Piano Dock 均继续保留。
 
 ## Development / 开发
 
-Install dependencies / 安装依赖：
+Install dependencies:
+
+安装依赖：
 
 ```bash
 npm install
 ```
 
-Start the development server / 启动开发服务器：
+Start the development server:
+
+启动开发服务器：
 
 ```bash
 npm run dev
 ```
 
-Build and lint the project / 构建并检查项目：
+Build, lint, and test the project:
+
+构建、检查并测试项目：
 
 ```bash
 npm run build
 npm run lint
 npm test
 ```
+
+Automated tests use Node.js 24's built-in test runner and the existing TypeScript compiler, with no additional dependencies.
 
 自动化测试使用 Node.js 24 的内置测试运行器及已有 TypeScript 编译器，无新增依赖。
