@@ -126,29 +126,28 @@ export default function ScoreEditor({ active, audition, onPlayNote, onStopNote }
       </div>
     </div>
     <div className="score-entry" aria-label="乐谱编辑操作">
-      <div className="score-edit-row score-edit-row--insert">
-        <strong className="score-row-label">插入</strong>
-        <div className="score-note-value score-note-value--input"><span>输入音</span><strong>{audition.length ? names(audition) : '在底部琴键上试弹'}</strong></div>
-        <div className="score-stepper score-stepper--entry" aria-label="输入音时值">
-          <span>输入时值</span>
-          <div><button aria-label="缩短输入时值" disabled={duration === durations[0]} onClick={() => changeEntryDuration(-1)}>◀</button><output>{durationText(duration)}</output><button aria-label="延长输入时值" disabled={duration === durations.at(-1)} onClick={() => changeEntryDuration(1)}>▶</button></div>
+      <div className="score-entry-inner">
+        <div className="score-edit-matrix">
+          <div className="score-edit-row score-edit-row--insert">
+            <div className="score-note-value score-note-value--input"><span>输入音</span><strong>{audition.length ? names(audition) : '在底部琴键上试弹'}</strong><small>{selectedEvent ? `插入第 ${insertionIndex + 1} 项前` : '在末尾写入'}</small></div>
+            <div className="score-stepper score-stepper--entry" aria-label="输入音时值">
+              <span>输入时值</span>
+              <div><button aria-label="缩短输入时值" disabled={duration === durations[0]} onClick={() => changeEntryDuration(-1)}>◀</button><output>{durationText(duration)}</output><button aria-label="延长输入时值" disabled={duration === durations.at(-1)} onClick={() => changeEntryDuration(1)}>▶</button></div>
+            </div>
+            <button className="score-grid-action score-primary" disabled={!audition.length} onClick={() => add(audition)}>写入音符</button>
+            <button className="score-grid-action" onClick={() => add([])}>写入休止符</button>
+          </div>
+          <div className="score-edit-row score-edit-row--current">
+            <div className="score-note-value"><span>当前音</span><strong>{selectedEvent ? (selectedEvent.pitches.length ? names(selectedEvent.pitches) : '休止符') : '未选择谱上内容'}</strong><small>{selectedEvent ? `第 ${insertionIndex + 1} 项 · 第 ${selectedEvent.startBeat + 1} 拍` : '选择谱上音符后可修改'}</small></div>
+            <div className="score-stepper score-stepper--entry" aria-label="当前音符时值">
+              <span>当前时值</span>
+              <div><button aria-label="缩短当前时值" disabled={!selectedEvent || selectedEvent.duration === durations[0]} onClick={() => changeSelectedDuration(-1)}>◀</button><output>{selectedEvent ? durationText(selectedEvent.duration) : '—'}</output><button aria-label="延长当前时值" disabled={!selectedEvent || selectedEvent.duration === durations.at(-1)} onClick={() => changeSelectedDuration(1)}>▶</button></div>
+            </div>
+            <button className="score-grid-action" disabled={!selectedEvent || !audition.length || audition.length > 12} onClick={() => selectedEvent && change(replaceEvent(score, selectedEvent.id, { pitches: audition }))}>替换音符</button>
+            <button className="score-grid-action" disabled={!selectedEvent} onClick={() => selectedEvent && change(replaceEvent(score, selectedEvent.id, { pitches: [] }))}>替换休止符</button>
+          </div>
         </div>
-        <div className="score-row-actions">
-          <button className="score-primary" disabled={!audition.length} onClick={() => add(audition)}>写入音符</button>
-          <button onClick={() => add([])}>写入休止符</button>
-          <span className="score-hint">{selectedEvent ? `插入第 ${insertionIndex + 1} 项前` : '在末尾写入'}</span>
-        </div>
-      </div>
-      <div className="score-edit-row score-edit-row--current">
-        <strong className="score-row-label">当前</strong>
-        <div className="score-note-value"><span>当前音</span><strong>{selectedEvent ? (selectedEvent.pitches.length ? names(selectedEvent.pitches) : '休止符') : '未选择谱上内容'}</strong></div>
-        <div className="score-stepper score-stepper--entry" aria-label="当前音符时值">
-          <span>当前时值</span>
-          <div><button aria-label="缩短当前时值" disabled={!selectedEvent || selectedEvent.duration === durations[0]} onClick={() => changeSelectedDuration(-1)}>◀</button><output>{selectedEvent ? durationText(selectedEvent.duration) : '—'}</output><button aria-label="延长当前时值" disabled={!selectedEvent || selectedEvent.duration === durations.at(-1)} onClick={() => changeSelectedDuration(1)}>▶</button></div>
-        </div>
-        <div className="score-row-actions score-row-actions--current">
-          <button disabled={!selectedEvent || !audition.length || audition.length > 12} onClick={() => selectedEvent && change(replaceEvent(score, selectedEvent.id, { pitches: audition }))}>替换音符</button>
-          <button disabled={!selectedEvent} onClick={() => selectedEvent && change(replaceEvent(score, selectedEvent.id, { pitches: [] }))}>替换休止符</button>
+        <div className="score-side-actions" aria-label="当前音符其他操作">
           <button disabled={!selectedEvent} onClick={() => { if (selectedEvent) { change(deleteEvent(score, selectedEvent.id)); setSelected(null) } }}>删除</button>
           <button disabled={!selectedEvent} onClick={() => selectedEvent && transport.seek(selectedEvent.startBeat)}>定位播放</button>
           <button disabled={!selectedEvent} onClick={clearSelection}>回到末尾</button>
