@@ -49,7 +49,9 @@ export default function ScoreStaff({ score, selected, beat, playing, previewPitc
     const safeRight = paper.scrollLeft + paper.clientWidth * .8
     if (position < safeLeft || position > safeRight) {
       const edge = position < safeLeft ? paper.clientWidth * .2 : paper.clientWidth * .8
-      paper.scrollTo({ left: Math.max(0, position - edge), behavior: 'smooth' })
+      // Playback publishes on every animation frame. Updating the native scroll position
+      // directly keeps the cursor at the boundary without stacking smooth-scroll animations.
+      paper.scrollLeft = Math.max(0, position - edge)
     }
   }, [playX, playing, width])
   const notation = useMemo(() => <g>
