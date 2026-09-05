@@ -191,7 +191,7 @@ export default function ScoreEditor({ active, audition, onPlayNote, onStopNote }
       <label className="score-progress">播放进度<input aria-label="播放进度" type="range" min="0" max={length || 1} step="0.01" disabled={!length} value={playback.beat} onChange={event => transport.seek(Number(event.target.value))} /></label>
       <output>{playback.beat.toFixed(1)} / {length} 拍</output>
       <button className="score-start-toggle" disabled={!length} onClick={() => transport.seek(0)} aria-label="播放光标回到开头" title="播放光标回到开头">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5v14M18 6 9 12l9 6Z" /></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="2.5" height="14" rx=".6" /><path d="M18 6 9 12l9 6Z" /></svg>
       </button>
       <button className="score-locate-toggle" disabled={!selectedEvent} onClick={() => selectedEvent && transport.seek(selectedEvent.startBeat)} aria-label="定位到当前音符" title="定位到当前音符">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4v16M18 5v10" /><ellipse className="score-locate-notehead" cx="15" cy="15" rx="4" ry="2.8" transform="rotate(-15 15 15)" /></svg>

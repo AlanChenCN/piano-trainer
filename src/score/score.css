@@ -217,7 +217,18 @@
   justify-content: center;
   gap: 6px 10px;
   min-height: 74px;
+  position: relative;
   white-space: nowrap;
+}
+
+.score-action-matrix::after {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 223px;
+  width: 1px;
+  background: var(--theme-border-color);
+  content: '';
 }
 
 .score-action-button {

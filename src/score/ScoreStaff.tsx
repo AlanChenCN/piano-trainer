@@ -30,7 +30,7 @@ export default function ScoreStaff({ score, selected, beat, playing, previewPitc
     const editCursorX = selectedIndex >= 0 ? xs[selectedIndex] - 8 : previewAnchorX
     // A preview stays anchored to the editing slot. At the end, use a quarter-note slot.
     const previewLayoutWidth = selectedIndex >= 0 ? widths[selectedIndex] : 66
-    return { segments, widths, xs, offset, width: Math.max(800, offset + 64), eventById: new Map(score.events.map(event => [event.id, event])), previewAnchorX, previewLayoutWidth, editCursorX }
+    return { segments, widths, xs, offset, width: Math.max(800, offset + 82), eventById: new Map(score.events.map(event => [event.id, event])), previewAnchorX, previewLayoutWidth, editCursorX }
   }, [score, insertionIndex, selected])
   const activeIndex = segments.findIndex(segment => beat >= segment.beat && beat < segment.beat + segment.duration)
   const playX = activeIndex < 0 ? offset : xs[activeIndex] - 8 + (beat - segments[activeIndex].beat) / segments[activeIndex].duration * widths[activeIndex]
@@ -147,8 +147,8 @@ export default function ScoreStaff({ score, selected, beat, playing, previewPitc
         </g>
       </g>}
       <g role="button" tabIndex={0} aria-label="在末尾继续写入" onClick={onEnd} onKeyDown={e => { if (e.key === 'Enter') onEnd() }} className="score-note-target">
-        <rect x={offset} y={(staffTopY + staffBottomEdgeY) / 2 - 68} width="52" height="136" rx="8" fill={selected === null ? 'var(--theme-accent-background)' : 'transparent'} />
-        <text x={offset + 17} y={(staffTopY + staffBottomEdgeY) / 2 + 8} fill="var(--theme-accent-color)" fontSize="24">+</text>
+        <rect className="score-end-slot" x={offset} y={(staffTopY + staffBottomEdgeY) / 2 - 68} width="66" height="136" rx="8" fill={selected === null ? 'var(--theme-accent-background)' : 'transparent'} />
+        <text x={offset + 25} y={(staffTopY + staffBottomEdgeY) / 2 + 8} fill="var(--theme-accent-color)" fontSize="24">+</text>
       </g>
     </g>, [segments, widths, xs, offset, width, eventById, selected, previewAnchorX, previewLayoutWidth, previewPitches, previewDuration, onSelect, onEnd])
   return <div ref={paperRef} className="score-paper" aria-label="乐谱五线谱，可横向滚动">
