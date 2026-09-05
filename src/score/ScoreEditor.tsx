@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
-import { midiNumberToPianoNote, pianoNotes, pianoNoteToMidiNumber } from '../data/piano'
+import { midiNumberToPianoNote } from '../data/piano'
 import { createScore, deleteEvent, durationLabels, durations, insertEvent, parseScore, replaceEvent, scoreLength, type ScoreDocument } from './scoreModel'
 import { ScoreTransport } from './scoreTransport'
 import ScoreStaff from './ScoreStaff'
@@ -105,6 +105,11 @@ export default function ScoreEditor({ active, audition, onPlayNote, onStopNote }
     return `${durationLabels[index]} · ${value} 拍`
   }
 
+  function updateTempo(nextTempo: number) {
+    const tempo = Math.max(30, Math.min(240, nextTempo))
+    if (tempo !== score.tempo) change({ ...score, tempo })
+  }
+
   return <section hidden={!active} id="score-panel" role="tabpanel" aria-labelledby="score-tab" className="score-editor">
     <div className="score-document-bar">
       <label className="score-title-field"><span>乐谱名称</span><input aria-label="乐谱名称" maxLength={120} value={score.title} onChange={event => change({ ...score, title: event.target.value })} /></label>
@@ -120,42 +125,47 @@ export default function ScoreEditor({ active, audition, onPlayNote, onStopNote }
         <button disabled={!redo.length} onClick={() => restore('redo')} aria-label="重做">↷</button>
       </div>
     </div>
-    <div className="score-entry">
-      <div className="score-audition"><span>最近试音</span><strong>{audition.length ? names(audition) : '在底部琴键上试弹'}</strong><small>松键后保留 · 不会自动写入</small></div>
-      <div className="score-stepper score-stepper--entry" aria-label="待写入音符时值">
-        <span>待写入时值</span>
-        <div><button aria-label="缩短写入时值" disabled={duration === durations[0]} onClick={() => changeEntryDuration(-1)}>◀</button><output>{durationText(duration)}</output><button aria-label="延长写入时值" disabled={duration === durations.at(-1)} onClick={() => changeEntryDuration(1)}>▶</button></div>
+    <div className="score-entry" aria-label="乐谱编辑操作">
+      <div className="score-edit-row score-edit-row--insert">
+        <strong className="score-row-label">插入</strong>
+        <div className="score-note-value score-note-value--input"><span>输入音</span><strong>{audition.length ? names(audition) : '在底部琴键上试弹'}</strong></div>
+        <div className="score-stepper score-stepper--entry" aria-label="输入音时值">
+          <span>输入时值</span>
+          <div><button aria-label="缩短输入时值" disabled={duration === durations[0]} onClick={() => changeEntryDuration(-1)}>◀</button><output>{durationText(duration)}</output><button aria-label="延长输入时值" disabled={duration === durations.at(-1)} onClick={() => changeEntryDuration(1)}>▶</button></div>
+        </div>
+        <div className="score-row-actions">
+          <button className="score-primary" disabled={!audition.length} onClick={() => add(audition)}>写入音符</button>
+          <button onClick={() => add([])}>写入休止符</button>
+          <span className="score-hint">{selectedEvent ? `插入第 ${insertionIndex + 1} 项前` : '在末尾写入'}</span>
+        </div>
       </div>
-      <button className="score-primary" disabled={!audition.length} onClick={() => add(audition)}>写入音符</button>
-      <button onClick={() => add([])}>插入休止符</button>
-      <span className="score-hint">{selectedEvent ? `插入第 ${insertionIndex + 1} 项前` : '在末尾写入'}</span>
+      <div className="score-edit-row score-edit-row--current">
+        <strong className="score-row-label">当前</strong>
+        <div className="score-note-value"><span>当前音</span><strong>{selectedEvent ? (selectedEvent.pitches.length ? names(selectedEvent.pitches) : '休止符') : '未选择谱上内容'}</strong></div>
+        <div className="score-stepper score-stepper--entry" aria-label="当前音符时值">
+          <span>当前时值</span>
+          <div><button aria-label="缩短当前时值" disabled={!selectedEvent || selectedEvent.duration === durations[0]} onClick={() => changeSelectedDuration(-1)}>◀</button><output>{selectedEvent ? durationText(selectedEvent.duration) : '—'}</output><button aria-label="延长当前时值" disabled={!selectedEvent || selectedEvent.duration === durations.at(-1)} onClick={() => changeSelectedDuration(1)}>▶</button></div>
+        </div>
+        <div className="score-row-actions score-row-actions--current">
+          <button disabled={!selectedEvent || !audition.length || audition.length > 12} onClick={() => selectedEvent && change(replaceEvent(score, selectedEvent.id, { pitches: audition }))}>替换音符</button>
+          <button disabled={!selectedEvent} onClick={() => selectedEvent && change(replaceEvent(score, selectedEvent.id, { pitches: [] }))}>替换休止符</button>
+          <button disabled={!selectedEvent} onClick={() => { if (selectedEvent) { change(deleteEvent(score, selectedEvent.id)); setSelected(null) } }}>删除</button>
+          <button disabled={!selectedEvent} onClick={() => selectedEvent && transport.seek(selectedEvent.startBeat)}>定位播放</button>
+          <button disabled={!selectedEvent} onClick={clearSelection}>回到末尾</button>
+        </div>
+      </div>
     </div>
     <ScoreStaff score={score} selected={selected} beat={playback.beat} playing={playback.playing} previewPitches={audition} previewDuration={duration} insertionIndex={insertionIndex} onSelect={setSelected} onEnd={clearSelection} />
-    <div className="score-inspector">
-      {selectedEvent ? <>
-        <strong>第 {insertionIndex + 1} 项 · {selectedEvent.startBeat + 1} 拍</strong>
-        <div className="score-stepper score-stepper--inline" aria-label="选中音符时值">
-          <button aria-label="缩短选中音符时值" disabled={selectedEvent.duration === durations[0]} onClick={() => changeSelectedDuration(-1)}>◀</button>
-          <output>{durationText(selectedEvent.duration)}</output>
-          <button aria-label="延长选中音符时值" disabled={selectedEvent.duration === durations.at(-1)} onClick={() => changeSelectedDuration(1)}>▶</button>
-        </div>
-        {selectedEvent.pitches.map((pitch, index) => <label key={index}>音高 {index + 1}<select aria-label={`音高 ${index + 1}`} value={pitch} onChange={event => {
-          const pitches = selectedEvent.pitches.map((value, i) => i === index ? Number(event.target.value) : value)
-          change(replaceEvent(score, selectedEvent.id, { pitches: [...new Set(pitches)].sort((a, b) => a - b) }))
-        }}>{pianoNotes.map(note => <option key={note.name} value={pianoNoteToMidiNumber(note)}>{note.name}</option>)}</select></label>)}
-        <button disabled={!audition.length || audition.length > 12} onClick={() => change(replaceEvent(score, selectedEvent.id, { pitches: audition }))}>用试音替换</button>
-        <button onClick={() => change(replaceEvent(score, selectedEvent.id, { pitches: [] }))}>改为休止符</button>
-        <button onClick={() => { change(deleteEvent(score, selectedEvent.id)); setSelected(null) }}>删除</button>
-        <button onClick={() => transport.seek(selectedEvent.startBeat)}>定位播放</button>
-        <button onClick={() => setSelected(null)}>回到末尾</button>
-      </> : <span>点击谱上的音符可修改音高、时值或删除；虚线 / 实线指针表示播放位置。</span>}
-    </div>
     <div className="score-transport">
-      <button className="score-primary" disabled={!length} onClick={playback.playing ? transport.pause : transport.play}>{playback.playing ? '暂停' : '播放'}</button>
-      <button disabled={!length} onClick={transport.stop}>停止</button>
       <label className="score-progress">播放进度<input aria-label="播放进度" type="range" min="0" max={length || 1} step="0.01" disabled={!length} value={playback.beat} onChange={event => transport.seek(Number(event.target.value))} /></label>
       <output>{playback.beat.toFixed(1)} / {length} 拍</output>
-      <label>速度 BPM<input aria-label="速度 BPM" type="number" min="30" max="240" key={score.tempo} defaultValue={score.tempo} onKeyDown={event => { if (event.key === 'Enter') event.currentTarget.blur() }} onBlur={event => { const tempo = Number(event.target.value); if (tempo >= 30 && tempo <= 240 && tempo !== score.tempo) change({ ...score, tempo }); else event.target.value = String(score.tempo) }} /></label>
+      <button className="score-play-toggle score-primary" disabled={!length} onClick={playback.playing ? transport.pause : transport.play} aria-label={playback.playing ? '暂停播放' : '开始播放'}>{playback.playing ? 'Ⅱ' : '▶'}</button>
+      <div className="score-tempo" aria-label="速度 BPM">
+        <span>BPM</span>
+        <button aria-label="速度降低 10 BPM" disabled={score.tempo <= 30} onClick={() => updateTempo(score.tempo - 10)}>−</button>
+        <input aria-label="速度 BPM 数值" type="number" min="30" max="240" key={score.tempo} defaultValue={score.tempo} onKeyDown={event => { if (event.key === 'Enter') event.currentTarget.blur() }} onBlur={event => { const tempo = Number(event.target.value); if (tempo >= 30 && tempo <= 240) updateTempo(tempo); else event.target.value = String(score.tempo) }} />
+        <button aria-label="速度提高 10 BPM" disabled={score.tempo >= 240} onClick={() => updateTempo(score.tempo + 10)}>+</button>
+      </div>
     </div>
     <p className="score-message" role="status">{message}</p>
   </section>

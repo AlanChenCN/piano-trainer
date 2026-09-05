@@ -8,7 +8,7 @@
 .score-editor button:disabled, .workspace-tabs button:disabled { opacity: .45; cursor: not-allowed; }
 .score-editor button:hover:not(:disabled) { border-color: var(--theme-accent-color); }
 .score-editor :focus-visible, .workspace-tabs :focus-visible { outline: 2px solid var(--theme-accent-color); outline-offset: 3px; }
-.score-heading, .score-meta, .score-entry, .score-inspector, .score-transport { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.score-heading, .score-meta, .score-transport { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
 .score-heading { justify-content: space-between; margin-bottom: 18px; }
 .score-heading h2 { margin: 4px 0; font-size: 25px; color: var(--theme-heading-color); }
 .score-eyebrow { font-size: 11px; letter-spacing: 2px; margin: 0; color: var(--theme-accent-color); }
@@ -17,7 +17,7 @@
 .score-meta .score-actions { margin-left: auto; }
 .score-editor label { display: flex; gap: 6px; flex-direction: column; font-size: 12px; }
 .score-meta input { width: 240px; }
-.score-entry { background: var(--theme-surface-background); padding: 16px; border: 1px solid var(--theme-border-color); border-radius: 10px 10px 0 0; }
+.score-entry { display: flex; flex-direction: column; gap: 5px; background: var(--theme-surface-background); padding: 16px; border: 1px solid var(--theme-border-color); border-radius: 10px 10px 0 0; }
 .score-audition { display: flex; flex-direction: column; min-width: 190px; max-width: 420px; gap: 3px; }
 .score-audition span, .score-audition small, .score-hint { font-size: 12px; }
 .score-audition strong { color: var(--theme-heading-color); font-size: 16px; overflow-wrap: anywhere; }
@@ -112,10 +112,64 @@
 }
 
 .score-entry {
-  justify-content: center;
-  min-height: 52px;
+  min-height: 92px;
   padding: 8px 12px;
+  gap: 5px;
+}
+
+.score-edit-row {
+  display: grid;
+  grid-template-columns: 48px minmax(170px, 1fr) auto auto;
+  align-items: center;
   gap: 10px;
+  min-height: 40px;
+}
+
+.score-edit-row + .score-edit-row {
+  padding-top: 5px;
+  border-top: 1px solid var(--theme-border-color);
+}
+
+.score-row-label {
+  color: var(--theme-text-color);
+  font-size: 12px;
+  letter-spacing: .08em;
+}
+
+.score-note-value {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+
+.score-note-value span {
+  color: var(--theme-text-color);
+  font-size: 11px;
+}
+
+.score-note-value strong {
+  overflow: hidden;
+  color: var(--theme-heading-color);
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.score-note-value--input strong {
+  color: var(--theme-accent-color);
+}
+
+.score-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.score-row-actions--current button {
+  padding-inline: 8px;
 }
 
 .score-audition {
@@ -179,8 +233,43 @@
 
 .score-transport {
   min-height: 42px;
-  padding-top: 8px;
+  padding: 7px 12px;
   gap: 10px;
+  background: var(--theme-surface-background);
+  border: 1px solid var(--theme-border-color);
+  border-top: 0;
+  border-radius: 0 0 10px 10px;
+}
+
+.score-play-toggle {
+  width: 38px;
+  min-width: 38px;
+  padding-inline: 0 !important;
+  font-size: 15px !important;
+}
+
+.score-tempo {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: 4px;
+}
+
+.score-tempo span {
+  color: var(--theme-text-color);
+  font-size: 11px;
+}
+
+.score-tempo button {
+  width: 30px;
+  min-height: 30px;
+  padding: 0;
+}
+
+.score-tempo input[type=number] {
+  width: 58px;
+  padding: 6px;
+  text-align: center;
 }
 
 .score-message {
@@ -195,7 +284,6 @@
 @media (max-width: 760px) {
   .app-header,
   .score-document-bar,
-  .score-entry,
   .score-transport {
     gap: 8px;
     flex-wrap: wrap;
@@ -209,5 +297,34 @@
   .score-summary {
     order: 3;
     width: 100%;
+  }
+
+  .score-edit-row {
+    grid-template-columns: 42px minmax(120px, 1fr) auto;
+    gap: 7px;
+  }
+
+  .score-row-label {
+    grid-row: 1 / span 2;
+  }
+
+  .score-stepper {
+    grid-column: 3;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .score-stepper > span {
+    margin-bottom: 0;
+  }
+
+  .score-row-actions {
+    grid-column: 2 / -1;
+  }
+
+  .score-row-actions {
+    flex-wrap: wrap;
+    white-space: normal;
   }
 }
