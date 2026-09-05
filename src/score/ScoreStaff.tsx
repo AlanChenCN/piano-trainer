@@ -10,6 +10,10 @@ interface Props { score: ScoreDocument; selected: string | null; beat: number; p
 const { staffBottomY, noteY } = createGrandStaffGeometry(199, 6)
 const staffTopY = noteY('treble', 8)
 const staffBottomEdgeY = noteY('bass', 0)
+// Keep event interaction inside the notation area. Measure numbers and beat labels
+// are annotations, so they must remain outside hover and selection outlines.
+const eventFrameTopY = 48
+const eventFrameBottomY = 344
 const beatFraction = (value: number) => ({ .25: ['1', '4'], .5: ['1', '2'] } as Record<number, [string, string] | undefined>)[value]
 const isMeasureStart = (beat: number, beatsPerMeasure: number) => Math.abs(beat / beatsPerMeasure - Math.round(beat / beatsPerMeasure)) < .00001
 
@@ -90,7 +94,7 @@ export default function ScoreStaff({ score, selected, beat, playing, previewPitc
           </g>}
           <g role="button" tabIndex={0} aria-label={label} aria-pressed={chosen} onClick={() => onSelect(segment.eventId)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(segment.eventId) } }} className="score-note-target">
             <title>{label}</title>
-            <rect className={`score-event-frame${chosen ? ' score-event-frame--selected' : ''}`} x={slotStartX} y="12" width={widths[index]} height="354" rx="8" />
+            <rect className={`score-event-frame${chosen ? ' score-event-frame--selected' : ''}`} x={slotStartX} y={eventFrameTopY} width={widths[index]} height={eventFrameBottomY - eventFrameTopY} rx="8" />
             <g pointerEvents="none" fill={chosen ? 'var(--theme-left-hand-color)' : 'var(--theme-heading-color)'} stroke={chosen ? 'var(--theme-left-hand-color)' : 'var(--theme-heading-color)'}>
               {!segment.pitches.length && <text x={x - 8} y="155" stroke="none" fontSize="30" fontFamily="Segoe UI Symbol, serif">{segment.duration === 4 ? '𝄻' : segment.duration === 2 ? '𝄼' : segment.duration === 1 ? '𝄽' : segment.duration === .5 ? '𝄾' : '𝄿'}</text>}
               {segment.pitches.map((pitch, noteIndex) => {
